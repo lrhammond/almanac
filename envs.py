@@ -1,3 +1,5 @@
+### Environments ###
+
 import random
 import torch.tensor as tt
 from torch.distributions import Categorical
@@ -7,9 +9,9 @@ from environments.markov_games import mg0, mg1, mg2, mg3
 import torch
 import utils
 import numpy as np
-
 import specs
 
+# Use GPU if available
 if torch.cuda.is_available():
     print("Using GPU!")
     device = torch.device("cuda")
@@ -19,9 +21,7 @@ else:
     device = torch.device("cpu")
 
 
-### ENV WRAPPER ###
-
-
+# Environment wrapper
 class EnvWrapper:
 
     def __init__(self, name, kind, model, labeller):
@@ -42,7 +42,6 @@ class EnvWrapper:
             self.state = self.model.reset()
         elif self.kind == 'mmg':
             self.state = self.model.reset()
-            
         return self.state
         
     def step(self, joint_action):
@@ -64,7 +63,6 @@ class EnvWrapper:
             features = self.model.featurise(state)
         elif self.kind == 'mmg':
             features = self.state
-
         return features
 
     def label(self, state):
@@ -77,7 +75,6 @@ class EnvWrapper:
             obs_size = self.model.num_states
         elif self.kind == 'mmg':
             obs_size = self.model.state_size
-        
         return obs_size
 
     def get_act_sizes(self):
@@ -86,7 +83,6 @@ class EnvWrapper:
             act_sizes = [len(a) for a in self.model.action_spaces]
         elif self.kind == 'mmg':
             act_sizes = self.model.action_sizes
-        
         return act_sizes
 
     def get_name(self):
@@ -103,9 +99,7 @@ class EnvWrapper:
             pickle.dump(self, f)
 
 
-### MARKOV GAMES ###
-
-
+# Markov game class
 class MarkovGame:
     
     def __init__(self, num_players, state_space, action_spaces, transition, initial):
@@ -183,7 +177,7 @@ def l_3(state):
     return mg3.labeller(state)
 
 
-
+# Matrix Markov game (mmg) class
 class MatrixMarkovGame:
 
     def __init__(self, state_size, action_sizes, labels, sparsity=0.7, structured_labels=True, nonlinearities=0.3):
@@ -204,13 +198,6 @@ class MatrixMarkovGame:
         self.initial = torch.distributions.bernoulli.Bernoulli(torch.rand(state_size))
         self.state = self.reset()
 
-    # def create_transition_dict(self, i):
-
-    #     if i == self.num_players - 1:
-    #         return dict(zip(range(self.action_sizes[i]), [torch.rand(self.state_size, self.state_size) * torch.where(torch.rand(self.state_size, self.state_size) > self.sparsity, tt(1), tt(0)) for a in range(self.action_sizes[i])]))
-    #     else:
-    #         return dict(zip(range(self.action_sizes[i]), [self.create_transition_dict(i+1) for a in range(self.action_sizes[i])]))
-
     def create_transitions(self):
 
         possible_actions = [[]]
@@ -230,14 +217,12 @@ class MatrixMarkovGame:
             m = np.random.randint(0, high=2, size=self.state_size)
             if m.any():
                 masks.add(tuple(m))
-
         return [tt(m).float() for m in masks]
 
     def create_state_labels(self):
 
         if self.structured_labels:
             return [[torch.randint(2, (self.state_size,)).float() for r in range(random.randint(1, self.state_size - 1))] for l in self.labels]
-
             # return [random.sample(range(self.state_size), random.randint(1, self.state_size)) for l in self.labels]
         else:
             return [set([torch.randint(2, (self.state_size,)).float() for r in range(random.randint(1, 2**self.state_size))]) for l in self.labels]
@@ -284,7 +269,6 @@ class MatrixMarkovGame:
         
         p = '' if policy == None else '-policy'
         d = '' if det == False else '-det'
-
         if filename == None:
             filename = 'environments/markov_games/mmg/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
 
@@ -319,7 +303,6 @@ class MatrixMarkovGame:
             f.write('    i : bool init false;\n')
             f.write('    [initialisation] !i -> 1.0:(i\'=true);\n')
             f.write('\nendmodule\n\n')
-
             f.write('\nmodule SYNC\n\n')
             f.write('    t : bool init true;\n')
             f.write('    [initialisation] !i -> 1.0:(t\' = false);\n')
@@ -343,7 +326,6 @@ class MatrixMarkovGame:
 
                 f.write('\nmodule STATE_{}\n\n'.format(state))
                 f.write('    s{} : [0..2] init 2;\n'.format(state))
-                
                 init_dist = self.initial.probs
                 p = init_dist[state]
                 f.write('    [initialisation] !i -> {}:(s{}\'=0) + {}:(s{}\'=1);\n'.format((1.0-p),state,p,state))
@@ -369,9 +351,10 @@ class MatrixMarkovGame:
                                 guard_action += ' & '
                             else:
                                 guard_action += ')'
-                        guard = guard_mask + ' & ' + guard_action
 
+                        guard = guard_mask + ' & ' + guard_action
                         transition_probs = self.transitions[i][a]
+
                         probs = []
                         for l in range(self.state_size):
                             l_probs = transition_probs[:,l]
@@ -385,7 +368,6 @@ class MatrixMarkovGame:
                             probs.append(p)
 
                         max_prob = 'max(0.0, ' + ','.join(probs) + ')'   
-
                         q = state
                         new_line = '    ' + guard + ' -> (' + probs[q] + '/' + max_prob + '):(s{}\'=1)'.format(q) + ' + (1.0 - (' + probs[q] + '/' + max_prob + ')):(s{}\'=0);\n'.format(q)
                         f.write(new_line)
@@ -404,10 +386,12 @@ class MatrixMarkovGame:
 
                     f.write('\nmodule ACTION_{}\n\n'.format(i))
                     f.write('    a{} : [-1..{}] init -1;\n'.format(i,(highest_action_num)))
+
                     for j in range(self.action_sizes[i]):
                         f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i,j))
                     for e in eps_actions:
                         f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i,e))
+
                     f.write('\nendmodule\n\n')
 
             else:
@@ -424,7 +408,7 @@ class MatrixMarkovGame:
                             guard += 's{}={}'.format(j, k[j])
                             if j != self.state_size - 1:
                                 guard += " & "
-                        
+                  
                         remaining = k[self.state_size:]
 
                         for l in range(len(ldbas)):
@@ -454,7 +438,6 @@ class MatrixMarkovGame:
 
                     f.write('\nendmodule\n\n')
 
-
             if self.structured_labels:
                 for l, s_ls in zip(self.labels, self.state_labels):
 
@@ -475,16 +458,3 @@ class MatrixMarkovGame:
 
             else:
                 print("Error: Converting unstructured labels to PRISM not yet supported")
-
-
-# ltl = 'F G psi'
-# ldba_0 = specs.Spec(ltl, 0.7)
-# ltl = 'F phi'
-# ldba_1 = specs.Spec(ltl, 0.7)
-
-
-# mg = MatrixMarkovGame(4, [2,3], ['phi', 'psi'])
-# # mg.test()
-# mg.create_prism_model(0, [ldba_0, ldba_1])
-
-print("testing")

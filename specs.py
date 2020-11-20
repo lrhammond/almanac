@@ -1,25 +1,18 @@
+### Specifications ###
+
 # Note, this code is primarily taken from work by Alper Kamil Bozkurt
 # His original repository can be found at https://gitlab.oit.duke.edu/cpsl/csrl/ and is licensed under the Apache License 2.0 (also included for reference within this repository)
-
 
 from subprocess import check_output
 import random
 from utils import flatten
-# import numpy as np
 import os
 import re
-# import importlib
 from itertools import chain, combinations
-# if importlib.util.find_spec('spot'):
-#     import spot
-# else:
-#     spot=None
 import pickle
 
 
-### AUTOMATON CLASS ###
-
-
+# Specification class
 class Spec:
 
     def __init__(self, formula, weight):
@@ -32,7 +25,6 @@ class Spec:
 
         if filename == None:
             filename = self.formula
-
         with open("specs/{}.pickle".format(filename), 'wb') as f:
             pickle.dump(self, f)
         
@@ -52,7 +44,6 @@ class Spec:
             for e in eps:
 
                 guard = '    [transition] q{}={} & '.format(spec_num, i)
-
                 eps_trans = '('
                 for a in range(num_players):
                     eps_trans += 'a{}=eps_{}_{}'.format(a, spec_num, e)
@@ -60,8 +51,7 @@ class Spec:
                         eps_trans += ' | '
                     else:
                         eps_trans += ')'
-                epsilon_actions.append(eps_trans)
-                    
+                epsilon_actions.append(eps_trans)   
                 lines += guard + eps_trans + ' -> 1.0:(q{}\'={});\n'.format(spec_num, e)
 
             if len(epsilon_actions) != 0:
@@ -91,7 +81,7 @@ class Spec:
         return lines
 
 
-
+# Automaton class
 class LDBA:
     """Transforms the LTL formula to an omega-automaton (OA) and stores the specifications.
     
@@ -116,7 +106,6 @@ class LDBA:
     spot_oa : spot.twa_graph
         The spot twa_graph object of the OA for visualization.
         
-    
     Parameters
     ----------
     ltl : str
@@ -144,9 +133,8 @@ class LDBA:
             the pair of the number of the Rabin pairs and the number of states and the spot object of the OA.
             
         """
-        
+
         # Translate the LTL formula to an OA using Rabinizer 4.
-        # out=check_output(['rabinizer-4/bin/ltl2ldba', '-d', '-e', ltl])
         out=check_output(['rabinizer4/bin/ltl2ldba', '-e', ltl])
         
         # Split the output into two parts: the header and the body
@@ -188,7 +176,6 @@ class LDBA:
                 # Parse the transition into three parts
                 _, _label, _dst, _, _acc_set = re.findall('(\[(.*)\])? ?(\d+) ?(\{(.*)\})?',line)[0]
                 dst = int(_dst)  # Get the destination
-                
                 if not _label: # If there is no label then the transition is an epsilon-move
                     eps[q].append(dst)
                 else:
@@ -223,27 +210,11 @@ class LDBA:
                                 delta[q][ap] = dst
                                 acc[q][ap] = t_acc
 
-        # Construct a spot object for visualization
-        # if spot:
-        #     filename = self.random_hoa_filename()
-        #     with open(filename,'wb') as f:
-        #         f.write(check_output(['ltl2ldba', '-d', ltl])
-        #     spot.setup()
-        #     spot_oa = spot.automaton(filename)
-        #     spot_oa.merge_edges()  # For better visualization
-        #     os.remove(filename)
-        # else:
-        #     spot_oa=None
-
-        # return q0, delta, acc, shape, spot_oa, eps
-
         self.q0 = q0
         self.state = q0
-        # self.delta = delta
         self.delta = [dict(zip([tuple(sorted(key)) for key in d.keys()], d.values())) for d in delta]
         self.acc = acc
         self.shape = shape
-        # self.spot_oa = spot_oa
         self.eps = eps
         self.num_states = n_qs
         self.labels = set(flatten(self.delta[0].keys()))
@@ -273,7 +244,6 @@ class LDBA:
             self.state = self.eps_actions[epsilon]
         else:
             print("Error: Epsilon transition not available!")
-
         return (self.state, reward)
 
     def check_epsilon(self, epsilon):
@@ -295,17 +265,6 @@ class LDBA:
         """
         return chain.from_iterable(combinations(a, k) for k in range(len(a)+1))
 
-    # def _repr_html_(self,show=None):
-    #     """Returns the string of svg representation of the OA within div tags to plot in a Jupyter notebook.
-        
-    #     Returns
-    #     -------
-    #     out: str
-    #         The string of svg representation of the OA within div tags.
-    #     """
-    #     if spot:
-    #         return '<div>%s</div>' % self.spot_oa.show(show)._repr_svg_()
-
     def random_hoa_filename(self):
         """Returns a random file name.
         
@@ -318,45 +277,3 @@ class LDBA:
         while os.path.isfile(filename):
             filename = 'temp_%032x.hoa' % random.getrandbits(128)
         return filename
-
-
-### OTHER FUNCTIONS ###
-
-
-# def is_epsilon_transition(joint_action, act_sizes, epsilon_act_sizes):
-
-#     eps_trans = []
-#     for i in range(len(act_sizes)):
-#         a = joint_action[i] - (act_sizes[i] - 1) 
-#         if a <= 0:
-#             continue
-#         else:
-#             j = -1
-#             while a > 0:
-#                 j += 1
-#                 a -= epsilon_act_sizes[j]
-#             eps_trans.append((j, a + epsilon_act_sizes[j] - 1))
-
-#     is_e_t = len(eps_trans) > 0
-#     if is_e_t:
-#         (j, e_t) = random.choice(eps_trans)
-#     else:
-#         j, e_t = None, None
-
-#     return is_e_t, j, e_t
-
-
-# ltl = 'F G phi'
-# s = Spec(ltl, 0.7)
-# s.create_prism_model(0,4)
-# print('Initial state:',ldba.q0)
-# print('Transition function: ['),print(*['  '+str(t) for t in ldba.delta],sep=',\n'),print(']')
-# print('Acceptance: ['),print(*['  '+str(t) for t in ldba.acc],sep=',\n'),print(']')
-# print("test")
-
-
-# ldba.step(('a',))
-# ldba.step(('a',))
-# ldba.step(('a',))
-
-
