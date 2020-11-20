@@ -484,7 +484,7 @@ class Almanac:
             on2awinner = False
 
         if filename == None:
-            filename = 'results/scores/{}/almanac-{}-{}.txt'.format(self.env_kind, self.env_name, run_id)
+            filename = 'scores/{}/almanac-{}-{}.txt'.format(self.env_kind, self.env_name, run_id)
 
         reward_multiplier = train_constants['reward_weight']
         tolerance = train_constants['nat_grad_tolerance']

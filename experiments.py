@@ -223,7 +223,7 @@ def exp1(state_size, num_actors, num_specs, run_num):
         #     f.write("Specs: {}\n".format(s_line))
         #     f.write("Run: {}\n\n".format(run_num))
 
-        specs_name = 'specs/matrix_markov_games/{}-{}-{}-{}.props'.format(state_size, num_actors, num_specs, run_num)
+        specs_name = 'results/experiment_1/specs/matrix_markov_games/{}-{}-{}-{}.props'.format(state_size, num_actors, num_specs, run_num)
         with open(specs_name, 'w') as f:
             if num_specs == 1:
                 f.write('Pmax=? [ X ( ' + specifications[0] + ' ) ]\n\n')
@@ -233,7 +233,7 @@ def exp1(state_size, num_actors, num_specs, run_num):
                 f.write('P=? [ X ( ' + specifications[0] + ' ) ]\n\n')
                 f.write('P=? [ X ( ' + specifications[1] + ' ) ]\n\n')
 
-        weights_name = 'specs/matrix_markov_games/{}-{}-{}-{}.weights'.format(state_size, num_actors, num_specs, run_num)
+        weights_name = 'results/experiment_1/specs/matrix_markov_games/{}-{}-{}-{}.weights'.format(state_size, num_actors, num_specs, run_num)
         with open(weights_name, 'w') as f:
             for w in weights:
                 f.write('{}\n'.format(w))
