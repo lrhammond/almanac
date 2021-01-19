@@ -21,11 +21,11 @@ class Spec:
         self.weight = weight
         self.ldba = LDBA(formula)
 
-    def save(self, filename=None):
+    def save(self, location):
 
-        if filename == None:
-            filename = self.formula
-        with open("specs/{}.pickle".format(filename), 'wb') as f:
+        # if filename == None:
+        #     filename = self.formula
+        with open(location + "/{}.pickle".format(self.formula), 'wb') as f:
             pickle.dump(self, f)
         
     def create_prism_model(self, spec_num, num_players, to_file=False, filename=None):

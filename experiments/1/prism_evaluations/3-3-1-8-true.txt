@@ -1,0 +1,121 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 07:47:49 BST 2020
+Hostname: arcus-htc-node021
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/3-3-1-8.prism /home/hert5888/almanac/specs/mmg/3-3-1-8.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/3-3-1-8.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/3-3-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 2 of command 3 of module "STATE_0" doesn't do anything ("(s0'=0)", line 30, column 535)
+
+Warning: Update 1 of command 4 of module "STATE_0" doesn't do anything ("(s0'=1)", line 31, column 252)
+
+Warning: Update 2 of command 5 of module "STATE_0" doesn't do anything ("(s0'=0)", line 32, column 535)
+
+Warning: Update 2 of command 6 of module "STATE_0" doesn't do anything ("(s0'=0)", line 33, column 535)
+
+Warning: Update 2 of command 8 of module "STATE_0" doesn't do anything ("(s0'=0)", line 35, column 535)
+
+Warning: Update 2 of command 10 of module "STATE_0" doesn't do anything ("(s0'=0)", line 37, column 329)
+
+Warning: Update 2 of command 12 of module "STATE_0" doesn't do anything ("(s0'=0)", line 39, column 329)
+
+Warning: Update 2 of command 13 of module "STATE_0" doesn't do anything ("(s0'=0)", line 40, column 329)
+
+Warning: Update 2 of command 2 of module "STATE_1" doesn't do anything ("(s1'=0)", line 62, column 453)
+
+Warning: Update 2 of command 7 of module "STATE_1" doesn't do anything ("(s1'=0)", line 67, column 453)
+
+Warning: Update 2 of command 9 of module "STATE_1" doesn't do anything ("(s1'=0)", line 69, column 453)
+
+Warning: Update 2 of command 10 of module "STATE_1" doesn't do anything ("(s1'=0)", line 70, column 329)
+
+Warning: Update 2 of command 11 of module "STATE_1" doesn't do anything ("(s1'=0)", line 71, column 453)
+
+Warning: Update 2 of command 12 of module "STATE_1" doesn't do anything ("(s1'=0)", line 72, column 329)
+
+Warning: Update 2 of command 13 of module "STATE_1" doesn't do anything ("(s1'=0)", line 73, column 329)
+
+Warning: Update 1 of command 2 of module "STATE_2" doesn't do anything ("(s2'=1)", line 95, column 238)
+
+Warning: Update 2 of command 4 of module "STATE_2" doesn't do anything ("(s2'=0)", line 97, column 543)
+
+Warning: Update 1 of command 7 of module "STATE_2" doesn't do anything ("(s2'=1)", line 100, column 238)
+
+Warning: Update 1 of command 9 of module "STATE_2" doesn't do anything ("(s2'=1)", line 102, column 238)
+
+Warning: Update 2 of command 10 of module "STATE_2" doesn't do anything ("(s2'=0)", line 103, column 329)
+
+Warning: Update 1 of command 11 of module "STATE_2" doesn't do anything ("(s2'=1)", line 104, column 238)
+
+Warning: Update 2 of command 12 of module "STATE_2" doesn't do anything ("(s2'=0)", line 105, column 329)
+
+Warning: Update 2 of command 13 of module "STATE_2" doesn't do anything ("(s2'=0)", line 106, column 329)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000300, setup 0.00)
+
+Time for model construction: 0.313 seconds.
+
+Type:        MDP
+States:      1477 (1 initial)
+Transitions: 23171
+Choices:     22897
+
+Transition matrix: 9956 nodes (50 terminal), 23171 minterms, vars: 19r/19c/9nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.28 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000500, setup 0.00)
+Time for product construction: 0.082 seconds.
+
+States:      1521 (1 initial)
+Transitions: 24755
+Choices:     24481
+
+Transition matrix: 13501 nodes (50 terminal), 24755 minterms, vars: 21r/21c/9nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.01 seconds (average 0.002800, setup 0.00)
+
+Prob1E: 6 iterations in 0.01 seconds (average 0.001000, setup 0.00)
+
+yes = 1521, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.681 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 23 warnings during computation.
+

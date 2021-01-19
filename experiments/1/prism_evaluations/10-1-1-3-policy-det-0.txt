@@ -1,0 +1,30 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 03:58:30 BST 2020
+Hostname: arcus-htc-node083
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/10-1-1-3-policy-det.prism /home/hert5888/almanac/specs/mmg/10-1-1-3.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/10-1-1-3-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/10-1-1-3.props"...
+
+2 properties:
+(1) Pmax=? [ X (G F psi) ]
+(2) P=? [ X (G F psi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 STATE_8 STATE_9 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G F psi) ]
+
+Building model...
+
+Warning: Update 2 of command 7 of module "STATE_4" doesn't do anything ("(s4'=0)", line 145, column 3671)
+
+Warning: Update 2 of command 8 of module "STATE_4" doesn't do anything ("(s4'=0)", line 146, column 3671)

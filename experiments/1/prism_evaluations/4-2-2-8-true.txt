@@ -1,0 +1,114 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 07:47:05 BST 2020
+Hostname: arcus-htc-node102
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/4-2-2-8.prism /home/hert5888/almanac/specs/mmg/4-2-2-8.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/4-2-2-8.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/4-2-2-8.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+(3) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 SPEC_0 SPEC_1 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 q0 q1 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+
+Building model...
+
+Warning: Update 1 of command 4 of module "STATE_2" doesn't do anything ("(s2'=1)", line 97, column 349)
+
+Warning: Update 1 of command 5 of module "STATE_2" doesn't do anything ("(s2'=1)", line 98, column 349)
+
+Warning: Update 1 of command 6 of module "STATE_2" doesn't do anything ("(s2'=1)", line 99, column 349)
+
+Warning: Update 1 of command 8 of module "STATE_2" doesn't do anything ("(s2'=1)", line 101, column 349)
+
+Warning: Update 1 of command 10 of module "STATE_2" doesn't do anything ("(s2'=1)", line 103, column 349)
+
+Warning: Guard for command 3 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_1" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 12 iterations in 0.00 seconds (average 0.000333, setup 0.00)
+
+Time for model construction: 0.376 seconds.
+
+Type:        MDP
+States:      4282 (1 initial)
+Transitions: 41870
+Choices:     37361
+
+Transition matrix: 13345 nodes (162 terminal), 41870 minterms, vars: 20r/20c/8nd
+
+Building deterministic Rabin automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.281 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 12 iterations in 0.01 seconds (average 0.000417, setup 0.00)
+States:      4472 (1 initial)
+Transitions: 45670
+Choices:     41161
+
+Transition matrix: 15744 nodes (162 terminal), 45670 minterms, vars: 22r/22c/8nd
+
+Building deterministic Rabin automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.015 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 12 iterations in 0.02 seconds (average 0.001417, setup 0.00)
+States:      4472 (1 initial)
+Transitions: 45670
+Choices:     41161
+
+Transition matrix: 20837 nodes (162 terminal), 45670 minterms, vars: 24r/24c/8nd
+Total time for product construction: 0.425 seconds.
+
+States:      4472 (1 initial)
+Transitions: 45670
+Choices:     41161
+
+Transition matrix: 20837 nodes (162 terminal), 45670 minterms, vars: 24r/24c/8nd
+
+Finding accepting end components for X (F G ((!phi)|(!xi)))...
+Time for end component identification: 0.005 seconds.
+
+Finding accepting end components for X (G ((!phi)|(X (chi))))...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 5 iterations in 0.01 seconds (average 0.002800, setup 0.00)
+
+yes = 1520, no = 0, maybe = 2952
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 108.95 seconds (average 0.001090, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 100000 iterations in 109.15 seconds (average 0.001091, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 8 warnings during computation.
+

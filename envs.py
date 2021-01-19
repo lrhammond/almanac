@@ -5,16 +5,18 @@ import torch.tensor as tt
 from torch.distributions import Categorical
 from torch.nn.functional import one_hot as one_hot
 import pickle
-from environments.test_envs import mg0, mg1, mg2, mg3
-from environments.overcooked_maps import oc0
+# from environments.test_envs import mg0, mg1, mg2, mg3
+# from environments.overcooked_maps import oc0
 import torch
 import utils
 import numpy as np
 import specs
 
-from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
-from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
-from overcooked_ai_py.mdp.actions import Action, Direction
+random.seed(26)
+
+# from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
+# from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
+# from overcooked_ai_py.mdp.actions import Action, Direction
 
 # Use GPU if available
 if torch.cuda.is_available():
@@ -183,33 +185,33 @@ class MarkovGame:
             print("Action: ", joint_action)
             self.step(joint_action)
 
-mg_0 = MarkovGame(num_players=mg0.num_players,
-                 state_space=mg0.state_space,
-                 action_spaces=mg0.action_spaces,
-                 transition=mg0.transition,
-                 initial=mg0.initial,
-                 labeller=mg0.labeller)
+# mg_0 = MarkovGame(num_players=mg0.num_players,
+#                  state_space=mg0.state_space,
+#                  action_spaces=mg0.action_spaces,
+#                  transition=mg0.transition,
+#                  initial=mg0.initial,
+#                  labeller=mg0.labeller)
 
-mg_1 = MarkovGame(num_players=mg1.num_players,
-                 state_space=mg1.state_space,
-                 action_spaces=mg1.action_spaces,
-                 transition=mg1.transition,
-                 initial=mg1.initial,
-                 labeller=mg1.labeller)
+# mg_1 = MarkovGame(num_players=mg1.num_players,
+#                  state_space=mg1.state_space,
+#                  action_spaces=mg1.action_spaces,
+#                  transition=mg1.transition,
+#                  initial=mg1.initial,
+#                  labeller=mg1.labeller)
 
-mg_2 = MarkovGame(num_players=mg2.num_players,
-                 state_space=mg2.state_space,
-                 action_spaces=mg2.action_spaces,
-                 transition=mg2.transition,
-                 initial=mg2.initial,
-                 labeller=mg2.labeller)
+# mg_2 = MarkovGame(num_players=mg2.num_players,
+#                  state_space=mg2.state_space,
+#                  action_spaces=mg2.action_spaces,
+#                  transition=mg2.transition,
+#                  initial=mg2.initial,
+#                  labeller=mg2.labeller)
 
-mg_3 = MarkovGame(num_players=mg3.num_players,
-                 state_space=mg3.state_space,
-                 action_spaces=mg3.action_spaces,
-                 transition=mg3.transition,
-                 initial=mg3.initial,
-                 labeller=mg3.labeller)
+# mg_3 = MarkovGame(num_players=mg3.num_players,
+#                  state_space=mg3.state_space,
+#                  action_spaces=mg3.action_spaces,
+#                  transition=mg3.transition,
+#                  initial=mg3.initial,
+#                  labeller=mg3.labeller)
 
 
 # Matrix Markov game (mmg) class
@@ -305,7 +307,7 @@ class MatrixMarkovGame:
         p = '' if policy == None else '-policy'
         d = '' if det == False else '-det'
         if filename == None:
-            filename = 'environments/markov_games/mmg/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
+            filename = 'experiments/1/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
 
         with open(filename, 'w') as f:
             

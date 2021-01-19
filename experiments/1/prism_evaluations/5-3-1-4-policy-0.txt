@@ -1,0 +1,105 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 04:08:46 BST 2020
+Hostname: arcus-htc-node003
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/5-3-1-4-policy.prism /home/hert5888/almanac/specs/mmg/5-3-1-4.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/5-3-1-4-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/5-3-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_3" doesn't do anything ("(s3'=1)", line 200, column 484)
+
+Warning: Update 1 of command 3 of module "STATE_3" doesn't do anything ("(s3'=1)", line 201, column 484)
+
+Warning: Update 1 of command 9 of module "STATE_3" doesn't do anything ("(s3'=1)", line 207, column 484)
+
+Warning: Update 1 of command 16 of module "STATE_3" doesn't do anything ("(s3'=1)", line 214, column 484)
+
+Warning: Update 1 of command 45 of module "STATE_3" doesn't do anything ("(s3'=1)", line 243, column 522)
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000700, setup 0.00)
+
+Time for model construction: 1.465 seconds.
+
+Type:        DTMC
+States:      7550 (1 initial)
+Transitions: 159735
+
+Transition matrix: 89497 nodes (5043 terminal), 159735 minterms, vars: 23r/23c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.265 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000500, setup 0.00)
+
+States:      7918 (1 initial)
+Transitions: 176295
+
+Transition matrix: 102911 nodes (5043 terminal), 176295 minterms, vars: 25r/25c
+
+Finding accepting BSCCs...
+
+SCCs: 5, BSCCs: 2, non-BSCC states: 4880
+BSCC sizes: 1:90 2:2948
+
+Computing reachability probabilities...
+
+Prob0: 4 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Prob1: 2 iterations in 0.00 seconds (average 0.001000, setup 0.00)
+
+yes = 152, no = 7765, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=25, nodes=899] [42.1 KB]
+Adding explicit sparse matrices... [levels=25, num=1, compact] [8.1 KB]
+Creating vector for diagonals... [dist=1, compact] [15.5 KB]
+Creating vector for RHS... [dist=2, compact] [15.5 KB]
+Allocating iteration vectors... [2 x 61.9 KB]
+TOTAL: [204.9 KB]
+
+Starting iterations...
+
+Jacobi: 2 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+
+Value in the initial state: 2.0118977922574708E-4
+
+Time for model checking: 0.47 seconds.
+
+Result: 2.0118977922574708E-4 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 8 warnings during computation.
+

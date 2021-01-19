@@ -1,0 +1,109 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 03:43:48 BST 2020
+Hostname: arcus-htc-node037
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/1-2-2-4-policy-det.prism /home/hert5888/almanac/specs/mmg/1-2-2-4.props -prop 3
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/1-2-2-4-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/1-2-2-4.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G ((!psi)|(F phi))) ])
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+(3) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 SPEC_0 SPEC_1 ACTION_0 ACTION_1 
+Variables:   i t s0 q0 q1 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!psi)|(F phi))) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_0" doesn't do anything ("(s0'=1)", line 29, column 72)
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 30, column 72)
+
+Warning: Update 1 of command 5 of module "STATE_0" doesn't do anything ("(s0'=1)", line 32, column 72)
+
+Warning: Update 1 of command 6 of module "STATE_0" doesn't do anything ("(s0'=1)", line 33, column 72)
+
+Warning: Update 1 of command 7 of module "STATE_0" doesn't do anything ("(s0'=1)", line 34, column 72)
+
+Warning: Update 1 of command 9 of module "STATE_0" doesn't do anything ("(s0'=1)", line 36, column 72)
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 2 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 3 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 6 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 10 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_1" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 7 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Time for model construction: 0.091 seconds.
+
+Type:        DTMC
+States:      12 (1 initial)
+Transitions: 13
+
+Transition matrix: 153 nodes (4 terminal), 13 minterms, vars: 14r/14c
+
+Building deterministic automaton (for X (G ("L0"|(F !"L0"))))...
+DFA has 2 states, 1 goal states.
+Time for deterministic automaton translation: 0.17 seconds.
+
+Constructing MC-DFA product...
+
+Reachability (BFS): 7 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+States:      12 (1 initial)
+Transitions: 13
+
+Transition matrix: 155 nodes (4 terminal), 13 minterms, vars: 15r/15c
+
+Skipping BSCC computation since acceptance is defined via goal states...
+
+Computing reachability probabilities...
+
+Prob0: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 12, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.209 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 18 warnings during computation.
+

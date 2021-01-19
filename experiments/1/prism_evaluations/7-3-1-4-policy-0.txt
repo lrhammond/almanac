@@ -1,0 +1,123 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 04:35:39 BST 2020
+Hostname: arcus-htc-node033
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-3-1-4-policy.prism /home/hert5888/almanac/specs/mmg/7-3-1-4.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-3-1-4-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/7-3-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_1" doesn't do anything ("(s1'=1)", line 110, column 932)
+
+Warning: Update 1 of command 13 of module "STATE_1" doesn't do anything ("(s1'=1)", line 121, column 932)
+
+Warning: Update 1 of command 14 of module "STATE_1" doesn't do anything ("(s1'=1)", line 122, column 932)
+
+Warning: Update 1 of command 15 of module "STATE_1" doesn't do anything ("(s1'=1)", line 123, column 932)
+
+Warning: Update 1 of command 16 of module "STATE_1" doesn't do anything ("(s1'=1)", line 124, column 932)
+
+Warning: Update 1 of command 18 of module "STATE_1" doesn't do anything ("(s1'=1)", line 126, column 932)
+
+Warning: Update 1 of command 19 of module "STATE_1" doesn't do anything ("(s1'=1)", line 127, column 932)
+
+Warning: Update 1 of command 24 of module "STATE_1" doesn't do anything ("(s1'=1)", line 132, column 932)
+
+Warning: Update 2 of command 28 of module "STATE_1" doesn't do anything ("(s1'=0)", line 136, column 1798)
+
+Warning: Update 2 of command 29 of module "STATE_1" doesn't do anything ("(s1'=0)", line 137, column 1798)
+
+Warning: Update 2 of command 34 of module "STATE_1" doesn't do anything ("(s1'=0)", line 142, column 1798)
+
+Warning: Update 2 of command 35 of module "STATE_1" doesn't do anything ("(s1'=0)", line 143, column 1798)
+
+Warning: Update 2 of command 36 of module "STATE_1" doesn't do anything ("(s1'=0)", line 144, column 1798)
+
+Warning: Update 2 of command 41 of module "STATE_1" doesn't do anything ("(s1'=0)", line 149, column 1798)
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.06 seconds (average 0.005700, setup 0.00)
+
+Time for model construction: 58.124 seconds.
+
+Type:        DTMC
+States:      41243 (1 initial)
+Transitions: 1344554
+
+Transition matrix: 694571 nodes (34492 terminal), 1344554 minterms, vars: 27r/27c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.27 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 10 iterations in 0.05 seconds (average 0.004800, setup 0.00)
+
+States:      45501 (1 initial)
+Transitions: 1600034
+
+Transition matrix: 747474 nodes (34492 terminal), 1600034 minterms, vars: 29r/29c
+
+Finding accepting BSCCs...
+
+SCCs: 5, BSCCs: 2, non-BSCC states: 28083
+BSCC sizes: 1:120 2:17298
+
+Computing reachability probabilities...
+
+Prob0: 4 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+
+Prob1: 2 iterations in 0.01 seconds (average 0.004000, setup 0.00)
+
+yes = 205, no = 45295, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=29, nodes=3639] [170.6 KB]
+Adding explicit sparse matrices... [levels=29, num=1, compact] [45.9 KB]
+Creating vector for diagonals... [dist=1, compact] [88.9 KB]
+Creating vector for RHS... [dist=2, compact] [88.9 KB]
+Allocating iteration vectors... [2 x 355.5 KB]
+TOTAL: [1.1 MB]
+
+Starting iterations...
+
+Jacobi: 2 iterations in 0.01 seconds (average 0.000500, setup 0.00)
+
+Value in the initial state: 2.2657794830879626E-4
+
+Time for model checking: 4.198 seconds.
+
+Result: 2.2657794830879626E-4 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 17 warnings during computation.
+

@@ -1,0 +1,111 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 07:44:17 BST 2020
+Hostname: arcus-htc-node014
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/1-4-1-8-policy-det.prism /home/hert5888/almanac/specs/mmg/1-4-1-8.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/1-4-1-8-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/1-4-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 
+Variables:   i t s0 q0 a0 a1 a2 a3 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 5 of module "STATE_0" doesn't do anything ("(s0'=1)", line 32, column 86)
+
+Warning: Update 1 of command 10 of module "STATE_0" doesn't do anything ("(s0'=1)", line 37, column 86)
+
+Warning: Update 1 of command 23 of module "STATE_0" doesn't do anything ("(s0'=1)", line 50, column 86)
+
+Warning: Update 1 of command 26 of module "STATE_0" doesn't do anything ("(s0'=1)", line 53, column 86)
+
+Warning: Update 1 of command 27 of module "STATE_0" doesn't do anything ("(s0'=1)", line 54, column 86)
+
+Warning: Update 1 of command 28 of module "STATE_0" doesn't do anything ("(s0'=1)", line 55, column 86)
+
+Warning: Update 1 of command 32 of module "STATE_0" doesn't do anything ("(s0'=1)", line 59, column 86)
+
+Warning: Update 1 of command 34 of module "STATE_0" doesn't do anything ("(s0'=1)", line 61, column 86)
+
+Warning: Update 1 of command 36 of module "STATE_0" doesn't do anything ("(s0'=1)", line 63, column 86)
+
+Warning: Update 1 of command 50 of module "STATE_0" doesn't do anything ("(s0'=1)", line 77, column 86)
+
+Warning: Update 1 of command 53 of module "STATE_0" doesn't do anything ("(s0'=1)", line 80, column 86)
+
+Warning: Update 1 of command 55 of module "STATE_0" doesn't do anything ("(s0'=1)", line 82, column 86)
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 7 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Time for model construction: 0.145 seconds.
+
+Type:        DTMC
+States:      12 (1 initial)
+Transitions: 13
+
+Transition matrix: 230 nodes (4 terminal), 13 minterms, vars: 18r/18c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.251 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+States:      13 (1 initial)
+Transitions: 14
+
+Transition matrix: 278 nodes (4 terminal), 14 minterms, vars: 20r/20c
+
+Finding accepting BSCCs...
+
+SCCs: 2, BSCCs: 2, non-BSCC states: 9
+BSCC sizes: 1:2 2:2
+
+Computing reachability probabilities...
+
+Prob0: 6 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 13, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.313 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 18 warnings during computation.
+

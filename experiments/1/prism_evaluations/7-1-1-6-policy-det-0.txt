@@ -1,0 +1,82 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 06:13:28 BST 2020
+Hostname: arcus-htc-node104
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-1-1-6-policy-det.prism /home/hert5888/almanac/specs/mmg/7-1-1-6.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-1-1-6-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/7-1-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X ((!xi) U psi) ]
+(2) P=? [ X ((!xi) U psi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X ((!xi) U psi) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 7 iterations in 0.01 seconds (average 0.001286, setup 0.00)
+
+Time for model construction: 6.659 seconds.
+
+Type:        DTMC
+States:      908 (1 initial)
+Transitions: 3162
+
+Transition matrix: 34434 nodes (2284 terminal), 3162 minterms, vars: 21r/21c
+
+Building deterministic automaton (for X ("L0" U "L1"))...
+DFA has 4 states, 1 goal states.
+Time for deterministic automaton translation: 0.303 seconds.
+
+Constructing MC-DFA product...
+
+Reachability (BFS): 7 iterations in 0.00 seconds (average 0.000571, setup 0.00)
+
+States:      908 (1 initial)
+Transitions: 3162
+
+Transition matrix: 36429 nodes (2284 terminal), 3162 minterms, vars: 23r/23c
+
+Skipping BSCC computation since acceptance is defined via goal states...
+
+Computing reachability probabilities...
+
+Prob0: 5 iterations in 0.00 seconds (average 0.000600, setup 0.00)
+
+Prob1: 3 iterations in 0.00 seconds (average 0.000667, setup 0.00)
+
+yes = 404, no = 361, maybe = 143
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=23, nodes=28359] [1.3 MB]
+Adding explicit sparse matrices... [levels=23, num=1, compact] [22.8 KB]
+Creating vector for diagonals... [dist=1, compact] [1.8 KB]
+Creating vector for RHS... [dist=2, compact] [1.8 KB]
+Allocating iteration vectors... [2 x 7.1 KB]
+TOTAL: [1.3 MB]
+
+Starting iterations...
+
+Jacobi: 19 iterations in 0.44 seconds (average 0.000000, setup 0.44)
+
+Value in the initial state: 0.20529462339678584
+
+Time for model checking: 0.842 seconds.
+
+Result: 0.20529462339678584 (value in the initial state)
+

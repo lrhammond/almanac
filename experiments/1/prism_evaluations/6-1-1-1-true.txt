@@ -1,0 +1,94 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 00:56:29 BST 2020
+Hostname: arcus-htc-node105
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-1-1-1.prism /home/hert5888/almanac/specs/mmg/6-1-1-1.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-1-1-1.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/6-1-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (G F psi) ]
+(2) P=? [ X (G F psi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (G F psi) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_2" doesn't do anything ("(s2'=1)", line 62, column 723)
+
+Warning: Update 1 of command 3 of module "STATE_2" doesn't do anything ("(s2'=1)", line 63, column 723)
+
+Warning: Update 1 of command 4 of module "STATE_2" doesn't do anything ("(s2'=1)", line 64, column 723)
+
+Computing reachable states...
+
+Reachability (BFS): 4 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Time for model construction: 0.576 seconds.
+
+Type:        MDP
+States:      433 (1 initial)
+Transitions: 1945
+Choices:     913
+
+Transition matrix: 10362 nodes (876 terminal), 1945 minterms, vars: 17r/17c/5nd
+
+Building deterministic automaton (for X (G F "L0"))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.342 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 4 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+Time for product construction: 0.011 seconds.
+
+States:      513 (1 initial)
+Transitions: 2185
+Choices:     1153
+
+Transition matrix: 12817 nodes (876 terminal), 2185 minterms, vars: 19r/19c/5nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 9 iterations in 0.00 seconds (average 0.000444, setup 0.00)
+
+Prob1E: 21 iterations in 0.01 seconds (average 0.000524, setup 0.00)
+
+yes = 106, no = 65, maybe = 342
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=5, levels=19, nodes=12812] [600.6 KB]
+Adding sparse bits... [levels=19-19, num=5, compact=5/5] [16.4 KB]
+Creating vector for yes... [dist=2, compact] [1.0 KB]
+Allocating iteration vectors... [3 x 4.0 KB]
+TOTAL: [630.0 KB]
+
+Starting iterations...
+
+Iterative method: 3068 iterations in 0.14 seconds (average 0.000023, setup 0.07)
+
+Value in the initial state: 0.6662562444456323
+
+Time for model checking: 0.806 seconds.
+
+Result: 0.6662562444456323 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 3 warnings during computation.
+

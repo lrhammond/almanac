@@ -1,0 +1,216 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 04:34:01 BST 2020
+Hostname: arcus-htc-node101
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-2-2-4.prism /home/hert5888/almanac/specs/mmg/6-2-2-4.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-2-2-4.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/6-2-2-4.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (G ((!psi)|(F phi))) ], Pmax=? [ X (F G ((!phi)|(!xi))) ])
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+(3) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 SPEC_1 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 q1 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (G ((!psi)|(F phi))) ], Pmax=? [ X (F G ((!phi)|(!xi))) ])
+
+Building model...
+
+Warning: Guard for command 10 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 14 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 15 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 16 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 17 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 14 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 15 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 16 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 17 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 14 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 15 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 16 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 17 of module "STATE_2" is never satisfied.
+
+Warning: Update 1 of command 2 of module "STATE_3" doesn't do anything ("(s3'=1)", line 128, column 724)
+
+Warning: Update 1 of command 6 of module "STATE_3" doesn't do anything ("(s3'=1)", line 132, column 724)
+
+Warning: Update 1 of command 7 of module "STATE_3" doesn't do anything ("(s3'=1)", line 133, column 724)
+
+Warning: Update 1 of command 8 of module "STATE_3" doesn't do anything ("(s3'=1)", line 134, column 724)
+
+Warning: Update 1 of command 9 of module "STATE_3" doesn't do anything ("(s3'=1)", line 135, column 724)
+
+Warning: Guard for command 10 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 14 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 15 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 16 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 17 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 14 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 15 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 16 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 17 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 14 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 15 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 16 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 17 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 2 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 6 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 10 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 3 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_1" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.02 seconds (average 0.001700, setup 0.00)
+
+Time for model construction: 2.571 seconds.
+
+Type:        MDP
+States:      10142 (1 initial)
+Transitions: 106159
+Choices:     72316
+
+Transition matrix: 67249 nodes (2012 terminal), 106159 minterms, vars: 24r/24c/8nd
+
+Building deterministic Rabin automaton (for X (G ("L0"|(F "L1"))))...
+DRA has 5 states, 1 Rabin pairs.Time for Rabin translation: 0.27 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.02 seconds (average 0.001600, setup 0.00)
+States:      10142 (1 initial)
+Transitions: 106159
+Choices:     72316
+
+Transition matrix: 79191 nodes (2012 terminal), 106159 minterms, vars: 27r/27c/8nd
+
+Building deterministic Rabin automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.005 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.001200, setup 0.00)
+States:      10374 (1 initial)
+Transitions: 109639
+Choices:     75796
+
+Transition matrix: 82702 nodes (2012 terminal), 109639 minterms, vars: 29r/29c/8nd
+Total time for product construction: 0.631 seconds.
+
+States:      10374 (1 initial)
+Transitions: 109639
+Choices:     75796
+
+Transition matrix: 82702 nodes (2012 terminal), 109639 minterms, vars: 29r/29c/8nd
+
+Finding accepting end components for X (G ((!psi)|(F phi)))...
+Time for end component identification: 0.001 seconds.
+
+Finding accepting end components for X (F G ((!phi)|(!xi)))...
+Time for end component identification: 0.825 seconds.
+
+Prob0A: 4 iterations in 0.03 seconds (average 0.006500, setup 0.00)
+
+yes = 7804, no = 0, maybe = 2570
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 219.26 seconds (average 0.002193, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 100000 iterations in 218.36 seconds (average 0.002184, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 59 warnings during computation.
+

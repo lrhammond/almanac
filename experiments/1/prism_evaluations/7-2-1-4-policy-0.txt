@@ -1,0 +1,67 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 03:41:48 BST 2020
+Hostname: arcus-htc-node037
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-2-1-4-policy.prism /home/hert5888/almanac/specs/mmg/7-2-1-4.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-2-1-4-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/7-2-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X (G F psi) ]
+(2) P=? [ X (G F psi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G F psi) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 4 iterations in 0.01 seconds (average 0.002000, setup 0.00)
+
+Time for model construction: 8.78 seconds.
+
+Type:        DTMC
+States:      2423 (1 initial)
+Transitions: 37953
+
+Transition matrix: 146413 nodes (8714 terminal), 37953 minterms, vars: 21r/21c
+
+Building deterministic automaton (for X (G F "L0"))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.147 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 4 iterations in 0.01 seconds (average 0.001500, setup 0.00)
+
+States:      3455 (1 initial)
+Transitions: 47241
+
+Transition matrix: 156524 nodes (8714 terminal), 47241 minterms, vars: 23r/23c
+
+Finding accepting BSCCs...
+
+SCCs: 3, BSCCs: 1, non-BSCC states: 3437
+BSCC sizes: 1:18
+
+Computing reachability probabilities...
+
+yes = 0, no = 3455, maybe = 0
+
+Value in the initial state: 0.0
+
+Time for model checking: 0.759 seconds.
+
+Result: 0.0 (value in the initial state)
+

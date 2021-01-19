@@ -1,0 +1,26 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 07:25:14 BST 2020
+Hostname: arcus-htc-node066
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/9-4-1-6.prism /home/hert5888/almanac/specs/mmg/9-4-1-6.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/9-4-1-6.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/9-4-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X (G chi) ]
+(2) P=? [ X (G chi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 STATE_8 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 s8 q0 a0 a1 a2 a3 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (G chi) ]
+
+Building model...

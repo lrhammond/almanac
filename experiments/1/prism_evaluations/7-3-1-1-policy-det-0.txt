@@ -1,0 +1,85 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 02:31:45 BST 2020
+Hostname: arcus-htc-node105
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-3-1-1-policy-det.prism /home/hert5888/almanac/specs/mmg/7-3-1-1.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-3-1-1-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/7-3-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 6 iterations in 0.02 seconds (average 0.003000, setup 0.00)
+
+Time for model construction: 48.165 seconds.
+
+Type:        DTMC
+States:      499 (1 initial)
+Transitions: 3230
+
+Transition matrix: 72768 nodes (2818 terminal), 3230 minterms, vars: 27r/27c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.202 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 6 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+
+States:      580 (1 initial)
+Transitions: 3311
+
+Transition matrix: 78071 nodes (2818 terminal), 3311 minterms, vars: 29r/29c
+
+Finding accepting BSCCs...
+
+SCCs: 45, BSCCs: 44, non-BSCC states: 492
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 6 iterations in 0.00 seconds (average 0.000667, setup 0.00)
+
+Prob1: 7 iterations in 0.00 seconds (average 0.000429, setup 0.00)
+
+yes = 253, no = 31, maybe = 296
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=29, nodes=77501] [3.5 MB]
+Adding explicit sparse matrices... [levels=29, num=1, compact] [34.3 KB]
+Creating vector for diagonals... [dist=1, compact] [1.1 KB]
+Creating vector for RHS... [dist=2, compact] [1.1 KB]
+Allocating iteration vectors... [2 x 4.5 KB]
+TOTAL: [3.6 MB]
+
+Starting iterations...
+
+Jacobi: 27 iterations in 2.22 seconds (average 0.000000, setup 2.22)
+
+Value in the initial state: 0.8116572446771569
+
+Time for model checking: 5.018 seconds.
+
+Result: 0.8116572446771569 (value in the initial state)
+

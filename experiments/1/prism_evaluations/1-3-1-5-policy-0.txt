@@ -1,0 +1,195 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 04:45:25 BST 2020
+Hostname: arcus-htc-node083
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/1-3-1-5-policy.prism /home/hert5888/almanac/specs/mmg/1-3-1-5.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/1-3-1-5-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/1-3-1-5.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_0" doesn't do anything ("(s0'=1)", line 29, column 79)
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 30, column 79)
+
+Warning: Update 1 of command 9 of module "STATE_0" doesn't do anything ("(s0'=1)", line 36, column 79)
+
+Warning: Update 1 of command 11 of module "STATE_0" doesn't do anything ("(s0'=1)", line 38, column 79)
+
+Warning: Update 1 of command 15 of module "STATE_0" doesn't do anything ("(s0'=1)", line 42, column 79)
+
+Warning: Update 1 of command 16 of module "STATE_0" doesn't do anything ("(s0'=1)", line 43, column 79)
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Warning: Update 1 of command 1 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 73, column 33)
+
+Warning: Update 3 of command 1 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 73, column 61)
+
+Warning: Update 4 of command 1 of module "ACTION_0" doesn't do anything ("(a0'=3)", line 73, column 75)
+
+Warning: Update 5 of command 1 of module "ACTION_0" doesn't do anything ("(a0'=eps_0_1)", line 73, column 89)
+
+Warning: Update 1 of command 2 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 74, column 33)
+
+Warning: Update 3 of command 2 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 74, column 61)
+
+Warning: Update 4 of command 2 of module "ACTION_0" doesn't do anything ("(a0'=3)", line 74, column 75)
+
+Warning: Update 5 of command 2 of module "ACTION_0" doesn't do anything ("(a0'=eps_0_1)", line 74, column 89)
+
+Warning: Update 1 of command 3 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 75, column 33)
+
+Warning: Update 2 of command 3 of module "ACTION_0" doesn't do anything ("(a0'=1)", line 75, column 47)
+
+Warning: Update 3 of command 3 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 75, column 61)
+
+Warning: Update 4 of command 3 of module "ACTION_0" doesn't do anything ("(a0'=3)", line 75, column 75)
+
+Warning: Update 1 of command 4 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 76, column 33)
+
+Warning: Update 3 of command 4 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 76, column 61)
+
+Warning: Update 4 of command 4 of module "ACTION_0" doesn't do anything ("(a0'=3)", line 76, column 75)
+
+Warning: Update 5 of command 4 of module "ACTION_0" doesn't do anything ("(a0'=eps_0_1)", line 76, column 89)
+
+Warning: Update 1 of command 5 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 77, column 33)
+
+Warning: Update 3 of command 5 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 77, column 61)
+
+Warning: Update 4 of command 5 of module "ACTION_0" doesn't do anything ("(a0'=3)", line 77, column 75)
+
+Warning: Update 5 of command 5 of module "ACTION_0" doesn't do anything ("(a0'=eps_0_1)", line 77, column 89)
+
+Warning: Update 1 of command 6 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 78, column 33)
+
+Warning: Update 2 of command 6 of module "ACTION_0" doesn't do anything ("(a0'=1)", line 78, column 47)
+
+Warning: Update 3 of command 6 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 78, column 61)
+
+Warning: Update 4 of command 6 of module "ACTION_0" doesn't do anything ("(a0'=3)", line 78, column 75)
+
+Warning: Update 1 of command 1 of module "ACTION_1" doesn't do anything ("(a1'=0)", line 86, column 33)
+
+Warning: Update 2 of command 1 of module "ACTION_1" doesn't do anything ("(a1'=1)", line 86, column 47)
+
+Warning: Update 1 of command 2 of module "ACTION_1" doesn't do anything ("(a1'=0)", line 87, column 33)
+
+Warning: Update 3 of command 2 of module "ACTION_1" doesn't do anything ("(a1'=eps_0_1)", line 87, column 61)
+
+Warning: Update 1 of command 3 of module "ACTION_1" doesn't do anything ("(a1'=0)", line 88, column 33)
+
+Warning: Update 3 of command 3 of module "ACTION_1" doesn't do anything ("(a1'=eps_0_1)", line 88, column 61)
+
+Warning: Update 2 of command 4 of module "ACTION_1" doesn't do anything ("(a1'=1)", line 89, column 47)
+
+Warning: Update 3 of command 4 of module "ACTION_1" doesn't do anything ("(a1'=eps_0_1)", line 89, column 61)
+
+Warning: Update 1 of command 5 of module "ACTION_1" doesn't do anything ("(a1'=0)", line 90, column 33)
+
+Warning: Update 3 of command 5 of module "ACTION_1" doesn't do anything ("(a1'=eps_0_1)", line 90, column 61)
+
+Warning: Update 1 of command 6 of module "ACTION_1" doesn't do anything ("(a1'=0)", line 91, column 33)
+
+Warning: Update 3 of command 6 of module "ACTION_1" doesn't do anything ("(a1'=eps_0_1)", line 91, column 61)
+
+Warning: Update 1 of command 1 of module "ACTION_2" doesn't do anything ("(a2'=0)", line 99, column 33)
+
+Warning: Update 3 of command 1 of module "ACTION_2" doesn't do anything ("(a2'=eps_0_1)", line 99, column 61)
+
+Warning: Update 1 of command 2 of module "ACTION_2" doesn't do anything ("(a2'=0)", line 100, column 33)
+
+Warning: Update 3 of command 2 of module "ACTION_2" doesn't do anything ("(a2'=eps_0_1)", line 100, column 61)
+
+Warning: Update 1 of command 3 of module "ACTION_2" doesn't do anything ("(a2'=0)", line 101, column 33)
+
+Warning: Update 2 of command 3 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 101, column 47)
+
+Warning: Update 1 of command 4 of module "ACTION_2" doesn't do anything ("(a2'=0)", line 102, column 33)
+
+Warning: Update 3 of command 4 of module "ACTION_2" doesn't do anything ("(a2'=eps_0_1)", line 102, column 61)
+
+Warning: Update 1 of command 5 of module "ACTION_2" doesn't do anything ("(a2'=0)", line 103, column 33)
+
+Warning: Update 3 of command 5 of module "ACTION_2" doesn't do anything ("(a2'=eps_0_1)", line 103, column 61)
+
+Warning: Update 1 of command 6 of module "ACTION_2" doesn't do anything ("(a2'=0)", line 104, column 33)
+
+Warning: Update 2 of command 6 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 104, column 47)
+
+Computing reachable states...
+
+Reachability (BFS): 6 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Time for model construction: 0.099 seconds.
+
+Type:        DTMC
+States:      9 (1 initial)
+Transitions: 10
+
+Transition matrix: 164 nodes (4 terminal), 10 minterms, vars: 15r/15c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.159 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 6 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+States:      9 (1 initial)
+Transitions: 10
+
+Transition matrix: 213 nodes (4 terminal), 10 minterms, vars: 17r/17c
+
+Finding accepting BSCCs...
+
+SCCs: 1, BSCCs: 1, non-BSCC states: 7
+BSCC sizes: 1:2
+
+Computing reachability probabilities...
+
+Prob0: 6 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 9, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.192 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 60 warnings during computation.
+

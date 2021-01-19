@@ -1,0 +1,107 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 01:41:18 BST 2020
+Hostname: arcus-htc-node049
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/5-4-1-1-policy.prism /home/hert5888/almanac/specs/mmg/5-4-1-1.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/5-4-1-1-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/5-4-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!psi)|(F phi))) ]
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 
+Variables:   i t s0 s1 s2 s3 s4 q0 a0 a1 a2 a3 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!psi)|(F phi))) ]
+
+Building model...
+
+Warning: Guard for command 2 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 6 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 10 of module "SPEC_0" is never satisfied.
+
+Warning: Update 2 of command 4 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1375, column 107)
+
+Warning: Update 2 of command 16 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1387, column 108)
+
+Warning: Update 2 of command 28 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1399, column 108)
+
+Warning: Update 2 of command 40 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1411, column 108)
+
+Warning: Update 2 of command 49 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1420, column 107)
+
+Warning: Update 2 of command 52 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1423, column 108)
+
+Warning: Update 2 of command 61 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1432, column 108)
+
+Warning: Update 2 of command 64 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1435, column 109)
+
+Warning: Update 2 of command 70 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1441, column 108)
+
+Warning: Update 2 of command 73 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1444, column 108)
+
+Warning: Update 2 of command 76 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1447, column 108)
+
+Warning: Update 2 of command 88 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1459, column 109)
+
+Warning: Update 2 of command 94 of module "ACTION_2" doesn't do anything ("(a2'=1)", line 1465, column 108)
+
+Computing reachable states...
+
+Reachability (BFS): 6 iterations in 0.04 seconds (average 0.005833, setup 0.00)
+
+Time for model construction: 6.187 seconds.
+
+Type:        DTMC
+States:      6919 (1 initial)
+Transitions: 211146
+
+Transition matrix: 187991 nodes (3808 terminal), 211146 minterms, vars: 26r/26c
+
+Building deterministic automaton (for X (G ("L0"|(F "L1"))))...
+DRA has 5 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.271 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 6 iterations in 0.02 seconds (average 0.004000, setup 0.00)
+
+States:      6919 (1 initial)
+Transitions: 211146
+
+Transition matrix: 190937 nodes (3808 terminal), 211146 minterms, vars: 29r/29c
+
+Finding accepting BSCCs...
+
+SCCs: 2, BSCCs: 2, non-BSCC states: 33
+BSCC sizes: 1:6832 2:54
+
+Computing reachability probabilities...
+
+Prob0: 3 iterations in 0.01 seconds (average 0.002000, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.001000, setup 0.00)
+
+yes = 6919, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.534 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 16 warnings during computation.
+

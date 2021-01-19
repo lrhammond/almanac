@@ -1,0 +1,114 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 05:45:57 BST 2020
+Hostname: arcus-htc-node103
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/5-2-1-6-policy.prism /home/hert5888/almanac/specs/mmg/5-2-1-6.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/5-2-1-6-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/5-2-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X (F xi) ]
+(2) P=? [ X (F xi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F xi) ]
+
+Building model...
+
+Warning: Update 2 of command 2 of module "STATE_1" doesn't do anything ("(s1'=0)", line 72, column 1031)
+
+Warning: Update 2 of command 3 of module "STATE_1" doesn't do anything ("(s1'=0)", line 73, column 1031)
+
+Warning: Update 2 of command 4 of module "STATE_1" doesn't do anything ("(s1'=0)", line 74, column 1031)
+
+Warning: Update 2 of command 13 of module "STATE_1" doesn't do anything ("(s1'=0)", line 83, column 1031)
+
+Warning: Update 1 of command 15 of module "STATE_1" doesn't do anything ("(s1'=1)", line 85, column 429)
+
+Warning: Update 1 of command 17 of module "STATE_1" doesn't do anything ("(s1'=1)", line 87, column 429)
+
+Warning: Update 1 of command 24 of module "STATE_1" doesn't do anything ("(s1'=1)", line 94, column 429)
+
+Warning: Update 1 of command 26 of module "STATE_4" doesn't do anything ("(s4'=1)", line 228, column 492)
+
+Warning: Update 1 of command 27 of module "STATE_4" doesn't do anything ("(s4'=1)", line 229, column 492)
+
+Warning: Update 1 of command 28 of module "STATE_4" doesn't do anything ("(s4'=1)", line 230, column 492)
+
+Warning: Update 1 of command 31 of module "STATE_4" doesn't do anything ("(s4'=1)", line 233, column 492)
+
+Warning: Update 1 of command 33 of module "STATE_4" doesn't do anything ("(s4'=1)", line 235, column 492)
+
+Warning: Update 1 of command 34 of module "STATE_4" doesn't do anything ("(s4'=1)", line 236, column 492)
+
+Warning: Update 1 of command 37 of module "STATE_4" doesn't do anything ("(s4'=1)", line 239, column 492)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+
+Time for model construction: 1.61 seconds.
+
+Type:        DTMC
+States:      1424 (1 initial)
+Transitions: 10856
+
+Transition matrix: 17127 nodes (1160 terminal), 10856 minterms, vars: 20r/20c
+
+Building deterministic automaton (for X (F "L0"))...
+DFA has 3 states, 1 goal states.
+Time for deterministic automaton translation: 1.169 seconds.
+
+Constructing MC-DFA product...
+
+Reachability (BFS): 8 iterations in 0.03 seconds (average 0.003625, setup 0.00)
+
+States:      1424 (1 initial)
+Transitions: 10856
+
+Transition matrix: 18998 nodes (1160 terminal), 10856 minterms, vars: 22r/22c
+
+Skipping BSCC computation since acceptance is defined via goal states...
+
+Computing reachability probabilities...
+
+Prob0: 8 iterations in 0.00 seconds (average 0.000375, setup 0.00)
+
+Prob1: 11 iterations in 0.00 seconds (average 0.000091, setup 0.00)
+
+yes = 866, no = 28, maybe = 530
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=22, nodes=10367] [486.0 KB]
+Adding explicit sparse matrices... [levels=22, num=1, compact] [21.2 KB]
+Creating vector for diagonals... [dist=1, compact] [2.8 KB]
+Creating vector for RHS... [dist=2, compact] [2.8 KB]
+Allocating iteration vectors... [2 x 11.1 KB]
+TOTAL: [535.0 KB]
+
+Starting iterations...
+
+Jacobi: 7208 iterations in 0.20 seconds (average 0.000020, setup 0.05)
+
+Value in the initial state: 0.8407535511998592
+
+Time for model checking: 1.727 seconds.
+
+Result: 0.8407535511998592 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 14 warnings during computation.
+

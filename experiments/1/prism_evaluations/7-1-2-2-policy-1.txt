@@ -1,0 +1,769 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 02:19:37 BST 2020
+Hostname: arcus-htc-node102
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-1-2-2-policy.prism /home/hert5888/almanac/specs/mmg/7-1-2-2.props -prop 3
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-1-2-2-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/7-1-2-2.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (G ((!psi)|(F phi))) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+(3) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 SPEC_1 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 q1 a0 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Warning: Update 1 of command 12 of module "STATE_1" doesn't do anything ("(s1'=1)", line 58, column 905)
+
+Warning: Update 1 of command 73 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 277, column 99)
+
+Warning: Update 3 of command 73 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 277, column 159)
+
+Warning: Update 1 of command 74 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 278, column 100)
+
+Warning: Update 3 of command 74 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 278, column 160)
+
+Warning: Update 1 of command 79 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 283, column 100)
+
+Warning: Update 1 of command 82 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 286, column 100)
+
+Warning: Update 3 of command 82 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 286, column 161)
+
+Warning: Update 1 of command 83 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 287, column 100)
+
+Warning: Update 3 of command 83 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 287, column 161)
+
+Warning: Update 1 of command 88 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 292, column 101)
+
+Warning: Update 1 of command 91 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 295, column 101)
+
+Warning: Update 3 of command 91 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 295, column 162)
+
+Warning: Update 1 of command 92 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 296, column 101)
+
+Warning: Update 3 of command 92 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 296, column 161)
+
+Warning: Update 1 of command 100 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 304, column 100)
+
+Warning: Update 3 of command 100 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 304, column 162)
+
+Warning: Update 1 of command 101 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 305, column 100)
+
+Warning: Update 3 of command 101 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 305, column 160)
+
+Warning: Update 1 of command 109 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 313, column 101)
+
+Warning: Update 3 of command 109 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 313, column 162)
+
+Warning: Update 1 of command 110 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 314, column 100)
+
+Warning: Update 3 of command 110 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 314, column 161)
+
+Warning: Update 1 of command 115 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 319, column 100)
+
+Warning: Update 3 of command 115 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 319, column 161)
+
+Warning: Update 1 of command 118 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 322, column 101)
+
+Warning: Update 3 of command 118 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 322, column 162)
+
+Warning: Update 1 of command 119 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 323, column 101)
+
+Warning: Update 3 of command 119 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 323, column 162)
+
+Warning: Update 1 of command 124 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 328, column 100)
+
+Warning: Update 3 of command 124 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 328, column 162)
+
+Warning: Update 1 of command 127 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 331, column 100)
+
+Warning: Update 3 of command 127 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 331, column 161)
+
+Warning: Update 1 of command 128 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 332, column 101)
+
+Warning: Update 3 of command 128 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 332, column 163)
+
+Warning: Update 1 of command 133 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 337, column 101)
+
+Warning: Update 1 of command 136 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 340, column 100)
+
+Warning: Update 3 of command 136 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 340, column 162)
+
+Warning: Update 1 of command 137 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 341, column 100)
+
+Warning: Update 3 of command 137 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 341, column 161)
+
+Warning: Update 1 of command 142 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 346, column 100)
+
+Warning: Update 1 of command 217 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 421, column 101)
+
+Warning: Update 3 of command 217 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 421, column 163)
+
+Warning: Update 1 of command 218 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 422, column 101)
+
+Warning: Update 3 of command 218 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 422, column 163)
+
+Warning: Update 1 of command 226 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 430, column 100)
+
+Warning: Update 3 of command 226 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 430, column 161)
+
+Warning: Update 1 of command 227 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 431, column 101)
+
+Warning: Update 3 of command 227 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 431, column 162)
+
+Warning: Update 1 of command 235 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 439, column 101)
+
+Warning: Update 3 of command 235 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 439, column 163)
+
+Warning: Update 1 of command 236 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 440, column 101)
+
+Warning: Update 3 of command 236 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 440, column 162)
+
+Warning: Update 1 of command 244 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 448, column 100)
+
+Warning: Update 3 of command 244 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 448, column 162)
+
+Warning: Update 1 of command 245 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 449, column 101)
+
+Warning: Update 3 of command 245 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 449, column 163)
+
+Warning: Update 1 of command 253 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 457, column 99)
+
+Warning: Update 3 of command 253 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 457, column 160)
+
+Warning: Update 1 of command 254 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 458, column 101)
+
+Warning: Update 3 of command 254 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 458, column 162)
+
+Warning: Update 1 of command 259 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 463, column 100)
+
+Warning: Update 1 of command 262 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 466, column 100)
+
+Warning: Update 3 of command 262 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 466, column 161)
+
+Warning: Update 1 of command 263 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 467, column 101)
+
+Warning: Update 3 of command 263 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 467, column 162)
+
+Warning: Update 1 of command 268 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 472, column 100)
+
+Warning: Update 1 of command 271 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 475, column 101)
+
+Warning: Update 3 of command 271 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 475, column 162)
+
+Warning: Update 1 of command 272 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 476, column 100)
+
+Warning: Update 3 of command 272 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 476, column 161)
+
+Warning: Update 1 of command 280 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 484, column 100)
+
+Warning: Update 3 of command 280 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 484, column 161)
+
+Warning: Update 1 of command 281 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 485, column 100)
+
+Warning: Update 3 of command 281 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 485, column 160)
+
+Warning: Update 1 of command 361 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 565, column 100)
+
+Warning: Update 3 of command 361 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 565, column 162)
+
+Warning: Update 1 of command 362 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 566, column 101)
+
+Warning: Update 3 of command 362 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 566, column 163)
+
+Warning: Update 1 of command 367 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 571, column 99)
+
+Warning: Update 3 of command 367 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 571, column 159)
+
+Warning: Update 1 of command 370 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 574, column 101)
+
+Warning: Update 3 of command 370 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 574, column 163)
+
+Warning: Update 1 of command 371 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 575, column 100)
+
+Warning: Update 3 of command 371 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 575, column 161)
+
+Warning: Update 1 of command 376 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 580, column 101)
+
+Warning: Update 1 of command 379 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 583, column 101)
+
+Warning: Update 3 of command 379 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 583, column 163)
+
+Warning: Update 1 of command 380 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 584, column 100)
+
+Warning: Update 3 of command 380 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 584, column 162)
+
+Warning: Update 1 of command 385 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 589, column 100)
+
+Warning: Update 1 of command 388 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 592, column 101)
+
+Warning: Update 3 of command 388 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 592, column 162)
+
+Warning: Update 1 of command 389 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 593, column 100)
+
+Warning: Update 3 of command 389 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 593, column 161)
+
+Warning: Update 1 of command 394 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 598, column 100)
+
+Warning: Update 1 of command 397 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 601, column 101)
+
+Warning: Update 3 of command 397 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 601, column 163)
+
+Warning: Update 1 of command 398 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 602, column 101)
+
+Warning: Update 3 of command 398 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 602, column 162)
+
+Warning: Update 1 of command 403 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 607, column 101)
+
+Warning: Update 3 of command 403 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 607, column 161)
+
+Warning: Update 1 of command 404 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 608, column 100)
+
+Warning: Update 1 of command 406 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 610, column 100)
+
+Warning: Update 3 of command 406 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 610, column 162)
+
+Warning: Update 1 of command 407 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 611, column 101)
+
+Warning: Update 3 of command 407 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 611, column 163)
+
+Warning: Update 1 of command 412 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 616, column 99)
+
+Warning: Update 3 of command 412 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 616, column 161)
+
+Warning: Update 1 of command 413 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 617, column 101)
+
+Warning: Update 1 of command 415 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 619, column 100)
+
+Warning: Update 3 of command 415 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 619, column 162)
+
+Warning: Update 1 of command 416 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 620, column 101)
+
+Warning: Update 3 of command 416 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 620, column 162)
+
+Warning: Update 1 of command 421 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 625, column 101)
+
+Warning: Update 3 of command 421 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 625, column 161)
+
+Warning: Update 1 of command 424 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 628, column 99)
+
+Warning: Update 3 of command 424 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 628, column 161)
+
+Warning: Update 1 of command 425 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 629, column 101)
+
+Warning: Update 3 of command 425 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 629, column 163)
+
+Warning: Update 1 of command 430 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 634, column 101)
+
+Warning: Update 3 of command 430 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 634, column 162)
+
+Warning: Update 1 of command 505 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 709, column 101)
+
+Warning: Update 3 of command 505 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 709, column 162)
+
+Warning: Update 1 of command 506 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 710, column 100)
+
+Warning: Update 3 of command 506 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 710, column 161)
+
+Warning: Update 1 of command 511 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 715, column 101)
+
+Warning: Update 1 of command 514 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 718, column 100)
+
+Warning: Update 3 of command 514 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 718, column 161)
+
+Warning: Update 1 of command 515 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 719, column 101)
+
+Warning: Update 3 of command 515 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 719, column 162)
+
+Warning: Update 1 of command 523 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 727, column 101)
+
+Warning: Update 3 of command 523 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 727, column 162)
+
+Warning: Update 1 of command 524 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 728, column 100)
+
+Warning: Update 3 of command 524 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 728, column 161)
+
+Warning: Update 1 of command 532 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 736, column 98)
+
+Warning: Update 3 of command 532 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 736, column 159)
+
+Warning: Update 1 of command 533 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 737, column 100)
+
+Warning: Update 3 of command 533 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 737, column 161)
+
+Warning: Update 1 of command 541 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 745, column 100)
+
+Warning: Update 3 of command 541 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 745, column 161)
+
+Warning: Update 1 of command 542 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 746, column 100)
+
+Warning: Update 3 of command 542 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 746, column 161)
+
+Warning: Update 1 of command 547 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 751, column 100)
+
+Warning: Update 3 of command 547 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 751, column 161)
+
+Warning: Update 1 of command 550 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 754, column 101)
+
+Warning: Update 3 of command 550 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 754, column 163)
+
+Warning: Update 1 of command 551 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 755, column 100)
+
+Warning: Update 3 of command 551 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 755, column 161)
+
+Warning: Update 1 of command 556 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 760, column 100)
+
+Warning: Update 1 of command 559 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 763, column 100)
+
+Warning: Update 3 of command 559 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 763, column 162)
+
+Warning: Update 1 of command 560 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 764, column 101)
+
+Warning: Update 3 of command 560 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 764, column 163)
+
+Warning: Update 1 of command 565 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 769, column 101)
+
+Warning: Update 1 of command 568 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 772, column 101)
+
+Warning: Update 3 of command 568 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 772, column 162)
+
+Warning: Update 1 of command 569 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 773, column 99)
+
+Warning: Update 3 of command 569 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 773, column 160)
+
+Warning: Update 1 of command 649 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 853, column 101)
+
+Warning: Update 3 of command 649 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 853, column 163)
+
+Warning: Update 1 of command 650 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 854, column 99)
+
+Warning: Update 3 of command 650 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 854, column 161)
+
+Warning: Update 1 of command 655 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 859, column 101)
+
+Warning: Update 1 of command 658 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 862, column 100)
+
+Warning: Update 3 of command 658 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 862, column 162)
+
+Warning: Update 1 of command 659 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 863, column 101)
+
+Warning: Update 3 of command 659 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 863, column 162)
+
+Warning: Update 1 of command 664 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 868, column 100)
+
+Warning: Update 1 of command 667 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 871, column 101)
+
+Warning: Update 3 of command 667 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 871, column 162)
+
+Warning: Update 1 of command 668 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 872, column 100)
+
+Warning: Update 3 of command 668 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 872, column 160)
+
+Warning: Update 1 of command 676 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 880, column 100)
+
+Warning: Update 3 of command 676 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 880, column 161)
+
+Warning: Update 1 of command 677 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 881, column 100)
+
+Warning: Update 3 of command 677 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 881, column 162)
+
+Warning: Update 1 of command 685 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 889, column 101)
+
+Warning: Update 3 of command 685 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 889, column 162)
+
+Warning: Update 1 of command 686 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 890, column 100)
+
+Warning: Update 3 of command 686 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 890, column 161)
+
+Warning: Update 1 of command 691 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 895, column 101)
+
+Warning: Update 3 of command 691 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 895, column 163)
+
+Warning: Update 1 of command 692 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 896, column 100)
+
+Warning: Update 1 of command 694 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 898, column 100)
+
+Warning: Update 3 of command 694 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 898, column 161)
+
+Warning: Update 1 of command 695 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 899, column 100)
+
+Warning: Update 3 of command 695 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 899, column 161)
+
+Warning: Update 1 of command 700 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 904, column 100)
+
+Warning: Update 3 of command 700 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 904, column 160)
+
+Warning: Update 1 of command 701 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 905, column 100)
+
+Warning: Update 1 of command 703 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 907, column 100)
+
+Warning: Update 3 of command 703 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 907, column 162)
+
+Warning: Update 1 of command 704 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 908, column 100)
+
+Warning: Update 3 of command 704 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 908, column 162)
+
+Warning: Update 1 of command 709 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 913, column 100)
+
+Warning: Update 3 of command 709 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 913, column 161)
+
+Warning: Update 1 of command 712 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 916, column 100)
+
+Warning: Update 3 of command 712 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 916, column 161)
+
+Warning: Update 1 of command 713 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 917, column 101)
+
+Warning: Update 3 of command 713 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 917, column 163)
+
+Warning: Update 1 of command 718 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 922, column 100)
+
+Warning: Update 3 of command 718 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 922, column 162)
+
+Warning: Update 1 of command 793 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 997, column 100)
+
+Warning: Update 3 of command 793 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 997, column 162)
+
+Warning: Update 1 of command 794 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 998, column 101)
+
+Warning: Update 3 of command 794 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 998, column 163)
+
+Warning: Update 1 of command 799 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1003, column 100)
+
+Warning: Update 1 of command 802 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1006, column 101)
+
+Warning: Update 3 of command 802 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1006, column 162)
+
+Warning: Update 1 of command 803 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1007, column 101)
+
+Warning: Update 3 of command 803 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1007, column 163)
+
+Warning: Update 1 of command 808 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1012, column 100)
+
+Warning: Update 1 of command 811 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1015, column 100)
+
+Warning: Update 3 of command 811 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1015, column 161)
+
+Warning: Update 1 of command 812 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1016, column 99)
+
+Warning: Update 3 of command 812 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1016, column 160)
+
+Warning: Update 1 of command 820 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1024, column 100)
+
+Warning: Update 3 of command 820 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1024, column 162)
+
+Warning: Update 1 of command 821 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1025, column 100)
+
+Warning: Update 3 of command 821 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1025, column 161)
+
+Warning: Update 1 of command 829 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1033, column 100)
+
+Warning: Update 3 of command 829 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1033, column 160)
+
+Warning: Update 1 of command 830 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1034, column 101)
+
+Warning: Update 3 of command 830 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1034, column 162)
+
+Warning: Update 1 of command 835 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1039, column 99)
+
+Warning: Update 3 of command 835 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1039, column 160)
+
+Warning: Update 1 of command 838 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1042, column 100)
+
+Warning: Update 3 of command 838 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1042, column 162)
+
+Warning: Update 1 of command 839 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1043, column 101)
+
+Warning: Update 3 of command 839 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1043, column 163)
+
+Warning: Update 1 of command 844 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1048, column 100)
+
+Warning: Update 3 of command 844 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1048, column 162)
+
+Warning: Update 1 of command 847 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1051, column 100)
+
+Warning: Update 3 of command 847 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1051, column 161)
+
+Warning: Update 1 of command 848 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1052, column 100)
+
+Warning: Update 3 of command 848 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1052, column 162)
+
+Warning: Update 1 of command 853 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1057, column 100)
+
+Warning: Update 1 of command 856 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1060, column 99)
+
+Warning: Update 3 of command 856 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1060, column 160)
+
+Warning: Update 1 of command 857 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1061, column 100)
+
+Warning: Update 3 of command 857 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1061, column 161)
+
+Warning: Update 1 of command 862 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1066, column 100)
+
+Warning: Update 1 of command 937 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1141, column 100)
+
+Warning: Update 3 of command 937 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1141, column 160)
+
+Warning: Update 1 of command 938 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1142, column 99)
+
+Warning: Update 3 of command 938 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1142, column 161)
+
+Warning: Update 1 of command 943 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1147, column 100)
+
+Warning: Update 3 of command 943 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1147, column 161)
+
+Warning: Update 1 of command 946 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1150, column 100)
+
+Warning: Update 3 of command 946 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1150, column 162)
+
+Warning: Update 1 of command 947 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1151, column 101)
+
+Warning: Update 3 of command 947 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1151, column 163)
+
+Warning: Update 1 of command 952 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1156, column 101)
+
+Warning: Update 3 of command 952 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1156, column 162)
+
+Warning: Update 1 of command 955 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1159, column 101)
+
+Warning: Update 3 of command 955 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1159, column 163)
+
+Warning: Update 1 of command 956 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1160, column 100)
+
+Warning: Update 3 of command 956 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1160, column 160)
+
+Warning: Update 1 of command 961 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1165, column 101)
+
+Warning: Update 3 of command 961 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1165, column 160)
+
+Warning: Update 1 of command 964 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1168, column 99)
+
+Warning: Update 3 of command 964 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1168, column 160)
+
+Warning: Update 1 of command 965 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1169, column 99)
+
+Warning: Update 3 of command 965 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1169, column 160)
+
+Warning: Update 1 of command 970 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1174, column 100)
+
+Warning: Update 1 of command 973 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1177, column 101)
+
+Warning: Update 3 of command 973 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1177, column 161)
+
+Warning: Update 1 of command 974 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1178, column 100)
+
+Warning: Update 3 of command 974 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1178, column 161)
+
+Warning: Update 1 of command 979 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1183, column 100)
+
+Warning: Update 3 of command 979 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1183, column 161)
+
+Warning: Update 1 of command 980 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1184, column 100)
+
+Warning: Update 3 of command 980 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1184, column 161)
+
+Warning: Update 1 of command 982 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1186, column 100)
+
+Warning: Update 3 of command 982 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1186, column 162)
+
+Warning: Update 1 of command 983 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1187, column 101)
+
+Warning: Update 3 of command 983 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1187, column 162)
+
+Warning: Update 1 of command 988 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1192, column 101)
+
+Warning: Update 3 of command 988 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1192, column 162)
+
+Warning: Update 1 of command 989 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1193, column 101)
+
+Warning: Update 3 of command 989 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1193, column 162)
+
+Warning: Update 1 of command 991 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1195, column 101)
+
+Warning: Update 3 of command 991 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1195, column 162)
+
+Warning: Update 1 of command 992 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1196, column 100)
+
+Warning: Update 3 of command 992 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1196, column 161)
+
+Warning: Update 1 of command 997 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1201, column 101)
+
+Warning: Update 3 of command 997 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1201, column 162)
+
+Warning: Update 1 of command 998 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1202, column 100)
+
+Warning: Update 1 of command 1000 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1204, column 100)
+
+Warning: Update 3 of command 1000 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1204, column 160)
+
+Warning: Update 1 of command 1001 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1205, column 101)
+
+Warning: Update 3 of command 1001 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1205, column 163)
+
+Warning: Update 1 of command 1006 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1210, column 101)
+
+Warning: Update 3 of command 1006 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1210, column 163)
+
+Warning: Update 1 of command 1007 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1211, column 101)
+
+Warning: Update 1 of command 1081 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1285, column 101)
+
+Warning: Update 3 of command 1081 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1285, column 162)
+
+Warning: Update 1 of command 1082 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1286, column 100)
+
+Warning: Update 3 of command 1082 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1286, column 161)
+
+Warning: Update 1 of command 1087 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1291, column 100)
+
+Warning: Update 1 of command 1090 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1294, column 100)
+
+Warning: Update 3 of command 1090 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1294, column 161)
+
+Warning: Update 1 of command 1091 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1295, column 100)
+
+Warning: Update 3 of command 1091 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1295, column 162)
+
+Warning: Update 1 of command 1096 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1300, column 101)
+
+Warning: Update 1 of command 1099 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1303, column 100)
+
+Warning: Update 3 of command 1099 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1303, column 162)
+
+Warning: Update 1 of command 1100 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1304, column 100)
+
+Warning: Update 3 of command 1100 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1304, column 162)
+
+Warning: Update 1 of command 1105 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1309, column 100)
+
+Warning: Update 1 of command 1108 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1312, column 101)
+
+Warning: Update 3 of command 1108 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1312, column 162)
+
+Warning: Update 1 of command 1109 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1313, column 101)
+
+Warning: Update 3 of command 1109 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1313, column 162)
+
+Warning: Update 1 of command 1117 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1321, column 101)
+
+Warning: Update 3 of command 1117 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1321, column 162)
+
+Warning: Update 1 of command 1118 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1322, column 100)
+
+Warning: Update 3 of command 1118 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1322, column 162)
+
+Warning: Update 1 of command 1123 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1327, column 100)
+
+Warning: Update 3 of command 1123 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1327, column 160)
+
+Warning: Update 1 of command 1124 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1328, column 101)
+
+Warning: Update 1 of command 1126 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1330, column 100)
+
+Warning: Update 3 of command 1126 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1330, column 162)
+
+Warning: Update 1 of command 1127 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1331, column 100)
+
+Warning: Update 3 of command 1127 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1331, column 162)
+
+Warning: Update 1 of command 1132 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1336, column 100)
+
+Warning: Update 3 of command 1132 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1336, column 161)
+
+Warning: Update 1 of command 1135 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1339, column 101)
+
+Warning: Update 3 of command 1135 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1339, column 163)
+
+Warning: Update 1 of command 1136 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1340, column 101)
+
+Warning: Update 3 of command 1136 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1340, column 163)
+
+Warning: Update 1 of command 1141 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1345, column 100)
+
+Warning: Update 3 of command 1141 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1345, column 162)
+
+Warning: Update 1 of command 1144 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1348, column 101)
+
+Warning: Update 3 of command 1144 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1348, column 161)
+
+Warning: Update 1 of command 1145 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1349, column 100)
+
+Warning: Update 3 of command 1145 of module "ACTION_0" doesn't do anything ("(a0'=2)", line 1349, column 162)
+
+Warning: Update 1 of command 1150 of module "ACTION_0" doesn't do anything ("(a0'=0)", line 1354, column 101)
+
+Computing reachable states...
+
+Reachability (BFS): 12 iterations in 0.02 seconds (average 0.001417, setup 0.00)
+
+Time for model construction: 9.328 seconds.
+
+Type:        DTMC
+States:      4718 (1 initial)
+Transitions: 46858
+
+Transition matrix: 123190 nodes (6112 terminal), 46858 minterms, vars: 23r/23c
+
+Building deterministic automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.248 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 12 iterations in 0.03 seconds (average 0.002500, setup 0.00)
+
+States:      6512 (1 initial)
+Transitions: 63741
+
+Transition matrix: 158064 nodes (6112 terminal), 63741 minterms, vars: 25r/25c
+
+Finding accepting BSCCs...
+
+SCCs: 95, BSCCs: 50, non-BSCC states: 5438
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 12 iterations in 0.01 seconds (average 0.000917, setup 0.00)
+
+Prob1: 10 iterations in 0.01 seconds (average 0.000900, setup 0.00)
+
+yes = 372, no = 4674, maybe = 1466
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=25, nodes=97619] [4.5 MB]
+Adding explicit sparse matrices... [levels=25, num=1, compact] [100.8 KB]
+Creating vector for diagonals... [dist=1, compact] [12.7 KB]
+Creating vector for RHS... [dist=2, compact] [12.7 KB]
+Allocating iteration vectors... [2 x 50.9 KB]
+TOTAL: [4.7 MB]
+
+Starting iterations...
+Iteration 55805: max relative diff=0.000134, 5.00 sec so far
+
+Jacobi: 73293 iterations in 12.87 seconds (average 0.000090, setup 6.29)
+
+Value in the initial state: 0.8986927788681269
+
+Time for model checking: 15.338 seconds.
+
+Result: 0.8986927788681269 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 339 warnings during computation.
+

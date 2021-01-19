@@ -1,0 +1,68 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 09:43:50 BST 2020
+Hostname: arcus-htc-node023
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/9-2-1-5-policy.prism /home/hert5888/almanac/specs/mmg/9-2-1-5.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/9-2-1-5-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/9-2-1-5.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+(2) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 STATE_8 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 s8 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.19 seconds (average 0.023250, setup 0.00)
+
+Time for model construction: 651.392 seconds.
+
+Type:        DTMC
+States:      18896 (1 initial)
+Transitions: 1347764
+
+Transition matrix: 2612643 nodes (139190 terminal), 1347764 minterms, vars: 26r/26c
+
+Building deterministic automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.308 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 10 iterations in 0.16 seconds (average 0.016200, setup 0.00)
+
+States:      27068 (1 initial)
+Transitions: 1984922
+
+Transition matrix: 3228019 nodes (139190 terminal), 1984922 minterms, vars: 28r/28c
+
+Finding accepting BSCCs...
+
+SCCs: 7, BSCCs: 3, non-BSCC states: 27032
+BSCC sizes: 1:12 2:12 3:12
+
+Computing reachability probabilities...
+
+Prob0: 10 iterations in 0.06 seconds (average 0.005600, setup 0.00)
+
+Prob1: 8 iterations in 0.04 seconds (average 0.005000, setup 0.00)
+
+yes = 14, no = 18474, maybe = 8580
+
+Computing remaining probabilities...
+Engine: Hybrid
+

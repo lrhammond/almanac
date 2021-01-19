@@ -1,0 +1,71 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 01:34:38 BST 2020
+Hostname: arcus-htc-node049
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-2-1-1-policy-det.prism /home/hert5888/almanac/specs/mmg/6-2-1-1.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-2-1-1-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/6-2-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!psi)|(F phi))) ]
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!psi)|(F phi))) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.001750, setup 0.00)
+
+Time for model construction: 4.996 seconds.
+
+Type:        DTMC
+States:      579 (1 initial)
+Transitions: 2415
+
+Transition matrix: 30734 nodes (1382 terminal), 2415 minterms, vars: 22r/22c
+
+Building deterministic automaton (for X (G ("L0"|(F "L1"))))...
+DRA has 5 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.205 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.000750, setup 0.00)
+
+States:      579 (1 initial)
+Transitions: 2415
+
+Transition matrix: 33338 nodes (1382 terminal), 2415 minterms, vars: 25r/25c
+
+Finding accepting BSCCs...
+
+SCCs: 30, BSCCs: 29, non-BSCC states: 521
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 8 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 579, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.576 seconds.
+
+Result: 1.0 (value in the initial state)
+

@@ -19,6 +19,8 @@ import specs
 import envs
 import utils
 
+random.seed(26)
+
 
 # Use GPU if available
 if torch.cuda.is_available():
@@ -479,7 +481,7 @@ class Almanac:
         best = 0.0
         last_score_interval = deque(maxlen=score_interval)
 
-        if self.env_kind == 'mmg'
+        if self.env_kind == 'mmg':
             first_50 = []
             on2awinner = False
 

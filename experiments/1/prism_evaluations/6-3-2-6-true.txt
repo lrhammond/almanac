@@ -1,0 +1,153 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 07:13:49 BST 2020
+Hostname: arcus-htc-node103
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-3-2-6.prism /home/hert5888/almanac/specs/mmg/6-3-2-6.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-3-2-6.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/6-3-2-6.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (G ((!phi)|(X (chi)))) ], Pmax=? [ X (G chi) ])
+(2) P=? [ X (G ((!phi)|(X (chi)))) ]
+(3) P=? [ X (G chi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 q1 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (G ((!phi)|(X (chi)))) ], Pmax=? [ X (G chi) ])
+
+Building model...
+
+Warning: Update 1 of command 5 of module "STATE_3" doesn't do anything ("(s3'=1)", line 271, column 706)
+
+Warning: Update 1 of command 7 of module "STATE_3" doesn't do anything ("(s3'=1)", line 273, column 706)
+
+Warning: Update 1 of command 9 of module "STATE_3" doesn't do anything ("(s3'=1)", line 275, column 706)
+
+Warning: Update 1 of command 10 of module "STATE_3" doesn't do anything ("(s3'=1)", line 276, column 706)
+
+Warning: Update 1 of command 12 of module "STATE_3" doesn't do anything ("(s3'=1)", line 278, column 706)
+
+Warning: Update 1 of command 15 of module "STATE_3" doesn't do anything ("(s3'=1)", line 281, column 706)
+
+Warning: Update 1 of command 52 of module "STATE_3" doesn't do anything ("(s3'=1)", line 318, column 684)
+
+Warning: Update 1 of command 57 of module "STATE_3" doesn't do anything ("(s3'=1)", line 323, column 684)
+
+Warning: Update 1 of command 60 of module "STATE_3" doesn't do anything ("(s3'=1)", line 326, column 684)
+
+Warning: Update 1 of command 63 of module "STATE_3" doesn't do anything ("(s3'=1)", line 329, column 684)
+
+Warning: Update 1 of command 65 of module "STATE_3" doesn't do anything ("(s3'=1)", line 331, column 684)
+
+Warning: Update 1 of command 71 of module "STATE_3" doesn't do anything ("(s3'=1)", line 337, column 684)
+
+Warning: Update 1 of command 73 of module "STATE_3" doesn't do anything ("(s3'=1)", line 339, column 684)
+
+Warning: Update 1 of command 52 of module "STATE_5" doesn't do anything ("(s5'=1)", line 478, column 684)
+
+Warning: Update 1 of command 57 of module "STATE_5" doesn't do anything ("(s5'=1)", line 483, column 684)
+
+Warning: Update 1 of command 60 of module "STATE_5" doesn't do anything ("(s5'=1)", line 486, column 684)
+
+Warning: Update 1 of command 63 of module "STATE_5" doesn't do anything ("(s5'=1)", line 489, column 684)
+
+Warning: Update 1 of command 65 of module "STATE_5" doesn't do anything ("(s5'=1)", line 491, column 684)
+
+Warning: Update 1 of command 71 of module "STATE_5" doesn't do anything ("(s5'=1)", line 497, column 684)
+
+Warning: Update 1 of command 73 of module "STATE_5" doesn't do anything ("(s5'=1)", line 499, column 684)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.03 seconds (average 0.003375, setup 0.00)
+
+Time for model construction: 6.371 seconds.
+
+Type:        MDP
+States:      14121 (1 initial)
+Transitions: 245418
+Choices:     165001
+
+Transition matrix: 175939 nodes (2990 terminal), 245418 minterms, vars: 26r/26c/8nd
+
+Building deterministic Rabin automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.248 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.33 seconds (average 0.041750, setup 0.00)
+States:      18445 (1 initial)
+Transitions: 323773
+Choices:     216889
+
+Transition matrix: 203286 nodes (2990 terminal), 323773 minterms, vars: 28r/28c/8nd
+
+Building deterministic Rabin automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.002 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.02 seconds (average 0.002750, setup 0.00)
+States:      18445 (1 initial)
+Transitions: 323773
+Choices:     216889
+
+Transition matrix: 219651 nodes (2990 terminal), 323773 minterms, vars: 30r/30c/8nd
+Total time for product construction: 1.061 seconds.
+
+States:      18445 (1 initial)
+Transitions: 323773
+Choices:     216889
+
+Transition matrix: 219651 nodes (2990 terminal), 323773 minterms, vars: 30r/30c/8nd
+
+Finding accepting end components for X (G ((!phi)|(X (chi))))...
+Time for end component identification: 0.001 seconds.
+
+Finding accepting end components for X (G chi)...
+Time for end component identification: 0.001 seconds.
+
+Prob0A: 4 iterations in 0.05 seconds (average 0.011500, setup 0.00)
+
+yes = 1192, no = 9917, maybe = 7336
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 603.75 seconds (average 0.006037, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 52 iterations in 0.31 seconds (average 0.005923, setup 0.00)
+Optimal value for weights [0.999900,0.000100] from initial state: 0.824458
+Computed point: (0.8244689013291858, 0.26304170484664646)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 9 iterations in 0.06 seconds (average 0.006111, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.263042
+Computed point: (0.26304169927020904, 0.26304169927020904)
+Optimising weighted sum of objectives: weights (9.932609870450877E-9, 0.9999999900673902)
+Iterative method: 32 iterations in 0.19 seconds (average 0.005969, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.263042
+The value iteration(s) took 625.021 seconds altogether.
+Number of weight vectors used: 1
+Multi-objective value iterations took 625.021 s.
+
+Value in the initial state: [(0.8244689013291858, 0.26304170484664646)]
+
+Time for model checking: 626.965 seconds.
+
+Result: [(0.8244689013291858, 0.26304170484664646)] (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 20 warnings during computation.
+

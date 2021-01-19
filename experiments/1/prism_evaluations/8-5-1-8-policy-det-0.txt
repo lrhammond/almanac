@@ -1,0 +1,15 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 09:15:07 BST 2020
+Hostname: arcus-htc-node095
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/8-5-1-8-policy-det.prism /home/hert5888/almanac/specs/mmg/8-5-1-8.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/8-5-1-8-policy-det.prism"...
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 1502085120 bytes for committing reserved memory.
+# An error report file with more information is saved as:
+# /home/hert5888/almanac/hs_err_pid28810.log

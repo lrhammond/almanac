@@ -1,0 +1,117 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 08:09:24 BST 2020
+Hostname: arcus-htc-node100
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/8-2-1-8-policy-det.prism /home/hert5888/almanac/specs/mmg/8-2-1-8.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/8-2-1-8-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/8-2-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!psi)|(F phi))) ]
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!psi)|(F phi))) ]
+
+Building model...
+
+Warning: Update 2 of command 2 of module "STATE_0" doesn't do anything ("(s0'=0)", line 28, column 2494)
+
+Warning: Update 2 of command 3 of module "STATE_0" doesn't do anything ("(s0'=0)", line 29, column 2494)
+
+Warning: Update 2 of command 7 of module "STATE_0" doesn't do anything ("(s0'=0)", line 33, column 2494)
+
+Warning: Update 2 of command 8 of module "STATE_0" doesn't do anything ("(s0'=0)", line 34, column 2494)
+
+Warning: Update 2 of command 10 of module "STATE_0" doesn't do anything ("(s0'=0)", line 36, column 2494)
+
+Warning: Update 2 of command 14 of module "STATE_0" doesn't do anything ("(s0'=0)", line 40, column 2494)
+
+Warning: Update 2 of command 15 of module "STATE_0" doesn't do anything ("(s0'=0)", line 41, column 2494)
+
+Warning: Update 1 of command 52 of module "STATE_2" doesn't do anything ("(s2'=1)", line 222, column 1172)
+
+Warning: Update 1 of command 56 of module "STATE_2" doesn't do anything ("(s2'=1)", line 226, column 1172)
+
+Warning: Update 1 of command 58 of module "STATE_2" doesn't do anything ("(s2'=1)", line 228, column 1172)
+
+Warning: Update 1 of command 60 of module "STATE_2" doesn't do anything ("(s2'=1)", line 230, column 1172)
+
+Warning: Update 1 of command 62 of module "STATE_2" doesn't do anything ("(s2'=1)", line 232, column 1172)
+
+Warning: Update 1 of command 63 of module "STATE_2" doesn't do anything ("(s2'=1)", line 233, column 1172)
+
+Warning: Update 1 of command 64 of module "STATE_2" doesn't do anything ("(s2'=1)", line 234, column 1172)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.04 seconds (average 0.005375, setup 0.00)
+
+Time for model construction: 140.501 seconds.
+
+Type:        DTMC
+States:      1739 (1 initial)
+Transitions: 16224
+
+Transition matrix: 258045 nodes (12832 terminal), 16224 minterms, vars: 26r/26c
+
+Building deterministic automaton (for X (G ("L0"|(F "L1"))))...
+DRA has 5 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.294 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 8 iterations in 8.71 seconds (average 1.089125, setup 0.00)
+
+States:      1739 (1 initial)
+Transitions: 16224
+
+Transition matrix: 274224 nodes (12832 terminal), 16224 minterms, vars: 29r/29c
+
+Finding accepting BSCCs...
+
+SCCs: 230, BSCCs: 229, non-BSCC states: 1281
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 7 iterations in 0.01 seconds (average 0.002000, setup 0.00)
+
+Prob1: 9 iterations in 0.01 seconds (average 0.001667, setup 0.00)
+
+yes = 465, no = 382, maybe = 892
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=29, nodes=277838] [12.7 MB]
+Adding explicit sparse matrices... [levels=29, num=1, compact] [167.0 KB]
+Creating vector for diagonals... [dist=1, compact] [3.4 KB]
+Creating vector for RHS... [dist=2, compact] [3.4 KB]
+Allocating iteration vectors... [2 x 13.6 KB]
+TOTAL: [12.9 MB]
+
+Starting iterations...
+
+Jacobi: 69 iterations in 57.12 seconds (average 0.000058, setup 57.12)
+
+Value in the initial state: 0.9440478349278829
+
+Time for model checking: 67.406 seconds.
+
+Result: 0.9440478349278829 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 14 warnings during computation.
+

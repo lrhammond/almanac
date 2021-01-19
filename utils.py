@@ -33,7 +33,7 @@ def remove_nans(x):
 
 
 # Writes .sh files for running mmg experiments on ARC
-def write_mmg_sh_files(range_repetitions, range_actions, range_states, range_specs):
+def write_mmg_sh_files(experiment_name, range_repetitions, range_actions, range_states, range_specs):
 
     filenames = []
 
@@ -42,21 +42,21 @@ def write_mmg_sh_files(range_repetitions, range_actions, range_states, range_spe
             for a in range_actions:
                 for l in range_specs:
 
-                    if (s + a >= 10) or (s >= 7):
-                        mb = 16384
-                        gb = 16
-                    else:
-                        mb = 4096
-                        gb = 4
+                    # if (s + a >= 10) or (s >= 7):
+                    mb = 16384
+                    gb = 16
+                    # else:
+                    #     mb = 4096
+                    #     gb = 4
 
-                    filename = 'arc/almanac-{}-{}-{}-{}.sh'.format(s,a,l,t)
+                    filename = 'experiments/1/arc/{}-almanac-{}-{}-{}-{}.sh'.format(experiment_name,s,a,l,t)
                     with open(filename, 'w') as f:
 
                         f.write("#!/bin/bash\n\
     #SBATCH --partition=htc\n\
-    #SBATCH --job-name=2almanac{0}{1}{2}{3}\n\
-    #SBATCH --output=/home/hert5888/almanac/logs/{0}-{1}-{2}-{3}.out\n\
-    #SBATCH --error=/home/hert5888/almanac/logs/{0}-{1}-{2}-{3}.err\n\
+    #SBATCH --job-name={0}{1}{2}{3}\n\
+    #SBATCH --output=/home/hert5888/almanac/logs/{6}-{0}-{1}-{2}-{3}.out\n\
+    #SBATCH --error=/home/hert5888/almanac/logs/{6}-{0}-{1}-{2}-{3}.err\n\
     #SBATCH --time=24:00:00\n\
     #SBATCH --mem={4}\n\
     module load python/anaconda3/2019.03\n\
@@ -64,36 +64,43 @@ def write_mmg_sh_files(range_repetitions, range_actions, range_states, range_spe
     python /home/hert5888/almanac/experiments.py {0} {1} {2} {3}\n\
     sleep 240\n\
     module load prism/4.4-beta\n\
-    prism -cuddmaxmem {5}g -javamaxmem {5}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/matrix_markov_games/{0}-{1}-{2}-{3}.prism \
-    /home/hert5888/almanac/specs/matrix_markov_games/{0}-{1}-{2}-{3}.props -prop 1 > \
-    /home/hert5888/almanac/results/matrix_markov_games/{0}-{1}-{2}-{3}-true.txt\n\
+    prism -cuddmaxmem {5}g -javamaxmem {5}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/experiments/1/prism_models/{0}-{1}-{2}-{3}.prism \
+    /home/hert5888/almanac/experiments/1/prism_specs/{0}-{1}-{2}-{3}.props -prop 1 > \
+    /home/hert5888/almanac/experiments/1/prism_evaluations/{0}-{1}-{2}-{3}-true.txt\n\
     sleep 60\n\
-    prism -cuddmaxmem {5}g -javamaxmem {5}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/matrix_markov_games/{0}-{1}-{2}-{3}-policy.prism \
-    /home/hert5888/almanac/specs/matrix_markov_games/{0}-{1}-{2}-{3}.props -prop 2 > \
-    /home/hert5888/almanac/results/matrix_markov_games/{0}-{1}-{2}-{3}-policy-0.txt\n\
+    prism -cuddmaxmem {5}g -javamaxmem {5}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/experiments/1/prism_models/{0}-{1}-{2}-{3}-policy.prism \
+    /home/hert5888/almanac/experiments/1/prism_specs/{0}-{1}-{2}-{3}.props -prop 2 > \
+    /home/hert5888/almanac/experiments/1/prism_evaluations/{0}-{1}-{2}-{3}-policy-0.txt\n\
     sleep 60\n\
-    prism -cuddmaxmem {5}g -javamaxmem {5}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/matrix_markov_games/{0}-{1}-{2}-{3}-policy-det.prism \
-    /home/hert5888/almanac/specs/matrix_markov_games/{0}-{1}-{2}-{3}.props -prop 2 > \
-    /home/hert5888/almanac/results/matrix_markov_games/{0}-{1}-{2}-{3}-policy-det-0.txt\n\
-    sleep 60\n".format(s,a,l,t,mb,gb))
+    prism -cuddmaxmem {5}g -javamaxmem {5}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/experiments/1/prism_models/{0}-{1}-{2}-{3}-policy-det.prism \
+    /home/hert5888/almanac/experiments/1/matrix_markov_games/{0}-{1}-{2}-{3}.props -prop 2 > \
+    /home/hert5888/almanac/experiments/1/prism_evaluations/{0}-{1}-{2}-{3}-policy-det-0.txt\n\
+    sleep 60\n".format(s,a,l,t,mb,gb,experiment_name))
 
                         if l == 2:
-                            f.write("prism -cuddmaxmem {4}g -javamaxmem {4}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/matrix_markov_games/{0}-{1}-{2}-{3}-policy.prism \
-    /home/hert5888/almanac/specs/matrix_markov_games/{0}-{1}-{2}-{3}.props -prop 3 > \
-    /home/hert5888/almanac/results/matrix_markov_games/{0}-{1}-{2}-{3}-policy-1.txt\n\
+                            f.write("prism -cuddmaxmem {4}g -javamaxmem {4}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/experiments/1/prism_models/{0}-{1}-{2}-{3}-policy.prism \
+    /home/hert5888/almanac/experiments/1/prism_specs/{0}-{1}-{2}-{3}.props -prop 3 > \
+    /home/hert5888/almanac/experiments/1/prism_evaluations/{0}-{1}-{2}-{3}-policy-1.txt\n\
     sleep 60\n\
-    prism -cuddmaxmem {4}g -javamaxmem {4}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/matrix_markov_games/{0}-{1}-{2}-{3}-policy-det.prism \
-    /home/hert5888/almanac/specs/matrix_markov_games/{0}-{1}-{2}-{3}.props -prop 3 > \
-    /home/hert5888/almanac/results/matrix_markov_games/{0}-{1}-{2}-{3}-policy-det-1.txt\n".format(s,a,l,t,gb))
+    prism -cuddmaxmem {4}g -javamaxmem {4}g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/experiments/1/prism_models/{0}-{1}-{2}-{3}-policy-det.prism \
+    /home/hert5888/almanac/experiments/1/prism_specs/{0}-{1}-{2}-{3}.props -prop 3 > \
+    /home/hert5888/almanac/experiments/1/prism_evaluations/{0}-{1}-{2}-{3}-policy-det-1.txt\n".format(s,a,l,t,gb))
 
                         f.write("conda deactivate")
 
                     filenames.append(filename)
 
-    with open('multi.sh', 'w') as f:
+    with open('experiments/1/arc/multi.sh', 'w') as f:
         f.write("#!/bin/bash\n")
-        for fn in filenames:
-            f.write("sbatch " + fn + "\n")
+
+        for t in range_repetitions:    
+            for s in range_states:
+                for a in range_actions:
+                    for l in range_specs:
+                        f.write("sbatch " + experiment_name + '-almanac-{}-{}-{}-{}.sh'.format(s,a,l,t) + "\n")
+
+        # for fn in filenames:
+        #     f.write("sbatch " + fn + "\n")
 
 
 # Get mmg experiment results 

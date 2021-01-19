@@ -1,0 +1,93 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 08:01:48 BST 2020
+Hostname: arcus-htc-node012
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/4-4-1-8-policy-det.prism /home/hert5888/almanac/specs/mmg/4-4-1-8.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/4-4-1-8-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/4-4-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 
+Variables:   i t s0 s1 s2 s3 q0 a0 a1 a2 a3 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 31 of module "STATE_1" doesn't do anything ("(s1'=1)", line 115, column 358)
+
+Warning: Update 1 of command 38 of module "STATE_1" doesn't do anything ("(s1'=1)", line 122, column 358)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Time for model construction: 0.5 seconds.
+
+Type:        DTMC
+States:      85 (1 initial)
+Transitions: 100
+
+Transition matrix: 1016 nodes (18 terminal), 100 minterms, vars: 24r/24c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.274 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000125, setup 0.00)
+
+States:      85 (1 initial)
+Transitions: 100
+
+Transition matrix: 1092 nodes (18 terminal), 100 minterms, vars: 26r/26c
+
+Finding accepting BSCCs...
+
+SCCs: 16, BSCCs: 16, non-BSCC states: 53
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 5 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 70, no = 14, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=26, nodes=563] [26.4 KB]
+Adding explicit sparse matrices... [levels=26, num=1, compact] [0.3 KB]
+Creating vector for diagonals... [dist=1, compact] [0.2 KB]
+Creating vector for RHS... [dist=2, compact] [0.2 KB]
+Allocating iteration vectors... [2 x 0.7 KB]
+TOTAL: [28.3 KB]
+
+Starting iterations...
+
+Jacobi: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.8766547709308977
+
+Time for model checking: 0.341 seconds.
+
+Result: 0.8766547709308977 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 2 warnings during computation.
+

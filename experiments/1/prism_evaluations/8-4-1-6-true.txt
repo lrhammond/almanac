@@ -1,0 +1,80 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 06:56:37 BST 2020
+Hostname: arcus-htc-node049
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/8-4-1-6.prism /home/hert5888/almanac/specs/mmg/8-4-1-6.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/8-4-1-6.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/8-4-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!psi)|(F phi))) ]
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 q0 a0 a1 a2 a3 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (G ((!psi)|(F phi))) ]
+
+Building model...
+
+Warning: Update 1 of command 5 of module "STATE_1" doesn't do anything ("(s1'=1)", line 231, column 1090)
+
+Warning: Update 1 of command 7 of module "STATE_1" doesn't do anything ("(s1'=1)", line 233, column 1090)
+
+Warning: Update 1 of command 10 of module "STATE_1" doesn't do anything ("(s1'=1)", line 236, column 1090)
+
+Warning: Update 1 of command 14 of module "STATE_1" doesn't do anything ("(s1'=1)", line 240, column 1090)
+
+Warning: Update 1 of command 16 of module "STATE_1" doesn't do anything ("(s1'=1)", line 242, column 1090)
+
+Warning: Update 1 of command 19 of module "STATE_1" doesn't do anything ("(s1'=1)", line 245, column 1090)
+
+Warning: Update 1 of command 20 of module "STATE_1" doesn't do anything ("(s1'=1)", line 246, column 1090)
+
+Warning: Update 1 of command 25 of module "STATE_1" doesn't do anything ("(s1'=1)", line 251, column 1090)
+
+Warning: Update 1 of command 26 of module "STATE_1" doesn't do anything ("(s1'=1)", line 252, column 1090)
+
+Warning: Update 1 of command 30 of module "STATE_1" doesn't do anything ("(s1'=1)", line 256, column 1090)
+
+Warning: Update 1 of command 35 of module "STATE_1" doesn't do anything ("(s1'=1)", line 261, column 1090)
+
+Warning: Update 1 of command 46 of module "STATE_1" doesn't do anything ("(s1'=1)", line 272, column 1090)
+
+Warning: Update 1 of command 101 of module "STATE_4" doesn't do anything ("(s4'=1)", line 927, column 1187)
+
+Warning: Update 1 of command 102 of module "STATE_4" doesn't do anything ("(s4'=1)", line 928, column 1187)
+
+Warning: Update 1 of command 108 of module "STATE_4" doesn't do anything ("(s4'=1)", line 934, column 1187)
+
+Warning: Update 1 of command 110 of module "STATE_4" doesn't do anything ("(s4'=1)", line 936, column 1187)
+
+Warning: Update 1 of command 113 of module "STATE_4" doesn't do anything ("(s4'=1)", line 939, column 1187)
+
+Warning: Update 1 of command 120 of module "STATE_4" doesn't do anything ("(s4'=1)", line 946, column 1187)
+
+Warning: Update 1 of command 124 of module "STATE_4" doesn't do anything ("(s4'=1)", line 950, column 1187)
+
+Warning: Update 1 of command 132 of module "STATE_4" doesn't do anything ("(s4'=1)", line 958, column 1187)
+
+Warning: Update 1 of command 106 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1532, column 1127)
+
+Warning: Update 1 of command 109 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1535, column 1127)
+
+Warning: Update 1 of command 119 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1545, column 1127)
+
+Warning: Update 1 of command 123 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1549, column 1127)
+
+Warning: Update 1 of command 133 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1559, column 1127)
+
+Warning: Update 1 of command 134 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1560, column 1127)
+
+Warning: Update 1 of command 145 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1571, column 1127)

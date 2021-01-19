@@ -1,0 +1,112 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 01:04:39 BST 2020
+Hostname: arcus-htc-node064
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/3-2-1-1.prism /home/hert5888/almanac/specs/mmg/3-2-1-1.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/3-2-1-1.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/3-2-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (G F psi) ]
+(2) P=? [ X (G F psi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (G F psi) ]
+
+Building model...
+
+Warning: Update 2 of command 2 of module "STATE_0" doesn't do anything ("(s0'=0)", line 28, column 322)
+
+Warning: Update 2 of command 6 of module "STATE_0" doesn't do anything ("(s0'=0)", line 32, column 322)
+
+Warning: Update 2 of command 2 of module "STATE_1" doesn't do anything ("(s1'=0)", line 52, column 322)
+
+Warning: Update 2 of command 4 of module "STATE_1" doesn't do anything ("(s1'=0)", line 54, column 474)
+
+Warning: Update 2 of command 6 of module "STATE_1" doesn't do anything ("(s1'=0)", line 56, column 322)
+
+Warning: Update 2 of command 7 of module "STATE_1" doesn't do anything ("(s1'=0)", line 57, column 474)
+
+Warning: Update 2 of command 2 of module "STATE_2" doesn't do anything ("(s2'=0)", line 76, column 322)
+
+Warning: Update 2 of command 3 of module "STATE_2" doesn't do anything ("(s2'=0)", line 77, column 508)
+
+Warning: Update 2 of command 5 of module "STATE_2" doesn't do anything ("(s2'=0)", line 79, column 508)
+
+Warning: Update 2 of command 6 of module "STATE_2" doesn't do anything ("(s2'=0)", line 80, column 322)
+
+Warning: Update 2 of command 8 of module "STATE_2" doesn't do anything ("(s2'=0)", line 82, column 508)
+
+Warning: Update 2 of command 9 of module "STATE_2" doesn't do anything ("(s2'=0)", line 83, column 508)
+
+Computing reachable states...
+
+Reachability (BFS): 4 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Time for model construction: 0.144 seconds.
+
+Type:        MDP
+States:      137 (1 initial)
+Transitions: 690
+Choices:     641
+
+Transition matrix: 1075 nodes (34 terminal), 690 minterms, vars: 15r/15c/6nd
+
+Building deterministic automaton (for X (G F "L0"))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.205 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 4 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+Time for product construction: 0.006 seconds.
+
+States:      146 (1 initial)
+Transitions: 762
+Choices:     713
+
+Transition matrix: 2524 nodes (34 terminal), 762 minterms, vars: 17r/17c/6nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 3 iterations in 0.00 seconds (average 0.000333, setup 0.00)
+
+Prob1E: 6 iterations in 0.00 seconds (average 0.000167, setup 0.00)
+
+yes = 128, no = 17, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=1, levels=17, nodes=185] [8.7 KB]
+Adding sparse bits... [levels=17-17, num=1, compact=1/1] [0.2 KB]
+Creating vector for yes... [dist=2, compact] [0.3 KB]
+Allocating iteration vectors... [3 x 1.1 KB]
+TOTAL: [12.6 KB]
+
+Starting iterations...
+
+Iterative method: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.9199210016552672
+
+Time for model checking: 0.287 seconds.
+
+Result: 0.9199210016552672 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 12 warnings during computation.
+

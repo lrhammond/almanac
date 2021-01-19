@@ -1,0 +1,113 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 01:06:48 BST 2020
+Hostname: arcus-htc-node064
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/3-2-1-1-policy-det.prism /home/hert5888/almanac/specs/mmg/3-2-1-1.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/3-2-1-1-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/3-2-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (G F psi) ]
+(2) P=? [ X (G F psi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G F psi) ]
+
+Building model...
+
+Warning: Update 2 of command 2 of module "STATE_0" doesn't do anything ("(s0'=0)", line 28, column 322)
+
+Warning: Update 2 of command 6 of module "STATE_0" doesn't do anything ("(s0'=0)", line 32, column 322)
+
+Warning: Update 2 of command 2 of module "STATE_1" doesn't do anything ("(s1'=0)", line 52, column 322)
+
+Warning: Update 2 of command 4 of module "STATE_1" doesn't do anything ("(s1'=0)", line 54, column 474)
+
+Warning: Update 2 of command 6 of module "STATE_1" doesn't do anything ("(s1'=0)", line 56, column 322)
+
+Warning: Update 2 of command 7 of module "STATE_1" doesn't do anything ("(s1'=0)", line 57, column 474)
+
+Warning: Update 2 of command 2 of module "STATE_2" doesn't do anything ("(s2'=0)", line 76, column 322)
+
+Warning: Update 2 of command 3 of module "STATE_2" doesn't do anything ("(s2'=0)", line 77, column 508)
+
+Warning: Update 2 of command 5 of module "STATE_2" doesn't do anything ("(s2'=0)", line 79, column 508)
+
+Warning: Update 2 of command 6 of module "STATE_2" doesn't do anything ("(s2'=0)", line 80, column 322)
+
+Warning: Update 2 of command 8 of module "STATE_2" doesn't do anything ("(s2'=0)", line 82, column 508)
+
+Warning: Update 2 of command 9 of module "STATE_2" doesn't do anything ("(s2'=0)", line 83, column 508)
+
+Computing reachable states...
+
+Reachability (BFS): 4 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Time for model construction: 0.156 seconds.
+
+Type:        DTMC
+States:      27 (1 initial)
+Transitions: 36
+
+Transition matrix: 413 nodes (14 terminal), 36 minterms, vars: 15r/15c
+
+Building deterministic automaton (for X (G F "L0"))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.254 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 4 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+States:      27 (1 initial)
+Transitions: 36
+
+Transition matrix: 572 nodes (14 terminal), 36 minterms, vars: 17r/17c
+
+Finding accepting BSCCs...
+
+SCCs: 5, BSCCs: 4, non-BSCC states: 19
+BSCC sizes: 1:2 2:2 3:2 4:2
+
+Computing reachability probabilities...
+
+Prob0: 6 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 23, no = 3, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=17, nodes=185] [8.7 KB]
+Adding explicit sparse matrices... [levels=17, num=1, compact] [0.1 KB]
+Creating vector for diagonals... [dist=1, compact] [0.1 KB]
+Creating vector for RHS... [dist=2, compact] [0.1 KB]
+Allocating iteration vectors... [2 x 0.2 KB]
+TOTAL: [9.3 KB]
+
+Starting iterations...
+
+Jacobi: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.9199210016552672
+
+Time for model checking: 0.308 seconds.
+
+Result: 0.9199210016552672 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 12 warnings during computation.
+

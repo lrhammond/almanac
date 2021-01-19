@@ -1,0 +1,95 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 06:49:10 BST 2020
+Hostname: arcus-htc-node104
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-3-1-6-policy.prism /home/hert5888/almanac/specs/mmg/7-3-1-6.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/7-3-1-6-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/7-3-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 4 of module "STATE_3" doesn't do anything ("(s3'=1)", line 274, column 896)
+
+Warning: Update 1 of command 5 of module "STATE_3" doesn't do anything ("(s3'=1)", line 275, column 896)
+
+Warning: Update 1 of command 13 of module "STATE_3" doesn't do anything ("(s3'=1)", line 283, column 896)
+
+Warning: Update 1 of command 24 of module "STATE_3" doesn't do anything ("(s3'=1)", line 294, column 896)
+
+Warning: Update 1 of command 52 of module "STATE_3" doesn't do anything ("(s3'=1)", line 322, column 838)
+
+Warning: Update 1 of command 61 of module "STATE_3" doesn't do anything ("(s3'=1)", line 331, column 838)
+
+Warning: Update 1 of command 63 of module "STATE_3" doesn't do anything ("(s3'=1)", line 333, column 838)
+
+Warning: Update 1 of command 64 of module "STATE_3" doesn't do anything ("(s3'=1)", line 334, column 838)
+
+Warning: Update 1 of command 67 of module "STATE_3" doesn't do anything ("(s3'=1)", line 337, column 838)
+
+Warning: Update 1 of command 69 of module "STATE_3" doesn't do anything ("(s3'=1)", line 339, column 838)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.08 seconds (average 0.008400, setup 0.00)
+
+Time for model construction: 60.432 seconds.
+
+Type:        DTMC
+States:      41148 (1 initial)
+Transitions: 1296680
+
+Transition matrix: 743637 nodes (32599 terminal), 1296680 minterms, vars: 27r/27c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.296 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 10 iterations in 0.04 seconds (average 0.003600, setup 0.00)
+
+States:      44734 (1 initial)
+Transitions: 1511840
+
+Transition matrix: 804507 nodes (32599 terminal), 1511840 minterms, vars: 29r/29c
+
+Finding accepting BSCCs...
+
+SCCs: 6, BSCCs: 2, non-BSCC states: 44494
+BSCC sizes: 1:120 2:120
+
+Computing reachability probabilities...
+
+Prob0: 10 iterations in 0.04 seconds (average 0.003500, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 44734, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 4.222 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 10 warnings during computation.
+

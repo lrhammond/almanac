@@ -1,0 +1,157 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Sat Oct 10 06:40:51 BST 2020
+Hostname: arcus-htc-node067
+Memory limits: cudd=4g, java(heap)=3.6g
+Command line: prism -cuddmaxmem 4g -javamaxmem 4g -epsilon 0.0001 -maxiters 100000 -timeout 18000 /home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-3-1-6-policy-det.prism /home/hert5888/almanac/specs/mmg/6-3-1-6.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/environments/markov_games/mmg/prism_models/6-3-1-6-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/specs/mmg/6-3-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+(2) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Warning: Update 1 of command 43 of module "STATE_0" doesn't do anything ("(s0'=1)", line 69, column 673)
+
+Warning: Update 1 of command 47 of module "STATE_0" doesn't do anything ("(s0'=1)", line 73, column 673)
+
+Warning: Update 1 of command 56 of module "STATE_0" doesn't do anything ("(s0'=1)", line 82, column 673)
+
+Warning: Update 1 of command 57 of module "STATE_0" doesn't do anything ("(s0'=1)", line 83, column 673)
+
+Warning: Update 1 of command 60 of module "STATE_0" doesn't do anything ("(s0'=1)", line 86, column 673)
+
+Warning: Update 1 of command 61 of module "STATE_0" doesn't do anything ("(s0'=1)", line 87, column 673)
+
+Warning: Update 1 of command 62 of module "STATE_0" doesn't do anything ("(s0'=1)", line 88, column 673)
+
+Warning: Update 1 of command 63 of module "STATE_0" doesn't do anything ("(s0'=1)", line 89, column 673)
+
+Warning: Update 1 of command 65 of module "STATE_0" doesn't do anything ("(s0'=1)", line 91, column 673)
+
+Warning: Update 1 of command 67 of module "STATE_0" doesn't do anything ("(s0'=1)", line 93, column 673)
+
+Warning: Update 1 of command 68 of module "STATE_0" doesn't do anything ("(s0'=1)", line 94, column 673)
+
+Warning: Update 1 of command 69 of module "STATE_0" doesn't do anything ("(s0'=1)", line 95, column 673)
+
+Warning: Update 1 of command 71 of module "STATE_0" doesn't do anything ("(s0'=1)", line 97, column 673)
+
+Warning: Update 1 of command 72 of module "STATE_0" doesn't do anything ("(s0'=1)", line 98, column 673)
+
+Warning: Update 1 of command 3 of module "STATE_3" doesn't do anything ("(s3'=1)", line 377, column 714)
+
+Warning: Update 1 of command 6 of module "STATE_3" doesn't do anything ("(s3'=1)", line 380, column 714)
+
+Warning: Update 1 of command 9 of module "STATE_3" doesn't do anything ("(s3'=1)", line 383, column 714)
+
+Warning: Update 1 of command 11 of module "STATE_3" doesn't do anything ("(s3'=1)", line 385, column 714)
+
+Warning: Update 1 of command 12 of module "STATE_3" doesn't do anything ("(s3'=1)", line 386, column 714)
+
+Warning: Update 1 of command 14 of module "STATE_3" doesn't do anything ("(s3'=1)", line 388, column 714)
+
+Warning: Update 1 of command 28 of module "STATE_3" doesn't do anything ("(s3'=1)", line 402, column 714)
+
+Warning: Update 1 of command 32 of module "STATE_3" doesn't do anything ("(s3'=1)", line 406, column 714)
+
+Warning: Update 1 of command 35 of module "STATE_3" doesn't do anything ("(s3'=1)", line 409, column 714)
+
+Warning: Update 1 of command 37 of module "STATE_3" doesn't do anything ("(s3'=1)", line 411, column 714)
+
+Warning: Update 1 of command 82 of module "STATE_4" doesn't do anything ("(s4'=1)", line 572, column 642)
+
+Warning: Update 1 of command 86 of module "STATE_4" doesn't do anything ("(s4'=1)", line 576, column 642)
+
+Warning: Update 1 of command 87 of module "STATE_4" doesn't do anything ("(s4'=1)", line 577, column 642)
+
+Warning: Update 1 of command 88 of module "STATE_4" doesn't do anything ("(s4'=1)", line 578, column 642)
+
+Warning: Update 1 of command 93 of module "STATE_4" doesn't do anything ("(s4'=1)", line 583, column 642)
+
+Warning: Update 1 of command 95 of module "STATE_4" doesn't do anything ("(s4'=1)", line 585, column 642)
+
+Warning: Update 1 of command 101 of module "STATE_4" doesn't do anything ("(s4'=1)", line 591, column 642)
+
+Warning: Update 1 of command 102 of module "STATE_4" doesn't do anything ("(s4'=1)", line 592, column 642)
+
+Warning: Update 1 of command 104 of module "STATE_4" doesn't do anything ("(s4'=1)", line 594, column 642)
+
+Warning: Update 1 of command 106 of module "STATE_4" doesn't do anything ("(s4'=1)", line 596, column 642)
+
+Computing reachable states...
+
+Reachability (BFS): 9 iterations in 0.03 seconds (average 0.003111, setup 0.00)
+
+Time for model construction: 18.492 seconds.
+
+Type:        DTMC
+States:      671 (1 initial)
+Transitions: 3102
+
+Transition matrix: 62693 nodes (2330 terminal), 3102 minterms, vars: 25r/25c
+
+Building deterministic automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.281 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 9 iterations in 0.02 seconds (average 0.002000, setup 0.00)
+
+States:      878 (1 initial)
+Transitions: 3979
+
+Transition matrix: 67104 nodes (2330 terminal), 3979 minterms, vars: 27r/27c
+
+Finding accepting BSCCs...
+
+SCCs: 45, BSCCs: 42, non-BSCC states: 794
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 9 iterations in 0.01 seconds (average 0.000556, setup 0.00)
+
+Prob1: 9 iterations in 0.01 seconds (average 0.000667, setup 0.00)
+
+yes = 99, no = 633, maybe = 146
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=27, nodes=20332] [953.1 KB]
+Adding explicit sparse matrices... [levels=27, num=1, compact] [9.5 KB]
+Creating vector for diagonals... [dist=1, compact] [1.7 KB]
+Creating vector for RHS... [dist=2, compact] [1.7 KB]
+Allocating iteration vectors... [2 x 6.9 KB]
+TOTAL: [979.7 KB]
+
+Starting iterations...
+
+Jacobi: 77 iterations in 0.13 seconds (average 0.000013, setup 0.13)
+
+Value in the initial state: 0.6332457022924348
+
+Time for model checking: 1.621 seconds.
+
+Result: 0.6332457022924348 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 34 warnings during computation.
+
