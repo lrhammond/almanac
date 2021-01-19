@@ -2,7 +2,7 @@
 
 from torch import clamp, isnan, tensor
 import ast
-
+import os
 
 # Flattens list of lists to a single list
 def flatten(l):
@@ -33,28 +33,30 @@ def remove_nans(x):
 
 
 # Writes .sh files for running mmg experiments on ARC
-def write_mmg_sh_files(range_repetitions, range_actions, range_states, range_specs):
+def write_mmg_sh_files(experiment_name, repetitions, actors, states, specs):
 
-    for t in range_repetitions:    
-        for s in range_states:
-            for a in range_actions:
-                for l in range_specs:
+    filenames = []
 
-                    if (s + a >= 10) or (s >= 7):
-                        mb = 16384
-                        gb = 16
-                    else:
-                        mb = 4096
-                        gb = 4
+    for t in range(repetitions):    
+        for s in range(states):
+            for a in range(actors):
+                for l in range(specs):
 
-                    filename = 'arc/almanac-{}-{}-{}-{}.sh'.format(s,a,l,t)
+                    # if (s + a >= 10) or (s >= 7):
+                    mb = 16384
+                    gb = 16
+                    # else:
+                    #     mb = 4096
+                    #     gb = 4
+
+                    filename = 'almanac-{}-{}-{}-{}.sh'.format(s,a,l,t)
                     with open(filename, 'w') as f:
 
                         f.write("#!/bin/bash\n\
     #SBATCH --partition=htc\n\
-    #SBATCH --job-name=2almanac{0}{1}{2}{3}\n\
-    #SBATCH --output=/home/hert5888/almanac/logs/{0}-{1}-{2}-{3}.out\n\
-    #SBATCH --error=/home/hert5888/almanac/logs/{0}-{1}-{2}-{3}.err\n\
+    #SBATCH --job-name="+experiment_name+"-almanac-{0}{1}{2}{3}\n\
+    #SBATCH --output=/home/hert5888/almanac/logs/"+experiment_name+"-{0}-{1}-{2}-{3}.out\n\
+    #SBATCH --error=/home/hert5888/almanac/logs/"+experiment_name+"-{0}-{1}-{2}-{3}.err\n\
     #SBATCH --time=24:00:00\n\
     #SBATCH --mem={4}\n\
     module load python/anaconda3/2019.03\n\
@@ -95,78 +97,78 @@ def write_mmg_sh_files(range_repetitions, range_actions, range_states, range_spe
 
 
 # Get mmg experiment results 
-def get_mmg_results(range_repetitions, range_states, range_actions, range_specs)
+def get_mmg_results(range_repetitions, range_states, range_actors, range_specs):
 
     results = dict()
 
     for t in range_repetitions:    
         for s in range_states:
-            for a in range_actions:
+            for a in range_actors:
                 for l in range_specs:
                 
-                key = (s,a,l,t)         
-                key_string = 'results/experiment_1/prism_evaluations/{}-{}-{}-{}'.format(s,a,l,t)
-                results[key] = []
+                    key = (s,a,l,t)         
+                    key_string = 'results/experiment_1/prism_evaluations/{}-{}-{}-{}'.format(s,a,l,t)
+                    results[key] = []
 
-                if l == 1:
-                    with open(key_string + '-true.txt') as f:
-                        for i, line in enumerate(f):
-                            if line[:7] == 'Result:':
-                                entry  = float(line[8:-29])
-                                results[key].append(entry)
-                        if len(results[key]) == 0:
-                            results[key].append(None)
-                    with open(key_string + '-policy-0.txt') as f:
-                        for i, line in enumerate(f):
-                            if line[:7] == 'Result:':
-                                entry  = float(line[8:-29])
-                                results[key].append(entry)
-                        if len(results[key]) == 1:
-                            results[key].append(None)
-                    with open(key_string + '-policy-det-0.txt') as f:
-                        for i, line in enumerate(f):
-                            if line[:7] == 'Result:':
-                                entry  = float(line[8:-29])
-                                results[key].append(entry)
-                        if len(results[key]) == 2:
-                            results[key].append(None)
+                    if l == 1:
+                        with open(key_string + '-true.txt') as f:
+                            for i, line in enumerate(f):
+                                if line[:7] == 'Result:':
+                                    entry  = float(line[8:-29])
+                                    results[key].append(entry)
+                            if len(results[key]) == 0:
+                                results[key].append(None)
+                        with open(key_string + '-policy-0.txt') as f:
+                            for i, line in enumerate(f):
+                                if line[:7] == 'Result:':
+                                    entry  = float(line[8:-29])
+                                    results[key].append(entry)
+                            if len(results[key]) == 1:
+                                results[key].append(None)
+                        with open(key_string + '-policy-det-0.txt') as f:
+                            for i, line in enumerate(f):
+                                if line[:7] == 'Result:':
+                                    entry  = float(line[8:-29])
+                                    results[key].append(entry)
+                            if len(results[key]) == 2:
+                                results[key].append(None)
 
-                if l == 2:
-                    with open(key_string + '-true.txt') as f:
-                        for i, line in enumerate(f):
-                            if line[:7] == 'Result:':
-                                entry = ast.literal_eval(line[8:-29])
-                                results[key].append(entry)
-                        if len(results[key]) == 0:
-                            results[key].append(None)
-                    pol_1 = None
-                    with open(key_string + '-policy-0.txt') as f:
-                        for i, line in enumerate(f):
-                            if line[:7] == 'Result:':
-                                pol_1  = float(line[8:-29])
-                    pol_2 = None
-                    with open(key_string + '-policy-1.txt') as f:
-                        for i, line in enumerate(f):
-                            if line[:7] == 'Result:':
-                                pol_2  = float(line[8:-29])
-                    results[key].append((pol_1,pol_2))
-                    det_1 = None
-                    with open(key_string + '-policy-det-0.txt') as f:
-                        for i, line in enumerate(f):
-                            if line[:7] == 'Result:':
-                                det_1  = float(line[8:-29])
-                    det_2 = None
-                    with open(key_string + '-policy-det-1.txt') as f:
-                        for i, line in enumerate(f):
-                            if line[:7] == 'Result:':
-                                det_2  = float(line[8:-29])
-                    results[key].append((det_1,det_2))
+                    if l == 2:
+                        with open(key_string + '-true.txt') as f:
+                            for i, line in enumerate(f):
+                                if line[:7] == 'Result:':
+                                    entry = ast.literal_eval(line[8:-29])
+                                    results[key].append(entry)
+                            if len(results[key]) == 0:
+                                results[key].append(None)
+                        pol_1 = None
+                        with open(key_string + '-policy-0.txt') as f:
+                            for i, line in enumerate(f):
+                                if line[:7] == 'Result:':
+                                    pol_1  = float(line[8:-29])
+                        pol_2 = None
+                        with open(key_string + '-policy-1.txt') as f:
+                            for i, line in enumerate(f):
+                                if line[:7] == 'Result:':
+                                    pol_2  = float(line[8:-29])
+                        results[key].append((pol_1,pol_2))
+                        det_1 = None
+                        with open(key_string + '-policy-det-0.txt') as f:
+                            for i, line in enumerate(f):
+                                if line[:7] == 'Result:':
+                                    det_1  = float(line[8:-29])
+                        det_2 = None
+                        with open(key_string + '-policy-det-1.txt') as f:
+                            for i, line in enumerate(f):
+                                if line[:7] == 'Result:':
+                                    det_2  = float(line[8:-29])
+                        results[key].append((det_1,det_2))
 
     weights = dict()
 
     for t in range_repetitions:    
         for s in range_states:
-            for a in range_actions:
+            for a in range_actors:
                 for l in range_specs:
                     
                     key = (s,a,l,t)
@@ -182,7 +184,7 @@ def get_mmg_results(range_repetitions, range_states, range_actions, range_specs)
     averages = dict()
 
     for s in range_states:
-        for a in range_actions:
+        for a in range_actors:
             for l in range_specs:
 
                 key = (s,a,l)
@@ -241,7 +243,7 @@ def get_mmg_results(range_repetitions, range_states, range_actions, range_specs)
     best = dict([(k, round(min(averages[k][0],averages[k][1]),2)) for k in averages.keys()])
 
     for s in range_states:
-        for a in range_actions:
+        for a in range_actors:
             for l in range_specs:
                 print(best[(s,a,l)])
 
