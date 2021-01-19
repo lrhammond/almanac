@@ -119,5 +119,6 @@ def transition(s, a):
     # elif s == tt(13):
         # TODO
         
-# Labelling function
-# TODO
+# Labelling function # TODO
+def labeller(s):
+    return None
