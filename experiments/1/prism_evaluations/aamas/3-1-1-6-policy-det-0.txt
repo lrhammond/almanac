@@ -1,0 +1,71 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:54:49 GMT 2021
+Hostname: arcus-htc-node045
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/3-1-1-6-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/3-1-1-6.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/3-1-1-6-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/3-1-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 4 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Time for model construction: 0.116 seconds.
+
+Type:        DTMC
+States:      24 (1 initial)
+Transitions: 37
+
+Transition matrix: 303 nodes (18 terminal), 37 minterms, vars: 13r/13c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.205 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 4 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+States:      27 (1 initial)
+Transitions: 40
+
+Transition matrix: 378 nodes (18 terminal), 40 minterms, vars: 15r/15c
+
+Finding accepting BSCCs...
+
+SCCs: 7, BSCCs: 6, non-BSCC states: 15
+BSCC sizes: 1:2 2:2 3:2 4:2 5:2 6:2
+
+Computing reachability probabilities...
+
+Prob0: 4 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 27, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.252 seconds.
+
+Result: 1.0 (value in the initial state)
+

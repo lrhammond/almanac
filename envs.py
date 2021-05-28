@@ -5,11 +5,18 @@ import torch.tensor as tt
 from torch.distributions import Categorical
 from torch.nn.functional import one_hot as one_hot
 import pickle
-from environments.markov_games import mg0, mg1, mg2, mg3
+# from environments.test_envs import mg0, mg1, mg2, mg3
+# from environments.overcooked_maps import oc0
 import torch
 import utils
 import numpy as np
 import specs
+
+# random.seed(26)
+
+# from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
+# from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
+# from overcooked_ai_py.mdp.actions import Action, Direction
 
 # Use GPU if available
 if torch.cuda.is_available():
@@ -24,7 +31,7 @@ else:
 # Environment wrapper
 class EnvWrapper:
 
-    def __init__(self, name, kind, model, labeller):
+    def __init__(self, name, kind, model):
 
         if not(kind != 'mg' or kind!= 'mmg' or kind != 'overcooked'):
             print("Error: Environment kind must be \'mg\' or \'mmg\' or \'overcooked\'")
@@ -33,27 +40,37 @@ class EnvWrapper:
             self.name = name
             self.kind = kind
             self.model = model
-            self.labeller = labeller
             self.state = model.state
 
     def reset(self):
 
-        if self.kind == 'mg':
-            self.state = self.model.reset()
-        elif self.kind == 'mmg':
-            self.state = self.model.reset()
+        # if self.kind == 'mg':
+        #     self.state = self.model.reset()
+        # elif self.kind == 'mmg':
+        #     self.state = self.model.reset()
+        # elif self.kind == 'overcooked':
+        #     self.state = self.model.reset()
+        self.state = self.model.reset()
+
         return self.state
         
     def step(self, joint_action):
 
         if self.kind == 'mg':
             model_joint_action = tuple([action_space[a.int()] for action_space, a in zip(self.model.action_spaces, joint_action)])
-            self.state = self.model.step(model_joint_action)
-            done = False
+            # self.state = self.model.step(model_joint_action)
+            # done = False
         elif self.kind == 'mmg':
             model_joint_action = tuple([int(a) for a in joint_action])
-            self.state = self.model.step(model_joint_action)
-            done = False
+            # self.state = self.model.step(model_joint_action)
+            # done = False
+        elif self.kind == 'overcooked':
+            model_joint_action = [self.model.action_space[joint_action[0]], self.model.action_space[joint_action[1]]]
+            # self.state = self.model.step(model_joint_action)
+            # done = False
+
+        self.state = self.model.step(model_joint_action)
+        done = False
 
         return self.state, done
 
@@ -62,12 +79,28 @@ class EnvWrapper:
         if self.kind == 'mg':
             features = self.model.featurise(state)
         elif self.kind == 'mmg':
-            features = self.state
+            features = state
+        elif self.kind == 'overcooked':
+            features = self.model.featurise(state)
+
         return features
 
     def label(self, state):
 
-        return self.labeller(state)
+        if self.kind == 'mg':
+            labels = self.model.label(state)
+        elif self.kind == 'mmg':
+            labels = self.model.label(state)
+        elif self.kind == 'overcooked':
+            label_dict = self.model.label(state)
+            labels = []
+            for k in label_dict.keys():
+                if label_dict[k][0]:
+                    labels.append('0_' + k)
+                if label_dict[k][1]:
+                    labels.append('1_' + k)
+
+        return labels
 
     def get_obs_size(self):
 
@@ -75,6 +108,10 @@ class EnvWrapper:
             obs_size = self.model.num_states
         elif self.kind == 'mmg':
             obs_size = self.model.state_size
+        elif self.kind == 'overcooked':
+            # obs_size = len(featurise(self.state))
+            obs_size = 62
+
         return obs_size
 
     def get_act_sizes(self):
@@ -83,6 +120,9 @@ class EnvWrapper:
             act_sizes = [len(a) for a in self.model.action_spaces]
         elif self.kind == 'mmg':
             act_sizes = self.model.action_sizes
+        elif self.kind == 'overcooked':
+            act_sizes = [6,6]
+
         return act_sizes
 
     def get_name(self):
@@ -102,7 +142,7 @@ class EnvWrapper:
 # Markov game class
 class MarkovGame:
     
-    def __init__(self, num_players, state_space, action_spaces, transition, initial):
+    def __init__(self, num_players, state_space, action_spaces, transition, initial, labeller):
 
         self.num_players = num_players
         self.state_space = state_space
@@ -110,6 +150,7 @@ class MarkovGame:
         self.action_spaces = action_spaces
         self.transition = transition
         self.initial = initial
+        self.labeller = labeller
         self.state = initial(state_space)
 
     def step(self, joint_action):
@@ -127,6 +168,10 @@ class MarkovGame:
     def featurise(self, state):
 
         return one_hot(self.state, self.num_states)
+    
+    def label(self, state):
+
+        return self.labeller(state)
 
     def print(self):
 
@@ -140,41 +185,33 @@ class MarkovGame:
             print("Action: ", joint_action)
             self.step(joint_action)
 
-# MG 0
-mg_0 = MarkovGame(num_players=mg0.num_players,
-                 state_space=mg0.state_space,
-                 action_spaces=mg0.action_spaces,
-                 transition=mg0.transition,
-                 initial=mg0.initial)
-def l_0(state):
-    return mg0.labeller(state)
+# mg_0 = MarkovGame(num_players=mg0.num_players,
+#                  state_space=mg0.state_space,
+#                  action_spaces=mg0.action_spaces,
+#                  transition=mg0.transition,
+#                  initial=mg0.initial,
+#                  labeller=mg0.labeller)
 
-# MG 1
-mg_1 = MarkovGame(num_players=mg1.num_players,
-                 state_space=mg1.state_space,
-                 action_spaces=mg1.action_spaces,
-                 transition=mg1.transition,
-                 initial=mg1.initial)
-def l_1(state):
-    return mg1.labeller(state)
+# mg_1 = MarkovGame(num_players=mg1.num_players,
+#                  state_space=mg1.state_space,
+#                  action_spaces=mg1.action_spaces,
+#                  transition=mg1.transition,
+#                  initial=mg1.initial,
+#                  labeller=mg1.labeller)
 
-# MG 2
-mg_2 = MarkovGame(num_players=mg2.num_players,
-                 state_space=mg2.state_space,
-                 action_spaces=mg2.action_spaces,
-                 transition=mg2.transition,
-                 initial=mg2.initial)
-def l_2(state):
-    return mg2.labeller(state)
+# mg_2 = MarkovGame(num_players=mg2.num_players,
+#                  state_space=mg2.state_space,
+#                  action_spaces=mg2.action_spaces,
+#                  transition=mg2.transition,
+#                  initial=mg2.initial,
+#                  labeller=mg2.labeller)
 
-# MG 3
-mg_3 = MarkovGame(num_players=mg3.num_players,
-                 state_space=mg3.state_space,
-                 action_spaces=mg3.action_spaces,
-                 transition=mg3.transition,
-                 initial=mg3.initial)
-def l_3(state):
-    return mg3.labeller(state)
+# mg_3 = MarkovGame(num_players=mg3.num_players,
+#                  state_space=mg3.state_space,
+#                  action_spaces=mg3.action_spaces,
+#                  transition=mg3.transition,
+#                  initial=mg3.initial,
+#                  labeller=mg3.labeller)
 
 
 # Matrix Markov game (mmg) class
@@ -227,7 +264,7 @@ class MatrixMarkovGame:
         else:
             return [set([torch.randint(2, (self.state_size,)).float() for r in range(random.randint(1, 2**self.state_size))]) for l in self.labels]
 
-    def labeller(self, state):
+    def label(self, state):
 
         if self.structured_labels:
             labels = []
@@ -255,7 +292,7 @@ class MatrixMarkovGame:
 
     def print(self):
         print("State: ", self.state)
-        print("Labels: ", self.labeller(self.state))
+        print("Labels: ", self.label(self.state))
     
     def test(self, steps=100):
 
@@ -270,7 +307,7 @@ class MatrixMarkovGame:
         p = '' if policy == None else '-policy'
         d = '' if det == False else '-det'
         if filename == None:
-            filename = 'environments/markov_games/mmg/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
+            filename = 'experiments/1/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
 
         with open(filename, 'w') as f:
             
@@ -458,3 +495,50 @@ class MatrixMarkovGame:
 
             else:
                 print("Error: Converting unstructured labels to PRISM not yet supported")
+
+
+class OvercookedGame:
+
+    def __init__(self, overcooked_map, recipes):
+
+        self.overcooked_map = overcooked_map
+        self.recipes = recipes
+        self.params = {"start_bonus_orders": [], "rew_shaping_params": None, }
+        recipe_dicts = [{"ingredients": r["ingredients"]} for r in recipes]
+        recipe_times = [r["time"] for r in recipes]
+        self.params.update({"start_all_orders" : recipe_dicts, "recipe_times": recipe_times})
+        self.overcooked = OvercookedEnv.from_mdp(OvercookedGridworld.from_grid(self.overcooked_map, params_to_overwrite=self.params))
+        self.state = self.overcooked.state
+        self.labels = {}
+        self.action_space = [Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Action.INTERACT, Action.STAY]
+
+    def reset(self):
+
+        self.labels = {}
+        self.overcooked = OvercookedEnv.from_mdp(OvercookedGridworld.from_grid(self.overcooked_map, params_to_overwrite=self.params))
+        self.state = self.overcooked.state
+
+        return self.state
+
+    def step(self, joint_action):
+
+        (self.state, _, _, env_info) = self.overcooked.step(joint_action)
+        self.labels = env_info["event_infos"]
+
+        return self.state
+    
+    def featurise(self, state):
+
+        return self.overcooked.featurize_state_mdp(state)
+
+    def label(self, state):
+
+        if state != self.state:
+            print("Error: Can only obtain labels for current state")
+            return
+        else:
+            return self.labels
+
+    def print(self):
+
+        print(repr(self.overcooked)[:-2])

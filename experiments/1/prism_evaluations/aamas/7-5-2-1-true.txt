@@ -1,0 +1,144 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:37:28 GMT 2021
+Hostname: arcus-htc-node052
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-5-2-1.prism /home/hert5888/almanac/experiments/1/prism_specs/7-5-2-1.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-5-2-1.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-5-2-1.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (G chi) ], Pmax=? [ X (G ((!psi)|(F phi))) ])
+(2) P=? [ X (G chi) ]
+(3) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 ACTION_3 ACTION_4 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 q1 a0 a1 a2 a3 a4 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (G chi) ], Pmax=? [ X (G ((!psi)|(F phi))) ])
+
+Building model...
+
+Warning: Update 1 of command 101 of module "STATE_1" doesn't do anything ("(s1'=1)", line 279, column 892)
+
+Warning: Update 1 of command 127 of module "STATE_1" doesn't do anything ("(s1'=1)", line 305, column 892)
+
+Warning: Update 1 of command 131 of module "STATE_1" doesn't do anything ("(s1'=1)", line 309, column 892)
+
+Warning: Update 1 of command 135 of module "STATE_1" doesn't do anything ("(s1'=1)", line 313, column 892)
+
+Warning: Update 1 of command 138 of module "STATE_1" doesn't do anything ("(s1'=1)", line 316, column 892)
+
+Warning: Update 1 of command 142 of module "STATE_1" doesn't do anything ("(s1'=1)", line 320, column 892)
+
+Warning: Update 1 of command 144 of module "STATE_1" doesn't do anything ("(s1'=1)", line 322, column 892)
+
+Warning: Update 1 of command 6 of module "STATE_6" doesn't do anything ("(s6'=1)", line 944, column 942)
+
+Warning: Update 1 of command 14 of module "STATE_6" doesn't do anything ("(s6'=1)", line 952, column 942)
+
+Warning: Update 1 of command 32 of module "STATE_6" doesn't do anything ("(s6'=1)", line 970, column 942)
+
+Warning: Update 1 of command 34 of module "STATE_6" doesn't do anything ("(s6'=1)", line 972, column 942)
+
+Warning: Update 1 of command 35 of module "STATE_6" doesn't do anything ("(s6'=1)", line 973, column 942)
+
+Warning: Update 1 of command 36 of module "STATE_6" doesn't do anything ("(s6'=1)", line 974, column 942)
+
+Warning: Update 1 of command 51 of module "STATE_6" doesn't do anything ("(s6'=1)", line 989, column 929)
+
+Warning: Update 1 of command 77 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1015, column 929)
+
+Warning: Update 1 of command 78 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1016, column 929)
+
+Warning: Update 1 of command 80 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1018, column 929)
+
+Warning: Update 1 of command 83 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1021, column 929)
+
+Warning: Update 1 of command 92 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1030, column 929)
+
+Warning: Update 1 of command 93 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1031, column 929)
+
+Warning: Update 1 of command 95 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1033, column 929)
+
+Computing reachable states...
+
+Reachability (BFS): 6 iterations in 0.08 seconds (average 0.013500, setup 0.00)
+
+Time for model construction: 126.643 seconds.
+
+Type:        MDP
+States:      46809 (1 initial)
+Transitions: 1795672
+Choices:     1096225
+
+Transition matrix: 1297176 nodes (21582 terminal), 1795672 minterms, vars: 29r/29c/9nd
+
+Building deterministic Rabin automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.303 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 6 iterations in 0.04 seconds (average 0.007333, setup 0.00)
+States:      46809 (1 initial)
+Transitions: 1795672
+Choices:     1096225
+
+Transition matrix: 1323225 nodes (21582 terminal), 1795672 minterms, vars: 31r/31c/9nd
+
+Building deterministic Rabin automaton (for X (G ("L0"|(F "L1"))))...
+DRA has 5 states, 1 Rabin pairs.Time for Rabin translation: 0.011 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 6 iterations in 0.07 seconds (average 0.012333, setup 0.00)
+States:      46809 (1 initial)
+Transitions: 1795672
+Choices:     1096225
+
+Transition matrix: 1438171 nodes (21582 terminal), 1795672 minterms, vars: 34r/34c/9nd
+Total time for product construction: 1.842 seconds.
+
+States:      46809 (1 initial)
+Transitions: 1795672
+Choices:     1096225
+
+Transition matrix: 1438171 nodes (21582 terminal), 1795672 minterms, vars: 34r/34c/9nd
+
+Finding accepting end components for X (G chi)...
+Time for end component identification: 0.0 seconds.
+
+Finding accepting end components for X (G ((!psi)|(F phi)))...
+Time for end component identification: 0.001 seconds.
+
+Prob0A: 4 iterations in 0.10 seconds (average 0.024750, setup 0.00)
+
+yes = 24628, no = 0, maybe = 22181
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 5 iterations in 0.15 seconds (average 0.030600, setup 0.00)
+Optimal value for weights [1.000000,0.000000] from initial state: 0.374910
+Computed point: (0.37491035607562223, 0.11188115129787973)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 100000 iterations in 2922.44 seconds (average 0.029224, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 2/2: weights (9.999000099990002E-5, 0.9999000099990001)
+Iterative method: 100000 iterations in 2805.76 seconds (average 0.028058, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 21 warnings during computation.
+

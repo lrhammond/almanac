@@ -1,0 +1,84 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:08:29 GMT 2021
+Hostname: arcus-htc-node046
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-1-1-8.prism /home/hert5888/almanac/experiments/1/prism_specs/7-1-1-8.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-1-1-8.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-1-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000800, setup 0.00)
+
+Time for model construction: 3.864 seconds.
+
+Type:        MDP
+States:      2271 (1 initial)
+Transitions: 28538
+Choices:     4519
+
+Transition matrix: 90426 nodes (5774 terminal), 28538 minterms, vars: 20r/20c/5nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.24 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000800, setup 0.00)
+Time for product construction: 0.285 seconds.
+
+States:      2555 (1 initial)
+Transitions: 29390
+Choices:     5371
+
+Transition matrix: 96861 nodes (5774 terminal), 29390 minterms, vars: 22r/22c/5nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.01 seconds (average 0.001000, setup 0.00)
+
+Prob1E: 21 iterations in 0.01 seconds (average 0.000571, setup 0.00)
+
+yes = 1942, no = 36, maybe = 577
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=5, levels=22, nodes=124568] [5.7 MB]
+Adding sparse bits... [levels=22-22, num=5, compact=5/5] [148.9 KB]
+Creating vector for yes... [dist=2, compact] [5.0 KB]
+Allocating iteration vectors... [3 x 20.0 KB]
+TOTAL: [5.9 MB]
+
+Starting iterations...
+
+Iterative method: 8 iterations in 31.01 seconds (average 0.000125, setup 31.01)
+
+Value in the initial state: 0.9613392138930508
+
+Time for model checking: 32.439 seconds.
+
+Result: 0.9613392138930508 (value in the initial state)
+

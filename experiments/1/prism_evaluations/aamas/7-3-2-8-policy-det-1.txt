@@ -1,0 +1,150 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 07:24:38 GMT 2021
+Hostname: arcus-htc-node043
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-3-2-8-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/7-3-2-8.props -prop 3
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-3-2-8-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-3-2-8.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (G ((!psi)|(F phi))) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+(3) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 q1 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Warning: Update 1 of command 11 of module "STATE_3" doesn't do anything ("(s3'=1)", line 385, column 860)
+
+Warning: Update 1 of command 16 of module "STATE_3" doesn't do anything ("(s3'=1)", line 390, column 860)
+
+Warning: Update 1 of command 17 of module "STATE_3" doesn't do anything ("(s3'=1)", line 391, column 860)
+
+Warning: Update 1 of command 20 of module "STATE_3" doesn't do anything ("(s3'=1)", line 394, column 860)
+
+Warning: Update 1 of command 22 of module "STATE_3" doesn't do anything ("(s3'=1)", line 396, column 860)
+
+Warning: Update 1 of command 25 of module "STATE_3" doesn't do anything ("(s3'=1)", line 399, column 860)
+
+Warning: Update 1 of command 26 of module "STATE_3" doesn't do anything ("(s3'=1)", line 400, column 860)
+
+Warning: Update 1 of command 30 of module "STATE_3" doesn't do anything ("(s3'=1)", line 404, column 860)
+
+Warning: Update 1 of command 32 of module "STATE_3" doesn't do anything ("(s3'=1)", line 406, column 860)
+
+Warning: Update 1 of command 3 of module "STATE_4" doesn't do anything ("(s4'=1)", line 493, column 832)
+
+Warning: Update 1 of command 8 of module "STATE_4" doesn't do anything ("(s4'=1)", line 498, column 832)
+
+Warning: Update 1 of command 9 of module "STATE_4" doesn't do anything ("(s4'=1)", line 499, column 832)
+
+Warning: Update 1 of command 10 of module "STATE_4" doesn't do anything ("(s4'=1)", line 500, column 832)
+
+Warning: Update 1 of command 12 of module "STATE_4" doesn't do anything ("(s4'=1)", line 502, column 832)
+
+Warning: Update 1 of command 13 of module "STATE_4" doesn't do anything ("(s4'=1)", line 503, column 832)
+
+Warning: Update 1 of command 14 of module "STATE_4" doesn't do anything ("(s4'=1)", line 504, column 832)
+
+Warning: Update 1 of command 19 of module "STATE_4" doesn't do anything ("(s4'=1)", line 509, column 832)
+
+Warning: Update 1 of command 28 of module "STATE_4" doesn't do anything ("(s4'=1)", line 518, column 832)
+
+Warning: Update 1 of command 29 of module "STATE_4" doesn't do anything ("(s4'=1)", line 519, column 832)
+
+Warning: Update 1 of command 35 of module "STATE_4" doesn't do anything ("(s4'=1)", line 525, column 832)
+
+Warning: Update 1 of command 79 of module "STATE_6" doesn't do anything ("(s6'=1)", line 801, column 906)
+
+Warning: Update 1 of command 86 of module "STATE_6" doesn't do anything ("(s6'=1)", line 808, column 906)
+
+Warning: Update 1 of command 87 of module "STATE_6" doesn't do anything ("(s6'=1)", line 809, column 906)
+
+Warning: Update 1 of command 91 of module "STATE_6" doesn't do anything ("(s6'=1)", line 813, column 906)
+
+Warning: Update 1 of command 92 of module "STATE_6" doesn't do anything ("(s6'=1)", line 814, column 906)
+
+Warning: Update 1 of command 93 of module "STATE_6" doesn't do anything ("(s6'=1)", line 815, column 906)
+
+Warning: Update 1 of command 94 of module "STATE_6" doesn't do anything ("(s6'=1)", line 816, column 906)
+
+Warning: Update 1 of command 97 of module "STATE_6" doesn't do anything ("(s6'=1)", line 819, column 906)
+
+Warning: Update 1 of command 101 of module "STATE_6" doesn't do anything ("(s6'=1)", line 823, column 906)
+
+Warning: Update 1 of command 108 of module "STATE_6" doesn't do anything ("(s6'=1)", line 830, column 906)
+
+Computing reachable states...
+
+Reachability (BFS): 18 iterations in 0.04 seconds (average 0.002056, setup 0.00)
+
+Time for model construction: 70.65 seconds.
+
+Type:        DTMC
+States:      1301 (1 initial)
+Transitions: 4092
+
+Transition matrix: 49399 nodes (1510 terminal), 4092 minterms, vars: 29r/29c
+
+Building deterministic automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.348 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 18 iterations in 0.01 seconds (average 0.000611, setup 0.00)
+
+States:      1626 (1 initial)
+Transitions: 5672
+
+Transition matrix: 61697 nodes (1510 terminal), 5672 minterms, vars: 31r/31c
+
+Finding accepting BSCCs...
+
+SCCs: 380, BSCCs: 377, non-BSCC states: 872
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 5 iterations in 0.00 seconds (average 0.000800, setup 0.00)
+
+Prob1: 7 iterations in 0.00 seconds (average 0.000571, setup 0.00)
+
+yes = 551, no = 966, maybe = 109
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=31, nodes=45469] [2.1 MB]
+Adding explicit sparse matrices... [levels=31, num=1, compact] [18.8 KB]
+Creating vector for diagonals... [dist=1, compact] [3.2 KB]
+Creating vector for RHS... [dist=2, compact] [3.2 KB]
+Allocating iteration vectors... [2 x 12.7 KB]
+TOTAL: [2.1 MB]
+
+Starting iterations...
+
+Jacobi: 13 iterations in 0.59 seconds (average 0.000077, setup 0.59)
+
+Value in the initial state: 0.87120298800173
+
+Time for model checking: 5.026 seconds.
+
+Result: 0.87120298800173 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 30 warnings during computation.
+

@@ -1,0 +1,147 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:56:18 GMT 2021
+Hostname: arcus-htc-node075
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-1-2-9.prism /home/hert5888/almanac/experiments/1/prism_specs/7-1-2-9.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-1-2-9.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-1-2-9.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F xi) ], Pmax=? [ X (G chi) ])
+(2) P=? [ X (F xi) ]
+(3) P=? [ X (G chi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 SPEC_1 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 q1 a0 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F xi) ], Pmax=? [ X (G chi) ])
+
+Building model...
+
+Warning: Guard for command 4 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_6" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.001250, setup 0.00)
+
+Time for model construction: 3.741 seconds.
+
+Type:        MDP
+States:      2094 (1 initial)
+Transitions: 20724
+Choices:     3179
+
+Transition matrix: 68188 nodes (4610 terminal), 20724 minterms, vars: 21r/21c/4nd
+
+Building deterministic Rabin automaton (for X (F "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.252 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.000625, setup 0.00)
+States:      2094 (1 initial)
+Transitions: 20724
+Choices:     3179
+
+Transition matrix: 96161 nodes (4610 terminal), 20724 minterms, vars: 23r/23c/4nd
+
+Building deterministic Rabin automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.004 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.001125, setup 0.00)
+States:      2094 (1 initial)
+Transitions: 20724
+Choices:     3179
+
+Transition matrix: 125551 nodes (4610 terminal), 20724 minterms, vars: 25r/25c/4nd
+Total time for product construction: 0.646 seconds.
+
+States:      2094 (1 initial)
+Transitions: 20724
+Choices:     3179
+
+Transition matrix: 125551 nodes (4610 terminal), 20724 minterms, vars: 25r/25c/4nd
+
+Finding accepting end components for X (F xi)...
+Time for end component identification: 0.002 seconds.
+
+Finding accepting end components for X (G chi)...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 14 iterations in 0.01 seconds (average 0.000714, setup 0.00)
+
+yes = 588, no = 7, maybe = 1499
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 24.81 seconds (average 0.000248, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 491 iterations in 0.12 seconds (average 0.000234, setup 0.00)
+Optimal value for weights [0.999900,0.000100] from initial state: 0.943258
+Computed point: (0.9425162443899266, 0.015020670399445256)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 5 iterations in 0.00 seconds (average 0.000400, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.225648
+Computed point: (0.00362466021338285, 0.22564800756288209)
+Optimising weighted sum of objectives: weights (0.18323085705967412, 0.8167691429403259)
+Iterative method: 531 iterations in 0.12 seconds (average 0.000235, setup 0.00)
+Optimal value for weights [0.183231,0.816769] from initial state: 0.320231
+Optimising weighted sum of objectives: weights (0.0, 1.0)
+Iterative method: 5 iterations in 0.00 seconds (average 0.000200, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.225648
+Optimising weighted sum of objectives: weights (0.5112752400663869, 0.48872475993361303)
+Iterative method: 460 iterations in 0.11 seconds (average 0.000237, setup 0.00)
+Optimal value for weights [0.511275,0.488725] from initial state: 0.484906
+The value iteration(s) took 25.45 seconds altogether.
+Number of weight vectors used: 3
+Multi-objective value iterations took 25.45 s.
+
+Value in the initial state: [(0.7411789084037548, 0.22564800756288209), (0.9425162443899266, 0.015020670399445256)]
+
+Time for model checking: 26.319 seconds.
+
+Result: [(0.7411789084037548, 0.22564800756288209), (0.9425162443899266, 0.015020670399445256)] (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 14 warnings during computation.
+

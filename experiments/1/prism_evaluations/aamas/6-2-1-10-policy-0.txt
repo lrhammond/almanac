@@ -1,0 +1,98 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 03:04:40 GMT 2021
+Hostname: arcus-htc-node044
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/6-2-1-10-policy.prism /home/hert5888/almanac/experiments/1/prism_specs/6-2-1-10.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/6-2-1-10-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/6-2-1-10.props"...
+
+2 properties:
+(1) Pmax=? [ X ((!xi) U psi) ]
+(2) P=? [ X ((!xi) U psi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X ((!xi) U psi) ]
+
+Building model...
+
+Warning: Update 1 of command 8 of module "STATE_3" doesn't do anything ("(s3'=1)", line 94, column 685)
+
+Warning: Update 1 of command 10 of module "STATE_5" doesn't do anything ("(s5'=1)", line 136, column 672)
+
+Warning: Update 1 of command 12 of module "STATE_5" doesn't do anything ("(s5'=1)", line 138, column 672)
+
+Warning: Update 1 of command 13 of module "STATE_5" doesn't do anything ("(s5'=1)", line 139, column 672)
+
+Warning: Update 2 of command 18 of module "ACTION_1" doesn't do anything ("(a1'=1)", line 382, column 100)
+
+Warning: Update 2 of command 66 of module "ACTION_1" doesn't do anything ("(a1'=1)", line 430, column 101)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000700, setup 0.00)
+
+Time for model construction: 1.164 seconds.
+
+Type:        DTMC
+States:      1355 (1 initial)
+Transitions: 7881
+
+Transition matrix: 24078 nodes (1402 terminal), 7881 minterms, vars: 20r/20c
+
+Building deterministic automaton (for X ("L0" U "L1"))...
+DFA has 4 states, 1 goal states.
+Time for deterministic automaton translation: 0.205 seconds.
+
+Constructing MC-DFA product...
+
+Reachability (BFS): 10 iterations in 0.04 seconds (average 0.004500, setup 0.00)
+
+States:      1355 (1 initial)
+Transitions: 7881
+
+Transition matrix: 29468 nodes (1402 terminal), 7881 minterms, vars: 22r/22c
+
+Skipping BSCC computation since acceptance is defined via goal states...
+
+Computing reachability probabilities...
+
+Prob0: 8 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Prob1: 6 iterations in 0.00 seconds (average 0.000333, setup 0.00)
+
+yes = 750, no = 505, maybe = 100
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=22, nodes=3657] [171.4 KB]
+Adding explicit sparse matrices... [levels=22, num=1, compact] [4.3 KB]
+Creating vector for diagonals... [dist=1, compact] [2.7 KB]
+Creating vector for RHS... [dist=2, compact] [2.7 KB]
+Allocating iteration vectors... [2 x 10.6 KB]
+TOTAL: [202.2 KB]
+
+Starting iterations...
+
+Jacobi: 18 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.75522187770541
+
+Time for model checking: 0.339 seconds.
+
+Result: 0.75522187770541 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 6 warnings during computation.
+

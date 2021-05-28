@@ -1,0 +1,81 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:18:26 GMT 2021
+Hostname: arcus-htc-node059
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/5-2-1-8.prism /home/hert5888/almanac/experiments/1/prism_specs/5-2-1-8.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/5-2-1-8.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/5-2-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 20 of module "STATE_3" doesn't do anything ("(s3'=1)", line 155, column 518)
+
+Warning: Update 1 of command 24 of module "STATE_3" doesn't do anything ("(s3'=1)", line 159, column 518)
+
+Warning: Update 1 of command 27 of module "STATE_3" doesn't do anything ("(s3'=1)", line 162, column 518)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.001000, setup 0.00)
+
+Time for model construction: 0.56 seconds.
+
+Type:        MDP
+States:      2769 (1 initial)
+Transitions: 24886
+Choices:     21489
+
+Transition matrix: 16236 nodes (398 terminal), 24886 minterms, vars: 20r/20c/7nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.232 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+Time for product construction: 0.024 seconds.
+
+States:      2959 (1 initial)
+Transitions: 27926
+Choices:     24529
+
+Transition matrix: 21101 nodes (398 terminal), 27926 minterms, vars: 22r/22c/7nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.01 seconds (average 0.002000, setup 0.00)
+
+Prob1E: 6 iterations in 0.01 seconds (average 0.000833, setup 0.00)
+
+yes = 2959, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.558 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 3 warnings during computation.
+

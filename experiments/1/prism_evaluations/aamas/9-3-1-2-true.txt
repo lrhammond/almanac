@@ -1,0 +1,58 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:26:52 GMT 2021
+Hostname: arcus-htc-node001
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/9-3-1-2.prism /home/hert5888/almanac/experiments/1/prism_specs/9-3-1-2.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/9-3-1-2.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/9-3-1-2.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+(2) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 STATE_8 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 s8 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Warning: Update 2 of command 34 of module "STATE_0" doesn't do anything ("(s0'=0)", line 60, column 3112)
+
+Warning: Update 2 of command 44 of module "STATE_0" doesn't do anything ("(s0'=0)", line 70, column 3112)
+
+Warning: Update 2 of command 47 of module "STATE_0" doesn't do anything ("(s0'=0)", line 73, column 3112)
+
+Warning: Update 2 of command 48 of module "STATE_0" doesn't do anything ("(s0'=0)", line 74, column 3112)
+
+Warning: Update 2 of command 51 of module "STATE_0" doesn't do anything ("(s0'=0)", line 77, column 3112)
+
+Warning: Update 2 of command 52 of module "STATE_0" doesn't do anything ("(s0'=0)", line 78, column 3112)
+
+Warning: Update 2 of command 53 of module "STATE_0" doesn't do anything ("(s0'=0)", line 79, column 3112)
+
+Warning: Update 2 of command 56 of module "STATE_0" doesn't do anything ("(s0'=0)", line 82, column 3112)
+
+Warning: Update 2 of command 61 of module "STATE_0" doesn't do anything ("(s0'=0)", line 87, column 3112)
+
+Warning: Update 2 of command 62 of module "STATE_0" doesn't do anything ("(s0'=0)", line 88, column 3112)
+
+Warning: Update 2 of command 36 of module "STATE_5" doesn't do anything ("(s5'=0)", line 742, column 3086)
+
+Warning: Update 2 of command 39 of module "STATE_5" doesn't do anything ("(s5'=0)", line 745, column 3086)
+
+Warning: Update 2 of command 45 of module "STATE_5" doesn't do anything ("(s5'=0)", line 751, column 3086)
+
+Warning: Update 2 of command 54 of module "STATE_5" doesn't do anything ("(s5'=0)", line 760, column 3086)
+
+Warning: Update 2 of command 55 of module "STATE_5" doesn't do anything ("(s5'=0)", line 761, column 3086)
+
+Warning: Update 2 of command 65 of module "STATE_5" doesn't do anything ("(s5'=0)", line 771, column 3086)

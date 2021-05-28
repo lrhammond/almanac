@@ -18,6 +18,9 @@ import pickle
 import specs
 import envs
 import utils
+import copy
+
+# random.seed(26)
 
 
 # Use GPU if available
@@ -261,6 +264,7 @@ class Almanac:
         self.actors = set_up_actors(self.models['actor'][0], local, self.obs_size + sum(self.ldba_state_sizes), [a_s + sum(self.epsilon_act_sizes) for a_s in self.act_sizes], hidden=self.models['actor'][1])
         self.patient_critics = set_up_critics(self.models['critic'][0], self.obs_size + sum(self.ldba_state_sizes), self.num_specs, hidden=self.models['critic'][1])
         self.hasty_critics = set_up_critics(self.models['critic'][0], self.obs_size + sum(self.ldba_state_sizes), self.num_specs, hidden=self.models['critic'][1])
+        self.best_actors = None
 
         # Natural gradients
         self.param_shapes = []
@@ -461,30 +465,42 @@ class Almanac:
                 self.mu[i] += self.lrs['mu'](e) * (self.current_patient_losses[i][-1] - l)
                 self.mu[i] = min(max(self.mu[i], tt(0.0)), max_mu)
 
-    def policy(self, state, probs=False):
-
-        if self.local: 
-            action_dists = [actor(state) for actor in self.actors]
-            if probs:
-                return [a[0] for a in action_dists]
+    def policy(self, state, probs=False, best=False):
+        
+        if best:
+            if self.local: 
+                action_dists = [actor(state) for actor in self.best_actors]
+                if probs:
+                    return [a[0] for a in action_dists]
+                else:
+                    return [Categorical(a[0]) for a in action_dists]
             else:
-                return [Categorical(a[0]) for a in action_dists]
+                joint_action_dists = self.best_actors[0](state)
+                action_dists = [joint_action_dists[i] for i in range(self.num_players)]
+                return [Categorical(a) for a in action_dists]
         else:
-            joint_action_dists = self.actors[0](state)
-            action_dists = [joint_action_dists[i] for i in range(self.num_players)]
-            return [Categorical(a) for a in action_dists]
+            if self.local: 
+                action_dists = [actor(state) for actor in self.actors]
+                if probs:
+                    return [a[0] for a in action_dists]
+                else:
+                    return [Categorical(a[0]) for a in action_dists]
+            else:
+                joint_action_dists = self.actors[0](state)
+                action_dists = [joint_action_dists[i] for i in range(self.num_players)]
+                return [Categorical(a) for a in action_dists]
 
     def train(self, steps, env, specs, actual_dist, patient_updates, train_constants, run_id, filename, score_interval=100):
         
         best = 0.0
         last_score_interval = deque(maxlen=score_interval)
 
-        if self.env_kind == 'mmg'
+        if self.env_kind == 'mmg':
             first_50 = []
             on2awinner = False
 
         if filename == None:
-            filename = 'scores/{}/almanac-{}-{}.txt'.format(self.env_kind, self.env_name, run_id)
+            filename = '{}/scores/almanac-{}-{}.txt'.format(self.env_kind, self.env_name, run_id)
 
         reward_multiplier = train_constants['reward_weight']
         tolerance = train_constants['nat_grad_tolerance']
@@ -531,7 +547,7 @@ class Almanac:
                 prod_state = torch.cat([env.featurise(game_state)] + spec_state_vectors, 0)
                 
                 # Perform joint action
-                if random.random() < epsilon(e):
+                if random.random() < epsilon(s):
                     joint_action = [tt(random.choice(range(act_size))) for act_size in self.act_sizes]
                 else:
                     joint_action = [actions.sample() for actions in self.policy(prod_state)]
@@ -609,29 +625,28 @@ class Almanac:
                         else:
                             if not on2awinner:
                                 if np.var(first_50[10:]) < 0.01:
-                                    return False
+                                    return False, 0, 0, 0
                                 else:
                                     on2awinner = True
                     
                     last_score_interval.append(recent_game_score / score_interval)
 
                     with open(filename, 'a') as f:
-                        f.write('{}, {}, {}\n'.format(int(s / score_interval), average_game_score, recent_game_score / score_interval))
+                        f.write('{}, {}, {}\n'.format(int(s / score_interval), recent_game_score / score_interval, average_game_score))
                     recent_game_score = 0
-
-                    if s > (steps / 10) and average_game_score > best + 0.05:
+                    
+                    # Store the best policy
+                    recent_average = np.mean(last_score_interval)
+                    if s > min(10000, steps / 10) and recent_average > best + 0.01:
                         if self.env_kind == 'mmg':
                             self.policy_dists = dict([(p, self.policy(t, probs=True)) for p,t in zip(self.possible_states, self.possible_state_tensors)])
-                        best = average_game_score
-
-                if len(last_score_interval) == score_interval:
-                    if np.var(last_score_interval) < 0.001:
-                        average_game_score = game_score / s
-                        if average_game_score > best + 0.05:
-                            if self.env_kind == 'mmg':
-                                self.policy_dists = dict([(p, self.policy(t, probs=True)) for p,t in zip(self.possible_states, self.possible_state_tensors)])
-                            best = average_game_score
-                        s = steps + 1   
+                            self.best_actors = copy.deepcopy(self.actors)
+                            print("New best: {}".format(recent_average))
+                        best = recent_average
+                        # If policy has become deterministic and enough training has taken place, assume learning is over and end training
+                        # min_difference = min([min([torch.max(d) - torch.min(d) for d in v]) for v in self.policy_dists.values()])
+                        # if min_difference > 0.999:
+                        #     s = steps + 1
 
             # If episode has ended use stored data for learning
             hasty_data = [self.hasty_buffer.sample(j, sample_all=True) for j in range(self.num_specs)]
@@ -662,20 +677,20 @@ class Almanac:
             # If natural gradients have converged, update the policy and clear buffers and old scores
             for i in range(len(self.actors)):
                 if self.nat_grads_converged(i, tolerance):                
-                    # print("Natural gradient {} converged!".format(i))
+                    print("Natural gradient {} converged!".format(i))
                     self.update_actors(i, e, neg_ent_reg, non_det_reg, a_neg_var_reg)
                     self.patient_buffer.clear()
                     self.hasty_buffer.clear()
                     self.scores[i].clear()
 
-                    #Additional Info when using cuda
+                    # Additional Info when using cuda
                     # if device.type == 'cuda':
                     #     print(torch.cuda.get_device_name(0))
                     #     print('Memory Usage:')
                     #     print('Allocated:', round(torch.cuda.memory_allocated(0)/1024**2,5), 'MB')
                     #     print('Cached:   ', round(torch.cuda.memory_cached(0)/1024**2,5), 'MB')
 
-        return True
+        return True, (game_score / s), np.mean(last_score_interval), best
 
     def get_scores(self, i, new_pairs):
 
@@ -824,3 +839,208 @@ class Almanac:
     def get_policy_dists(self, save=False):
 
         return self.policy_dists
+
+    def test(self, steps, env, specs, actual_dist, patient_updates, train_constants, run_id, filename, score_interval=100):
+        
+        # best = 0.0
+        # last_score_interval = deque(maxlen=score_interval)
+
+        # if self.env_kind == 'mmg':
+        #     first_50 = []
+        #     on2awinner = False
+
+        if filename == None:
+            filename = '{}/scores/best-almanac-{}-{}.txt'.format(self.env_kind, self.env_name, run_id)
+
+        reward_multiplier = train_constants['reward_weight']
+        # tolerance = train_constants['nat_grad_tolerance']
+        # neg_ent_reg = train_constants['neg_ent_reg']
+        # non_det_reg = train_constants['non_det_reg']
+        # sum_val_reg = train_constants['sum_val_reg']
+        # c_neg_var_reg = train_constants['c_neg_var_reg']
+        # a_neg_var_reg = train_constants['a_neg_var_reg']
+        continue_prob = train_constants['continue_prob']
+        # epsilon = train_constants['epsilon']
+        # max_nat_grad_norm = train_constants['max_nat_grad_norm']
+        # max_critic_norm = train_constants['max_critic_norm']
+
+        # Check for dumb mistakes
+        if env.get_name() != self.env_name:
+            print("Error: Environment mismatch")
+            return
+
+        if run_id == None:
+            run_id = time.strftime("%Y%m%d-%H%M%S")
+
+        s = 1
+        game_score = 0.0
+        e = -1
+        recent_game_score = 0.0
+
+        # Run episodes
+        while s < steps:
+            
+            # Initialise environment
+            game_state = env.reset()
+            spec_states_rewards = [(spec.ldba.reset(), 0.0) for spec in self.specs]
+            done = False
+            t = 0
+            gammas = [1.0 for j in range(self.num_specs)]
+            Z = [dict() for j in range(self.num_specs)]
+            e += 1
+            # print("End of episode, resetting...")
+
+            while not random.random() > continue_prob and not done:
+
+                # Form state vectors 
+                spec_state_vectors = [one_hot(tt(spec_states_rewards[j][0]), self.specs[j].ldba.get_num_states()) for j in range(self.num_specs)]
+                prod_state = torch.cat([env.featurise(game_state)] + spec_state_vectors, 0)
+                
+                # # Perform joint action
+                # if random.random() < epsilon(s):
+                #     joint_action = [tt(random.choice(range(act_size))) for act_size in self.act_sizes]
+                # else:          
+                joint_action = [actions.sample() for actions in self.policy(prod_state,best=True)]
+
+                # If an epsilon transition is made the game (and possibly spec) state remains the same 
+                is_e_t, j, e_t = self.is_epsilon_transition(joint_action)
+                if is_e_t:
+                    new_game_state, done = game_state, done
+
+                    # If the chosen epsilon transition is available in this state then it is made
+                    if e_t != None:
+                        spec_states_rewards[j] = self.specs[j].ldba.step(None, epsilon=e_t)
+                        label_set = env.label(new_game_state)
+                        for k in range(len(self.specs)):
+                            if k != j:
+                                spec_states_rewards[k] = self.specs[k].ldba.step(label_set)
+                        new_spec_states_rewards = spec_states_rewards
+                    else:
+                        label_set = env.label(new_game_state)
+                        new_spec_states_rewards = [spec.ldba.step(label_set) for spec in self.specs]
+
+                # Otherwise a standard action is performed in the MG
+                else:
+                    new_game_state, done = env.step(joint_action)
+                    label_set = env.label(new_game_state)
+                    new_spec_states_rewards = [spec.ldba.step(label_set) for spec in self.specs]
+                
+                # Temporarily save new product state
+                if patient_updates:
+                    for j in range(self.num_specs): 
+                        Z[j][tuple(prod_state.tolist())] = (t, prod_state, joint_action)
+
+                # Compute rewards etc. from environment and automata
+                unweighted_rewards = [reward_multiplier * s_r[1] for spec, s_r in zip(self.specs, new_spec_states_rewards)]
+                discounts = [self.discounts['patient'] if r > 0.0 else 1.0 for r in unweighted_rewards]
+                gammas = [g * d for g, d in zip(gammas, discounts)]
+                # new_spec_state_vectors = [one_hot(tt(new_spec_states_rewards[j][0]), self.specs[j].ldba.get_num_states()) for j in range(self.num_specs)]
+                # new_prod_state = torch.cat([env.featurise(new_game_state)] + new_spec_state_vectors, 0)
+
+                # for j in range(self.num_specs):
+                    
+                #     # Store patient critic experience when possible
+                #     if patient_updates:
+                #         if unweighted_rewards[j] > 0.0 or self.patient_critics[j](new_prod_state) == 0.0:
+                #             for k in Z[j].keys():
+                #                 (p_t, p_s, p_a) = Z[j][k]
+                #                 self.patient_buffer.add(j, p_t, p_s, p_a, unweighted_rewards[j], new_prod_state, gammas[j], done)
+                #             Z[j] = dict()
+                #     # else:
+                #     #     self.patient_buffer.add(j, t, prod_state, joint_action, unweighted_rewards[j], new_prod_state, gammas[j], done)
+
+                #     # Store hasty critic experience
+                #     self.hasty_buffer.add(j, t, prod_state, joint_action, unweighted_rewards[j], new_prod_state, gammas[j], done)
+                    
+                # Update variables for next step
+                game_state = new_game_state
+                spec_states_rewards = new_spec_states_rewards
+
+                game_score += sum([r * spec.weight for r, spec in zip(unweighted_rewards, self.specs)])
+                # recent_game_score += sum([r * spec.weight for r, spec in zip(unweighted_rewards, self.specs)])
+                t += 1
+                s += 1
+
+                # Save and occasionally print (average) score
+                if s % score_interval == 0:
+                    
+                    average_game_score = game_score / s
+
+                    print("Score ({}/{}): {} (average)".format(int(s / score_interval), int(steps / score_interval), average_game_score))
+
+                    # # Sometimes the mmg generated is trivial, if so we return false and regenerate the mmg
+                    # if self.env_kind == 'mmg':
+                    #     if len(first_50) < 60:
+                    #         first_50.append(recent_game_score/score_interval)
+                    #     else:
+                    #         if not on2awinner:
+                    #             if np.var(first_50[10:]) < 0.01:
+                    #                 return False, 0, 0, 0
+                    #             else:
+                    #                 on2awinner = True
+                    
+                    # last_score_interval.append(recent_game_score / score_interval)
+
+                    # with open(filename, 'a') as f:
+                    #     f.write('{}, {}, {}\n'.format(int(s / score_interval), recent_game_score / score_interval, average_game_score))
+                    # recent_game_score = 0
+
+                    # if s > (steps / 10) and average_game_score > best + 0.05:
+                    #     if self.env_kind == 'mmg':
+                    #         self.policy_dists = dict([(p, self.policy(t, probs=True)) for p,t in zip(self.possible_states, self.possible_state_tensors)])
+                    #         self.best_actors = copy.deepcopy(self.actors)
+                    #     best = average_game_score
+
+                # # Store the best policy
+                # if len(last_score_interval) == score_interval:
+                #     if np.var(last_score_interval) < 0.001:
+                #         average_game_score = game_score / s
+                #         if average_game_score > best + 0.05:
+                #             if self.env_kind == 'mmg':
+                #                 self.policy_dists = dict([(p, self.policy(t, probs=True)) for p,t in zip(self.possible_states, self.possible_state_tensors)])
+                #             best = average_game_score
+                #         s = steps + 1   
+
+            # # If episode has ended use stored data for learning
+            # hasty_data = [self.hasty_buffer.sample(j, sample_all=True) for j in range(self.num_specs)]
+            # if patient_updates:
+            #     patient_data = [self.patient_buffer.sample(j, sample_all=True) for j in range(self.num_specs)]
+            #     data = patient_data + hasty_data
+            # else:
+            #     patient_data = hasty_data
+            #     data = hasty_data
+
+            # # Compute new score functions
+            # for d in data:
+            #     if d != None:
+            #         for i in range(len(self.actors)):
+            #             if self.local:
+            #                 data_state_actions = torch.unique(torch.cat((d[1],d[2][i]), dim=1), dim=0)
+            #             else:
+            #                 data_state_actions = torch.unique(torch.cat((d[1],torch.cat(d[2], dim=1)), dim=1), dim=0)
+            #             keys = [tuple(tens.tolist()) for tens in data_state_actions]
+            #             new_pairs = [(k, tens) for k, tens in zip(keys, data_state_actions) if k not in self.scores[i].keys()]
+            #             self.scores[i].update(self.get_scores(i, new_pairs))
+                    
+            # # Update critics and natural gradients
+            # self.update_critics(e, patient_data, hasty_data, continue_prob, sum_val_reg, c_neg_var_reg, max_critic_norm, actual_dist)
+            # self.update_nat_grads(e, hasty_data, continue_prob, max_nat_grad_norm, actual_dist)
+            # self.update_mu(e)
+
+            # # If natural gradients have converged, update the policy and clear buffers and old scores
+            # for i in range(len(self.actors)):
+            #     if self.nat_grads_converged(i, tolerance):                
+            #         # print("Natural gradient {} converged!".format(i))
+            #         self.update_actors(i, e, neg_ent_reg, non_det_reg, a_neg_var_reg)
+            #         self.patient_buffer.clear()
+            #         self.hasty_buffer.clear()
+            #         self.scores[i].clear()
+
+                    #Additional Info when using cuda
+                    # if device.type == 'cuda':
+                    #     print(torch.cuda.get_device_name(0))
+                    #     print('Memory Usage:')
+                    #     print('Allocated:', round(torch.cuda.memory_allocated(0)/1024**2,5), 'MB')
+                    #     print('Cached:   ', round(torch.cuda.memory_cached(0)/1024**2,5), 'MB')
+
+        return (game_score / s)

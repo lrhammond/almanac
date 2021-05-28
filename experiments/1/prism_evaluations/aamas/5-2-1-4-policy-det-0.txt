@@ -1,0 +1,120 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:15:06 GMT 2021
+Hostname: arcus-htc-node057
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/5-2-1-4-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/5-2-1-4.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/5-2-1-4-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/5-2-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X ((!xi) U psi) ]
+(2) P=? [ X ((!xi) U psi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X ((!xi) U psi) ]
+
+Building model...
+
+Warning: Update 1 of command 5 of module "STATE_1" doesn't do anything ("(s1'=1)", line 63, column 475)
+
+Warning: Update 1 of command 7 of module "STATE_1" doesn't do anything ("(s1'=1)", line 65, column 475)
+
+Warning: Update 1 of command 19 of module "STATE_1" doesn't do anything ("(s1'=1)", line 77, column 532)
+
+Warning: Update 1 of command 20 of module "STATE_1" doesn't do anything ("(s1'=1)", line 78, column 532)
+
+Warning: Update 1 of command 23 of module "STATE_1" doesn't do anything ("(s1'=1)", line 81, column 508)
+
+Warning: Update 1 of command 24 of module "STATE_1" doesn't do anything ("(s1'=1)", line 82, column 508)
+
+Warning: Update 1 of command 11 of module "STATE_2" doesn't do anything ("(s2'=1)", line 101, column 477)
+
+Warning: Update 1 of command 15 of module "STATE_2" doesn't do anything ("(s2'=1)", line 105, column 477)
+
+Warning: Update 1 of command 16 of module "STATE_2" doesn't do anything ("(s2'=1)", line 106, column 477)
+
+Warning: Update 1 of command 17 of module "STATE_2" doesn't do anything ("(s2'=1)", line 107, column 477)
+
+Warning: Update 1 of command 11 of module "STATE_3" doesn't do anything ("(s3'=1)", line 133, column 477)
+
+Warning: Update 1 of command 15 of module "STATE_3" doesn't do anything ("(s3'=1)", line 137, column 477)
+
+Warning: Update 1 of command 16 of module "STATE_3" doesn't do anything ("(s3'=1)", line 138, column 477)
+
+Warning: Update 1 of command 17 of module "STATE_3" doesn't do anything ("(s3'=1)", line 139, column 477)
+
+Warning: Guard for command 2 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 6 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 10 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000375, setup 0.00)
+
+Time for model construction: 0.535 seconds.
+
+Type:        DTMC
+States:      200 (1 initial)
+Transitions: 476
+
+Transition matrix: 5465 nodes (234 terminal), 476 minterms, vars: 20r/20c
+
+Building deterministic automaton (for X ("L0" U "L1"))...
+DFA has 4 states, 1 goal states.
+Time for deterministic automaton translation: 0.255 seconds.
+
+Constructing MC-DFA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+States:      200 (1 initial)
+Transitions: 476
+
+Transition matrix: 6543 nodes (234 terminal), 476 minterms, vars: 22r/22c
+
+Skipping BSCC computation since acceptance is defined via goal states...
+
+Computing reachability probabilities...
+
+Prob0: 7 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 5 iterations in 0.00 seconds (average 0.000200, setup 0.00)
+
+yes = 80, no = 81, maybe = 39
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=22, nodes=2484] [116.4 KB]
+Adding explicit sparse matrices... [levels=22, num=1, compact] [1.4 KB]
+Creating vector for diagonals... [dist=1, compact] [0.4 KB]
+Creating vector for RHS... [dist=2, compact] [0.4 KB]
+Allocating iteration vectors... [2 x 1.6 KB]
+TOTAL: [121.7 KB]
+
+Starting iterations...
+
+Jacobi: 37 iterations in 0.00 seconds (average 0.000027, setup 0.00)
+
+Value in the initial state: 0.6129830549368487
+
+Time for model checking: 0.336 seconds.
+
+Result: 0.6129830549368487 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 17 warnings during computation.
+

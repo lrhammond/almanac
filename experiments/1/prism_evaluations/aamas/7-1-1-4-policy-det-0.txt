@@ -1,0 +1,145 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:24:53 GMT 2021
+Hostname: arcus-htc-node061
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-1-1-4-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/7-1-1-4.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-1-1-4-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-1-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Guard for command 6 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 8 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 9 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 8 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 9 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 8 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 9 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 8 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 9 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 8 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 9 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 8 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 9 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 8 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 9 of module "STATE_6" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.001300, setup 0.00)
+
+Time for model construction: 9.307 seconds.
+
+Type:        DTMC
+States:      1181 (1 initial)
+Transitions: 7226
+
+Transition matrix: 58497 nodes (3626 terminal), 7226 minterms, vars: 21r/21c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.213 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000800, setup 0.00)
+
+States:      1313 (1 initial)
+Transitions: 7358
+
+Transition matrix: 62872 nodes (3626 terminal), 7358 minterms, vars: 23r/23c
+
+Finding accepting BSCCs...
+
+SCCs: 119, BSCCs: 116, non-BSCC states: 1081
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 6 iterations in 0.01 seconds (average 0.001667, setup 0.00)
+
+Prob1: 7 iterations in 0.01 seconds (average 0.001143, setup 0.00)
+
+yes = 593, no = 95, maybe = 625
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=23, nodes=71547] [3.3 MB]
+Adding explicit sparse matrices... [levels=23, num=1, compact] [55.5 KB]
+Creating vector for diagonals... [dist=1, compact] [2.6 KB]
+Creating vector for RHS... [dist=2, compact] [2.6 KB]
+Allocating iteration vectors... [2 x 10.3 KB]
+TOTAL: [3.4 MB]
+
+Starting iterations...
+
+Jacobi: 17 iterations in 4.03 seconds (average 0.000059, setup 4.03)
+
+Value in the initial state: 0.9072838004069641
+
+Time for model checking: 5.2 seconds.
+
+Result: 0.9072838004069641 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 28 warnings during computation.
+

@@ -1,0 +1,99 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 03:00:55 GMT 2021
+Hostname: arcus-htc-node057
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/5-2-2-4.prism /home/hert5888/almanac/experiments/1/prism_specs/5-2-2-4.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/5-2-2-4.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/5-2-2-4.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G chi) ])
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+(3) P=? [ X (G chi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 SPEC_1 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 q0 q1 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G chi) ])
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000800, setup 0.00)
+
+Time for model construction: 0.524 seconds.
+
+Type:        MDP
+States:      3823 (1 initial)
+Transitions: 27419
+Choices:     21313
+
+Transition matrix: 20462 nodes (570 terminal), 27419 minterms, vars: 21r/21c/7nd
+
+Building deterministic Rabin automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.137 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000500, setup 0.00)
+States:      4003 (1 initial)
+Transitions: 29579
+Choices:     23473
+
+Transition matrix: 22334 nodes (570 terminal), 29579 minterms, vars: 23r/23c/7nd
+
+Building deterministic Rabin automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.006 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.02 seconds (average 0.002000, setup 0.00)
+States:      4003 (1 initial)
+Transitions: 29579
+Choices:     23473
+
+Transition matrix: 29288 nodes (570 terminal), 29579 minterms, vars: 25r/25c/7nd
+Total time for product construction: 0.255 seconds.
+
+States:      4003 (1 initial)
+Transitions: 29579
+Choices:     23473
+
+Transition matrix: 29288 nodes (570 terminal), 29579 minterms, vars: 25r/25c/7nd
+
+Finding accepting end components for X (F G ((!phi)|(!xi)))...
+Time for end component identification: 0.002 seconds.
+
+Finding accepting end components for X (G chi)...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 5 iterations in 0.02 seconds (average 0.003400, setup 0.00)
+
+yes = 1748, no = 0, maybe = 2255
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 9 iterations in 0.01 seconds (average 0.000667, setup 0.00)
+Optimal value for weights [1.000000,0.000000] from initial state: 0.999999
+Computed point: (0.9999829779952303, 0.8423130962535483)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 5 iterations in 0.00 seconds (average 0.000600, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.889385
+Computed point: (0.8014875916498497, 0.8893853333539699)
+Optimising weighted sum of objectives: weights (0.19168747263952968, 0.8083125273604703)
+Iterative method: 100000 iterations in 66.05 seconds (average 0.000660, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+

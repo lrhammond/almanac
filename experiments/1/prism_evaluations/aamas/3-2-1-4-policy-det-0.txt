@@ -1,0 +1,81 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:22:36 GMT 2021
+Hostname: arcus-htc-node022
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/3-2-1-4-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/3-2-1-4.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/3-2-1-4-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/3-2-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X (G chi) ]
+(2) P=? [ X (G chi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G chi) ]
+
+Building model...
+
+Warning: Update 1 of command 3 of module "STATE_1" doesn't do anything ("(s1'=1)", line 53, column 197)
+
+Warning: Update 1 of command 7 of module "STATE_1" doesn't do anything ("(s1'=1)", line 57, column 197)
+
+Warning: Update 1 of command 9 of module "STATE_1" doesn't do anything ("(s1'=1)", line 59, column 197)
+
+Warning: Update 1 of command 12 of module "STATE_2" doesn't do anything ("(s2'=1)", line 86, column 228)
+
+Warning: Update 1 of command 13 of module "STATE_2" doesn't do anything ("(s2'=1)", line 87, column 228)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000125, setup 0.00)
+
+Time for model construction: 0.132 seconds.
+
+Type:        DTMC
+States:      41 (1 initial)
+Transitions: 58
+
+Transition matrix: 499 nodes (20 terminal), 58 minterms, vars: 15r/15c
+
+Building deterministic automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.145 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000125, setup 0.00)
+
+States:      41 (1 initial)
+Transitions: 58
+
+Transition matrix: 568 nodes (20 terminal), 58 minterms, vars: 17r/17c
+
+Finding accepting BSCCs...
+
+SCCs: 4, BSCCs: 4, non-BSCC states: 33
+BSCC sizes: 1:2 2:2 3:2 4:2
+
+Computing reachability probabilities...
+
+yes = 0, no = 41, maybe = 0
+
+Value in the initial state: 0.0
+
+Time for model checking: 0.179 seconds.
+
+Result: 0.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 5 warnings during computation.
+

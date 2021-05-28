@@ -1,0 +1,122 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:37:43 GMT 2021
+Hostname: arcus-htc-node056
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/1-3-2-8-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/1-3-2-8.props -prop 3
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/1-3-2-8-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/1-3-2-8.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F xi) ], Pmax=? [ X (F G ((!phi)|(!xi))) ])
+(2) P=? [ X (F xi) ]
+(3) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 q0 q1 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_0" doesn't do anything ("(s0'=1)", line 29, column 79)
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 30, column 79)
+
+Warning: Update 1 of command 4 of module "STATE_0" doesn't do anything ("(s0'=1)", line 31, column 79)
+
+Warning: Update 1 of command 5 of module "STATE_0" doesn't do anything ("(s0'=1)", line 32, column 79)
+
+Warning: Update 1 of command 6 of module "STATE_0" doesn't do anything ("(s0'=1)", line 33, column 79)
+
+Warning: Update 1 of command 7 of module "STATE_0" doesn't do anything ("(s0'=1)", line 34, column 79)
+
+Warning: Update 1 of command 9 of module "STATE_0" doesn't do anything ("(s0'=1)", line 36, column 79)
+
+Warning: Update 1 of command 10 of module "STATE_0" doesn't do anything ("(s0'=1)", line 37, column 79)
+
+Warning: Update 1 of command 12 of module "STATE_0" doesn't do anything ("(s0'=1)", line 39, column 79)
+
+Warning: Update 1 of command 13 of module "STATE_0" doesn't do anything ("(s0'=1)", line 40, column 79)
+
+Warning: Update 1 of command 14 of module "STATE_0" doesn't do anything ("(s0'=1)", line 41, column 79)
+
+Warning: Update 1 of command 15 of module "STATE_0" doesn't do anything ("(s0'=1)", line 42, column 79)
+
+Warning: Update 1 of command 18 of module "STATE_0" doesn't do anything ("(s0'=1)", line 45, column 79)
+
+Warning: Update 1 of command 19 of module "STATE_0" doesn't do anything ("(s0'=1)", line 46, column 79)
+
+Warning: Update 1 of command 22 of module "STATE_0" doesn't do anything ("(s0'=1)", line 49, column 79)
+
+Warning: Update 1 of command 24 of module "STATE_0" doesn't do anything ("(s0'=1)", line 51, column 79)
+
+Warning: Update 1 of command 25 of module "STATE_0" doesn't do anything ("(s0'=1)", line 52, column 79)
+
+Warning: Guard for command 3 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 4 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_1" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 5 iterations in 0.00 seconds (average 0.000200, setup 0.00)
+
+Time for model construction: 0.106 seconds.
+
+Type:        DTMC
+States:      8 (1 initial)
+Transitions: 9
+
+Transition matrix: 144 nodes (4 terminal), 9 minterms, vars: 17r/17c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.225 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 6 iterations in 0.00 seconds (average 0.000167, setup 0.00)
+
+States:      9 (1 initial)
+Transitions: 10
+
+Transition matrix: 189 nodes (4 terminal), 10 minterms, vars: 19r/19c
+
+Finding accepting BSCCs...
+
+SCCs: 2, BSCCs: 2, non-BSCC states: 5
+BSCC sizes: 1:2 2:2
+
+Computing reachability probabilities...
+
+Prob0: 4 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 9, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.28 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 23 warnings during computation.
+

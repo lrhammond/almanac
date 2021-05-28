@@ -1,0 +1,503 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:29:53 GMT 2021
+Hostname: arcus-htc-node052
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/8-4-1-1.prism /home/hert5888/almanac/experiments/1/prism_specs/8-4-1-1.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/8-4-1-1.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/8-4-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 q0 a0 a1 a2 a3 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Guard for command 26 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 27 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 28 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 29 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 30 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 31 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 32 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 33 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 34 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 35 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 36 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 37 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 38 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 39 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 40 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 41 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 42 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 43 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 44 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 45 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 46 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 47 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 48 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 49 of module "STATE_0" is never satisfied.
+
+Warning: Update 2 of command 51 of module "STATE_0" doesn't do anything ("(s0'=0)", line 78, column 2220)
+
+Warning: Update 2 of command 53 of module "STATE_0" doesn't do anything ("(s0'=0)", line 80, column 2220)
+
+Warning: Update 2 of command 56 of module "STATE_0" doesn't do anything ("(s0'=0)", line 83, column 2220)
+
+Warning: Update 2 of command 57 of module "STATE_0" doesn't do anything ("(s0'=0)", line 84, column 2220)
+
+Warning: Update 2 of command 58 of module "STATE_0" doesn't do anything ("(s0'=0)", line 85, column 2220)
+
+Warning: Update 2 of command 59 of module "STATE_0" doesn't do anything ("(s0'=0)", line 86, column 2220)
+
+Warning: Update 2 of command 64 of module "STATE_0" doesn't do anything ("(s0'=0)", line 91, column 2220)
+
+Warning: Update 2 of command 65 of module "STATE_0" doesn't do anything ("(s0'=0)", line 92, column 2220)
+
+Warning: Update 2 of command 67 of module "STATE_0" doesn't do anything ("(s0'=0)", line 94, column 2220)
+
+Warning: Guard for command 26 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 27 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 28 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 29 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 30 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 31 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 32 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 33 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 34 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 35 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 36 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 37 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 38 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 39 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 40 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 41 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 42 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 43 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 44 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 45 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 46 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 47 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 48 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 49 of module "STATE_1" is never satisfied.
+
+Warning: Update 1 of command 2 of module "STATE_2" doesn't do anything ("(s2'=1)", line 239, column 1126)
+
+Warning: Update 1 of command 6 of module "STATE_2" doesn't do anything ("(s2'=1)", line 243, column 1126)
+
+Warning: Update 1 of command 7 of module "STATE_2" doesn't do anything ("(s2'=1)", line 244, column 1126)
+
+Warning: Update 1 of command 21 of module "STATE_2" doesn't do anything ("(s2'=1)", line 258, column 1126)
+
+Warning: Guard for command 26 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 27 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 28 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 29 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 30 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 31 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 32 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 33 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 34 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 35 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 36 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 37 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 38 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 39 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 40 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 41 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 42 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 43 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 44 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 45 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 46 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 47 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 48 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 49 of module "STATE_2" is never satisfied.
+
+Warning: Update 2 of command 50 of module "STATE_2" doesn't do anything ("(s2'=0)", line 287, column 2454)
+
+Warning: Update 2 of command 63 of module "STATE_2" doesn't do anything ("(s2'=0)", line 300, column 2454)
+
+Warning: Update 2 of command 66 of module "STATE_2" doesn't do anything ("(s2'=0)", line 303, column 2454)
+
+Warning: Update 2 of command 68 of module "STATE_2" doesn't do anything ("(s2'=0)", line 305, column 2454)
+
+Warning: Update 2 of command 73 of module "STATE_2" doesn't do anything ("(s2'=0)", line 310, column 2454)
+
+Warning: Guard for command 26 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 27 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 28 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 29 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 30 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 31 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 32 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 33 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 34 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 35 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 36 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 37 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 38 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 39 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 40 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 41 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 42 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 43 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 44 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 45 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 46 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 47 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 48 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 49 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 26 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 27 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 28 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 29 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 30 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 31 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 32 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 33 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 34 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 35 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 36 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 37 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 38 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 39 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 40 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 41 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 42 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 43 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 44 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 45 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 46 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 47 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 48 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 49 of module "STATE_4" is never satisfied.
+
+Warning: Update 1 of command 9 of module "STATE_5" doesn't do anything ("(s5'=1)", line 561, column 1095)
+
+Warning: Update 1 of command 11 of module "STATE_5" doesn't do anything ("(s5'=1)", line 563, column 1095)
+
+Warning: Update 1 of command 19 of module "STATE_5" doesn't do anything ("(s5'=1)", line 571, column 1095)
+
+Warning: Update 1 of command 22 of module "STATE_5" doesn't do anything ("(s5'=1)", line 574, column 1095)
+
+Warning: Guard for command 26 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 27 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 28 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 29 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 30 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 31 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 32 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 33 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 34 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 35 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 36 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 37 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 38 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 39 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 40 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 41 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 42 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 43 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 44 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 45 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 46 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 47 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 48 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 49 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 26 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 27 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 28 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 29 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 30 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 31 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 32 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 33 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 34 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 35 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 36 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 37 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 38 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 39 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 40 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 41 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 42 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 43 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 44 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 45 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 46 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 47 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 48 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 49 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 26 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 27 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 28 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 29 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 30 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 31 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 32 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 33 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 34 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 35 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 36 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 37 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 38 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 39 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 40 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 41 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 42 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 43 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 44 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 45 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 46 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 47 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 48 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 49 of module "STATE_7" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.22 seconds (average 0.022300, setup 0.00)
+
+Time for model construction: 657.863 seconds.
+
+Type:        MDP
+States:      144089 (1 initial)
+Transitions: 7833409
+Choices:     6698053
+
+Transition matrix: 4220377 nodes (81804 terminal), 7833409 minterms, vars: 32r/32c/11nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 2.237 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.09 seconds (average 0.009100, setup 0.00)
+Time for product construction: 3.009 seconds.
+
+States:      151141 (1 initial)
+Transitions: 8595025
+Choices:     7459669
+
+Transition matrix: 4308340 nodes (81804 terminal), 8595025 minterms, vars: 34r/34c/11nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.32 seconds (average 0.063000, setup 0.00)
+
+Prob1E: 6 iterations in 0.10 seconds (average 0.016500, setup 0.00)
+
+yes = 151141, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 18.396 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 214 warnings during computation.
+

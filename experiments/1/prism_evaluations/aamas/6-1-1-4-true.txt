@@ -1,0 +1,115 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 01:55:24 GMT 2021
+Hostname: arcus-htc-node057
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/6-1-1-4.prism /home/hert5888/almanac/experiments/1/prism_specs/6-1-1-4.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/6-1-1-4.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/6-1-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Guard for command 5 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_3" is never satisfied.
+
+Warning: Update 1 of command 9 of module "STATE_3" doesn't do anything ("(s3'=1)", line 90, column 649)
+
+Warning: Update 1 of command 10 of module "STATE_3" doesn't do anything ("(s3'=1)", line 91, column 649)
+
+Warning: Guard for command 5 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_5" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 14 iterations in 0.00 seconds (average 0.000143, setup 0.00)
+
+Time for model construction: 0.343 seconds.
+
+Type:        MDP
+States:      1331 (1 initial)
+Transitions: 6052
+Choices:     3113
+
+Transition matrix: 10677 nodes (584 terminal), 6052 minterms, vars: 19r/19c/5nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.238 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 14 iterations in 0.00 seconds (average 0.000286, setup 0.00)
+Time for product construction: 0.013 seconds.
+
+States:      1449 (1 initial)
+Transitions: 6524
+Choices:     3585
+
+Transition matrix: 12043 nodes (584 terminal), 6524 minterms, vars: 21r/21c/5nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.00 seconds (average 0.000600, setup 0.00)
+
+Prob1E: 6 iterations in 0.00 seconds (average 0.000167, setup 0.00)
+
+yes = 1449, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.683 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 20 warnings during computation.
+

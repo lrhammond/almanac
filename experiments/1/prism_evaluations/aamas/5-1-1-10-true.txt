@@ -1,0 +1,96 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:47:29 GMT 2021
+Hostname: arcus-htc-node013
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/5-1-1-10.prism /home/hert5888/almanac/experiments/1/prism_specs/5-1-1-10.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/5-1-1-10.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/5-1-1-10.props"...
+
+2 properties:
+(1) Pmax=? [ X ((!xi) U psi) ]
+(2) P=? [ X ((!xi) U psi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X ((!xi) U psi) ]
+
+Building model...
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 29, column 528)
+
+Warning: Update 1 of command 5 of module "STATE_0" doesn't do anything ("(s0'=1)", line 31, column 528)
+
+Warning: Update 2 of command 3 of module "STATE_4" doesn't do anything ("(s4'=0)", line 109, column 1180)
+
+Warning: Update 2 of command 5 of module "STATE_4" doesn't do anything ("(s4'=0)", line 111, column 1180)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000300, setup 0.00)
+
+Time for model construction: 0.344 seconds.
+
+Type:        MDP
+States:      704 (1 initial)
+Transitions: 3825
+Choices:     1733
+
+Transition matrix: 7559 nodes (320 terminal), 3825 minterms, vars: 17r/17c/5nd
+
+Building deterministic automaton (for X ("L0" U "L1"))...
+DFA has 4 states, 1 goal states.
+Time for deterministic automaton translation: 0.128 seconds.
+
+Constructing MDP-DFA product...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000400, setup 0.00)
+Time for product construction: 0.017 seconds.
+
+States:      704 (1 initial)
+Transitions: 3825
+Choices:     1733
+
+Transition matrix: 11095 nodes (320 terminal), 3825 minterms, vars: 19r/19c/5nd
+
+Skipping accepting MEC computation since acceptance is defined via goal states...
+
+Computing reachability probabilities...
+
+Prob0A: 8 iterations in 0.00 seconds (average 0.000375, setup 0.00)
+
+Prob1E: 4 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+
+yes = 302, no = 263, maybe = 139
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=6, levels=19, nodes=5362] [251.3 KB]
+Adding sparse bits... [levels=19-19, num=6, compact=6/6] [8.9 KB]
+Creating vector for yes... [dist=2, compact] [1.4 KB]
+Allocating iteration vectors... [3 x 5.5 KB]
+TOTAL: [278.1 KB]
+
+Starting iterations...
+
+Iterative method: 40 iterations in 0.01 seconds (average 0.000025, setup 0.01)
+
+Value in the initial state: 0.40526584916841907
+
+Time for model checking: 0.193 seconds.
+
+Result: 0.40526584916841907 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 4 warnings during computation.
+

@@ -1,0 +1,97 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:09:18 GMT 2021
+Hostname: arcus-htc-node056
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/1-2-1-5.prism /home/hert5888/almanac/experiments/1/prism_specs/1-2-1-5.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/1-2-1-5.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/1-2-1-5.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_0" doesn't do anything ("(s0'=1)", line 29, column 72)
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 30, column 72)
+
+Warning: Update 1 of command 5 of module "STATE_0" doesn't do anything ("(s0'=1)", line 32, column 72)
+
+Warning: Update 1 of command 7 of module "STATE_0" doesn't do anything ("(s0'=1)", line 34, column 72)
+
+Warning: Update 1 of command 9 of module "STATE_0" doesn't do anything ("(s0'=1)", line 36, column 72)
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000125, setup 0.00)
+
+Time for model construction: 0.092 seconds.
+
+Type:        MDP
+States:      151 (1 initial)
+Transitions: 992
+Choices:     991
+
+Transition matrix: 1102 nodes (4 terminal), 992 minterms, vars: 12r/12c/8nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.256 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+Time for product construction: 0.005 seconds.
+
+States:      161 (1 initial)
+Transitions: 1142
+Choices:     1141
+
+Transition matrix: 1625 nodes (4 terminal), 1142 minterms, vars: 14r/14c/8nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.00 seconds (average 0.000200, setup 0.00)
+
+Prob1E: 6 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 161, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.337 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 11 warnings during computation.
+

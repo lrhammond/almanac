@@ -1,0 +1,130 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 03:24:16 GMT 2021
+Hostname: arcus-htc-node061
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-3-2-4.prism /home/hert5888/almanac/experiments/1/prism_specs/7-3-2-4.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-3-2-4.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-3-2-4.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F xi) ], Pmax=? [ X (G chi) ])
+(2) P=? [ X (F xi) ]
+(3) P=? [ X (G chi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 q1 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F xi) ], Pmax=? [ X (G chi) ])
+
+Building model...
+
+Warning: Update 1 of command 9 of module "STATE_1" doesn't do anything ("(s1'=1)", line 151, column 925)
+
+Warning: Update 1 of command 11 of module "STATE_1" doesn't do anything ("(s1'=1)", line 153, column 925)
+
+Warning: Update 1 of command 20 of module "STATE_1" doesn't do anything ("(s1'=1)", line 162, column 925)
+
+Warning: Update 1 of command 23 of module "STATE_1" doesn't do anything ("(s1'=1)", line 165, column 925)
+
+Warning: Update 1 of command 25 of module "STATE_1" doesn't do anything ("(s1'=1)", line 167, column 925)
+
+Warning: Update 1 of command 33 of module "STATE_1" doesn't do anything ("(s1'=1)", line 175, column 925)
+
+Warning: Update 1 of command 37 of module "STATE_1" doesn't do anything ("(s1'=1)", line 179, column 925)
+
+Warning: Update 2 of command 43 of module "STATE_6" doesn't do anything ("(s6'=0)", line 765, column 1848)
+
+Warning: Update 2 of command 46 of module "STATE_6" doesn't do anything ("(s6'=0)", line 768, column 1848)
+
+Warning: Update 2 of command 47 of module "STATE_6" doesn't do anything ("(s6'=0)", line 769, column 1848)
+
+Warning: Update 2 of command 50 of module "STATE_6" doesn't do anything ("(s6'=0)", line 772, column 1848)
+
+Warning: Update 2 of command 56 of module "STATE_6" doesn't do anything ("(s6'=0)", line 778, column 1848)
+
+Warning: Update 2 of command 60 of module "STATE_6" doesn't do anything ("(s6'=0)", line 782, column 1848)
+
+Warning: Update 2 of command 68 of module "STATE_6" doesn't do anything ("(s6'=0)", line 790, column 1848)
+
+Warning: Update 2 of command 70 of module "STATE_6" doesn't do anything ("(s6'=0)", line 792, column 1848)
+
+Warning: Update 2 of command 72 of module "STATE_6" doesn't do anything ("(s6'=0)", line 794, column 1848)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.07 seconds (average 0.008625, setup 0.00)
+
+Time for model construction: 64.046 seconds.
+
+Type:        MDP
+States:      35312 (1 initial)
+Transitions: 1146712
+Choices:     628597
+
+Transition matrix: 880274 nodes (14780 terminal), 1146712 minterms, vars: 28r/28c/9nd
+
+Building deterministic Rabin automaton (for X (F "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.135 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.03 seconds (average 0.004125, setup 0.00)
+States:      35312 (1 initial)
+Transitions: 1146712
+Choices:     628597
+
+Transition matrix: 947019 nodes (14780 terminal), 1146712 minterms, vars: 30r/30c/9nd
+
+Building deterministic Rabin automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.008 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.03 seconds (average 0.003625, setup 0.00)
+States:      35312 (1 initial)
+Transitions: 1146712
+Choices:     628597
+
+Transition matrix: 980071 nodes (14780 terminal), 1146712 minterms, vars: 32r/32c/9nd
+Total time for product construction: 1.202 seconds.
+
+States:      35312 (1 initial)
+Transitions: 1146712
+Choices:     628597
+
+Transition matrix: 980071 nodes (14780 terminal), 1146712 minterms, vars: 32r/32c/9nd
+
+Finding accepting end components for X (F xi)...
+Time for end component identification: 0.002 seconds.
+
+Finding accepting end components for X (G chi)...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 8 iterations in 0.07 seconds (average 0.008625, setup 0.00)
+
+yes = 9548, no = 109, maybe = 25655
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 1817.04 seconds (average 0.018170, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 100000 iterations in 1798.36 seconds (average 0.017984, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 16 warnings during computation.
+
