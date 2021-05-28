@@ -1,0 +1,123 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 03:02:52 GMT 2021
+Hostname: arcus-htc-node061
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-3-1-4-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/7-3-1-4.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-3-1-4-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-3-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!psi)|(F phi))) ]
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!psi)|(F phi))) ]
+
+Building model...
+
+Warning: Update 2 of command 53 of module "STATE_2" doesn't do anything ("(s2'=0)", line 287, column 1694)
+
+Warning: Update 2 of command 56 of module "STATE_2" doesn't do anything ("(s2'=0)", line 290, column 1694)
+
+Warning: Update 1 of command 4 of module "STATE_4" doesn't do anything ("(s4'=1)", line 446, column 815)
+
+Warning: Update 1 of command 12 of module "STATE_4" doesn't do anything ("(s4'=1)", line 454, column 815)
+
+Warning: Update 1 of command 16 of module "STATE_4" doesn't do anything ("(s4'=1)", line 458, column 815)
+
+Warning: Update 1 of command 18 of module "STATE_4" doesn't do anything ("(s4'=1)", line 460, column 815)
+
+Warning: Update 1 of command 20 of module "STATE_4" doesn't do anything ("(s4'=1)", line 462, column 815)
+
+Warning: Update 1 of command 21 of module "STATE_4" doesn't do anything ("(s4'=1)", line 463, column 815)
+
+Warning: Update 1 of command 24 of module "STATE_4" doesn't do anything ("(s4'=1)", line 466, column 815)
+
+Warning: Update 1 of command 32 of module "STATE_4" doesn't do anything ("(s4'=1)", line 474, column 815)
+
+Warning: Update 1 of command 33 of module "STATE_4" doesn't do anything ("(s4'=1)", line 475, column 815)
+
+Warning: Update 1 of command 66 of module "STATE_5" doesn't do anything ("(s5'=1)", line 612, column 900)
+
+Warning: Update 1 of command 71 of module "STATE_5" doesn't do anything ("(s5'=1)", line 617, column 900)
+
+Warning: Update 1 of command 89 of module "STATE_5" doesn't do anything ("(s5'=1)", line 635, column 900)
+
+Warning: Update 1 of command 90 of module "STATE_5" doesn't do anything ("(s5'=1)", line 636, column 900)
+
+Warning: Update 1 of command 93 of module "STATE_5" doesn't do anything ("(s5'=1)", line 639, column 900)
+
+Warning: Update 1 of command 96 of module "STATE_5" doesn't do anything ("(s5'=1)", line 642, column 900)
+
+Computing reachable states...
+
+Reachability (BFS): 7 iterations in 0.03 seconds (average 0.004571, setup 0.00)
+
+Time for model construction: 67.374 seconds.
+
+Type:        DTMC
+States:      847 (1 initial)
+Transitions: 6792
+
+Transition matrix: 153852 nodes (6110 terminal), 6792 minterms, vars: 27r/27c
+
+Building deterministic automaton (for X (G ("L0"|(F "L1"))))...
+DRA has 5 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.139 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 7 iterations in 0.01 seconds (average 0.001286, setup 0.00)
+
+States:      847 (1 initial)
+Transitions: 6792
+
+Transition matrix: 158111 nodes (6110 terminal), 6792 minterms, vars: 30r/30c
+
+Finding accepting BSCCs...
+
+SCCs: 11, BSCCs: 9, non-BSCC states: 815
+BSCC sizes: 1:2 2:2 3:2 4:2 5:2 6:2 7:2 8:2 9:16
+
+Computing reachability probabilities...
+
+Prob0: 11 iterations in 0.01 seconds (average 0.000636, setup 0.00)
+
+Prob1: 11 iterations in 0.01 seconds (average 0.000455, setup 0.00)
+
+yes = 46, no = 21, maybe = 780
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=30, nodes=156778] [7.2 MB]
+Adding explicit sparse matrices... [levels=30, num=1, compact] [74.1 KB]
+Creating vector for diagonals... [dist=1, compact] [1.7 KB]
+Creating vector for RHS... [dist=2, compact] [1.7 KB]
+Allocating iteration vectors... [2 x 6.6 KB]
+TOTAL: [7.3 MB]
+
+Starting iterations...
+
+Jacobi: 53 iterations in 13.07 seconds (average 0.000038, setup 13.06)
+
+Value in the initial state: 0.9559026066293005
+
+Time for model checking: 17.105 seconds.
+
+Result: 0.9559026066293005 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 17 warnings during computation.
+

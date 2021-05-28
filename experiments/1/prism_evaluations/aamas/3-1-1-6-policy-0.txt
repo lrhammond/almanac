@@ -1,0 +1,85 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:53:45 GMT 2021
+Hostname: arcus-htc-node045
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/3-1-1-6-policy.prism /home/hert5888/almanac/experiments/1/prism_specs/3-1-1-6.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/3-1-1-6-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/3-1-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000100, setup 0.00)
+
+Time for model construction: 0.121 seconds.
+
+Type:        DTMC
+States:      161 (1 initial)
+Transitions: 438
+
+Transition matrix: 604 nodes (30 terminal), 438 minterms, vars: 13r/13c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.202 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000100, setup 0.00)
+
+States:      173 (1 initial)
+Transitions: 486
+
+Transition matrix: 699 nodes (30 terminal), 486 minterms, vars: 15r/15c
+
+Finding accepting BSCCs...
+
+SCCs: 9, BSCCs: 2, non-BSCC states: 115
+BSCC sizes: 1:8 2:50
+
+Computing reachability probabilities...
+
+Prob0: 6 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Prob1: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 30, no = 142, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=15, nodes=139] [6.5 KB]
+Adding explicit sparse matrices... [levels=15, num=1, compact] [0.3 KB]
+Creating vector for diagonals... [dist=1, compact] [0.3 KB]
+Creating vector for RHS... [dist=2, compact] [0.4 KB]
+Allocating iteration vectors... [2 x 1.4 KB]
+TOTAL: [10.2 KB]
+
+Starting iterations...
+
+Jacobi: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.0011362140777393392
+
+Time for model checking: 0.263 seconds.
+
+Result: 0.0011362140777393392 (value in the initial state)
+

@@ -1,0 +1,174 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:19:34 GMT 2021
+Hostname: arcus-htc-node043
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/6-3-2-6.prism /home/hert5888/almanac/experiments/1/prism_specs/6-3-2-6.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/6-3-2-6.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/6-3-2-6.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+(3) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 q1 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+
+Building model...
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 30, column 651)
+
+Warning: Update 1 of command 6 of module "STATE_0" doesn't do anything ("(s0'=1)", line 33, column 651)
+
+Warning: Update 1 of command 17 of module "STATE_0" doesn't do anything ("(s0'=1)", line 44, column 651)
+
+Warning: Update 1 of command 19 of module "STATE_0" doesn't do anything ("(s0'=1)", line 46, column 651)
+
+Warning: Update 1 of command 20 of module "STATE_0" doesn't do anything ("(s0'=1)", line 47, column 651)
+
+Warning: Update 1 of command 25 of module "STATE_0" doesn't do anything ("(s0'=1)", line 52, column 651)
+
+Warning: Update 1 of command 26 of module "STATE_0" doesn't do anything ("(s0'=1)", line 53, column 651)
+
+Warning: Update 1 of command 27 of module "STATE_0" doesn't do anything ("(s0'=1)", line 54, column 651)
+
+Warning: Update 1 of command 30 of module "STATE_0" doesn't do anything ("(s0'=1)", line 57, column 651)
+
+Warning: Update 1 of command 66 of module "STATE_0" doesn't do anything ("(s0'=1)", line 93, column 534)
+
+Warning: Update 1 of command 70 of module "STATE_0" doesn't do anything ("(s0'=1)", line 97, column 534)
+
+Warning: Update 1 of command 76 of module "STATE_0" doesn't do anything ("(s0'=1)", line 103, column 534)
+
+Warning: Update 1 of command 77 of module "STATE_0" doesn't do anything ("(s0'=1)", line 104, column 534)
+
+Warning: Update 1 of command 78 of module "STATE_0" doesn't do anything ("(s0'=1)", line 105, column 534)
+
+Warning: Update 1 of command 84 of module "STATE_0" doesn't do anything ("(s0'=1)", line 111, column 534)
+
+Warning: Update 1 of command 86 of module "STATE_0" doesn't do anything ("(s0'=1)", line 113, column 534)
+
+Warning: Update 1 of command 96 of module "STATE_0" doesn't do anything ("(s0'=1)", line 123, column 534)
+
+Warning: Update 1 of command 66 of module "STATE_1" doesn't do anything ("(s1'=1)", line 198, column 534)
+
+Warning: Update 1 of command 70 of module "STATE_1" doesn't do anything ("(s1'=1)", line 202, column 534)
+
+Warning: Update 1 of command 76 of module "STATE_1" doesn't do anything ("(s1'=1)", line 208, column 534)
+
+Warning: Update 1 of command 77 of module "STATE_1" doesn't do anything ("(s1'=1)", line 209, column 534)
+
+Warning: Update 1 of command 78 of module "STATE_1" doesn't do anything ("(s1'=1)", line 210, column 534)
+
+Warning: Update 1 of command 84 of module "STATE_1" doesn't do anything ("(s1'=1)", line 216, column 534)
+
+Warning: Update 1 of command 86 of module "STATE_1" doesn't do anything ("(s1'=1)", line 218, column 534)
+
+Warning: Update 1 of command 96 of module "STATE_1" doesn't do anything ("(s1'=1)", line 228, column 534)
+
+Warning: Update 1 of command 40 of module "STATE_3" doesn't do anything ("(s3'=1)", line 382, column 611)
+
+Warning: Update 1 of command 46 of module "STATE_3" doesn't do anything ("(s3'=1)", line 388, column 611)
+
+Warning: Update 1 of command 51 of module "STATE_3" doesn't do anything ("(s3'=1)", line 393, column 611)
+
+Warning: Update 1 of command 54 of module "STATE_3" doesn't do anything ("(s3'=1)", line 396, column 611)
+
+Warning: Update 1 of command 59 of module "STATE_3" doesn't do anything ("(s3'=1)", line 401, column 611)
+
+Warning: Update 1 of command 66 of module "STATE_3" doesn't do anything ("(s3'=1)", line 408, column 534)
+
+Warning: Update 1 of command 70 of module "STATE_3" doesn't do anything ("(s3'=1)", line 412, column 534)
+
+Warning: Update 1 of command 76 of module "STATE_3" doesn't do anything ("(s3'=1)", line 418, column 534)
+
+Warning: Update 1 of command 77 of module "STATE_3" doesn't do anything ("(s3'=1)", line 419, column 534)
+
+Warning: Update 1 of command 78 of module "STATE_3" doesn't do anything ("(s3'=1)", line 420, column 534)
+
+Warning: Update 1 of command 84 of module "STATE_3" doesn't do anything ("(s3'=1)", line 426, column 534)
+
+Warning: Update 1 of command 86 of module "STATE_3" doesn't do anything ("(s3'=1)", line 428, column 534)
+
+Warning: Update 1 of command 96 of module "STATE_3" doesn't do anything ("(s3'=1)", line 438, column 534)
+
+Computing reachable states...
+
+Reachability (BFS): 12 iterations in 0.05 seconds (average 0.004000, setup 0.00)
+
+Time for model construction: 10.418 seconds.
+
+Type:        MDP
+States:      69627 (1 initial)
+Transitions: 2242960
+Choices:     2041801
+
+Transition matrix: 314979 nodes (2918 terminal), 2242960 minterms, vars: 27r/27c/11nd
+
+Building deterministic Rabin automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.143 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 12 iterations in 0.04 seconds (average 0.002917, setup 0.00)
+States:      74175 (1 initial)
+Transitions: 2584060
+Choices:     2382901
+
+Transition matrix: 352555 nodes (2918 terminal), 2584060 minterms, vars: 29r/29c/11nd
+
+Building deterministic Rabin automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.011 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 14 iterations in 0.52 seconds (average 0.037286, setup 0.00)
+States:      110934 (1 initial)
+Transitions: 3822004
+Choices:     3508126
+
+Transition matrix: 466016 nodes (2918 terminal), 3822004 minterms, vars: 31r/31c/11nd
+Total time for product construction: 2.067 seconds.
+
+States:      110934 (1 initial)
+Transitions: 3822004
+Choices:     3508126
+
+Transition matrix: 466016 nodes (2918 terminal), 3822004 minterms, vars: 31r/31c/11nd
+
+Finding accepting end components for X (F G ((!phi)|(!xi)))...
+Time for end component identification: 0.024 seconds.
+
+Finding accepting end components for X (G ((!phi)|(X (chi))))...
+Time for end component identification: 0.002 seconds.
+
+Prob0A: 5 iterations in 0.56 seconds (average 0.111800, setup 0.00)
+
+yes = 44469, no = 0, maybe = 66465
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 8024.96 seconds (average 0.080250, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 100000 iterations in 7388.48 seconds (average 0.073885, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 38 warnings during computation.
+

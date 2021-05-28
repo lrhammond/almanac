@@ -1,0 +1,230 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:48:04 GMT 2021
+Hostname: arcus-htc-node043
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/1-5-2-3.prism /home/hert5888/almanac/experiments/1/prism_specs/1-5-2-3.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/1-5-2-3.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/1-5-2-3.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G chi) ])
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+(3) P=? [ X (G chi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 ACTION_3 ACTION_4 
+Variables:   i t s0 q0 q1 a0 a1 a2 a3 a4 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G chi) ])
+
+Building model...
+
+Warning: Update 1 of command 4 of module "STATE_0" doesn't do anything ("(s0'=1)", line 31, column 93)
+
+Warning: Update 1 of command 5 of module "STATE_0" doesn't do anything ("(s0'=1)", line 32, column 93)
+
+Warning: Update 1 of command 7 of module "STATE_0" doesn't do anything ("(s0'=1)", line 34, column 93)
+
+Warning: Update 1 of command 9 of module "STATE_0" doesn't do anything ("(s0'=1)", line 36, column 93)
+
+Warning: Update 1 of command 10 of module "STATE_0" doesn't do anything ("(s0'=1)", line 37, column 93)
+
+Warning: Update 1 of command 11 of module "STATE_0" doesn't do anything ("(s0'=1)", line 38, column 93)
+
+Warning: Update 1 of command 13 of module "STATE_0" doesn't do anything ("(s0'=1)", line 40, column 93)
+
+Warning: Update 1 of command 14 of module "STATE_0" doesn't do anything ("(s0'=1)", line 41, column 93)
+
+Warning: Update 1 of command 15 of module "STATE_0" doesn't do anything ("(s0'=1)", line 42, column 93)
+
+Warning: Update 1 of command 17 of module "STATE_0" doesn't do anything ("(s0'=1)", line 44, column 93)
+
+Warning: Update 1 of command 18 of module "STATE_0" doesn't do anything ("(s0'=1)", line 45, column 93)
+
+Warning: Update 1 of command 19 of module "STATE_0" doesn't do anything ("(s0'=1)", line 46, column 93)
+
+Warning: Update 1 of command 20 of module "STATE_0" doesn't do anything ("(s0'=1)", line 47, column 93)
+
+Warning: Update 1 of command 21 of module "STATE_0" doesn't do anything ("(s0'=1)", line 48, column 93)
+
+Warning: Update 1 of command 24 of module "STATE_0" doesn't do anything ("(s0'=1)", line 51, column 93)
+
+Warning: Update 1 of command 26 of module "STATE_0" doesn't do anything ("(s0'=1)", line 53, column 93)
+
+Warning: Update 1 of command 29 of module "STATE_0" doesn't do anything ("(s0'=1)", line 56, column 93)
+
+Warning: Update 1 of command 30 of module "STATE_0" doesn't do anything ("(s0'=1)", line 57, column 93)
+
+Warning: Update 1 of command 32 of module "STATE_0" doesn't do anything ("(s0'=1)", line 59, column 93)
+
+Warning: Update 1 of command 34 of module "STATE_0" doesn't do anything ("(s0'=1)", line 61, column 93)
+
+Warning: Update 1 of command 38 of module "STATE_0" doesn't do anything ("(s0'=1)", line 65, column 93)
+
+Warning: Update 1 of command 43 of module "STATE_0" doesn't do anything ("(s0'=1)", line 70, column 93)
+
+Warning: Update 1 of command 47 of module "STATE_0" doesn't do anything ("(s0'=1)", line 74, column 93)
+
+Warning: Update 1 of command 48 of module "STATE_0" doesn't do anything ("(s0'=1)", line 75, column 93)
+
+Warning: Update 1 of command 51 of module "STATE_0" doesn't do anything ("(s0'=1)", line 78, column 93)
+
+Warning: Update 1 of command 52 of module "STATE_0" doesn't do anything ("(s0'=1)", line 79, column 93)
+
+Warning: Update 1 of command 55 of module "STATE_0" doesn't do anything ("(s0'=1)", line 82, column 93)
+
+Warning: Update 1 of command 56 of module "STATE_0" doesn't do anything ("(s0'=1)", line 83, column 93)
+
+Warning: Update 1 of command 60 of module "STATE_0" doesn't do anything ("(s0'=1)", line 87, column 93)
+
+Warning: Update 1 of command 61 of module "STATE_0" doesn't do anything ("(s0'=1)", line 88, column 93)
+
+Warning: Update 1 of command 62 of module "STATE_0" doesn't do anything ("(s0'=1)", line 89, column 93)
+
+Warning: Update 1 of command 67 of module "STATE_0" doesn't do anything ("(s0'=1)", line 94, column 93)
+
+Warning: Update 1 of command 69 of module "STATE_0" doesn't do anything ("(s0'=1)", line 96, column 93)
+
+Warning: Update 1 of command 70 of module "STATE_0" doesn't do anything ("(s0'=1)", line 97, column 93)
+
+Warning: Update 1 of command 71 of module "STATE_0" doesn't do anything ("(s0'=1)", line 98, column 93)
+
+Warning: Update 1 of command 72 of module "STATE_0" doesn't do anything ("(s0'=1)", line 99, column 93)
+
+Warning: Update 1 of command 73 of module "STATE_0" doesn't do anything ("(s0'=1)", line 100, column 93)
+
+Warning: Update 1 of command 81 of module "STATE_0" doesn't do anything ("(s0'=1)", line 108, column 93)
+
+Warning: Update 1 of command 82 of module "STATE_0" doesn't do anything ("(s0'=1)", line 109, column 93)
+
+Warning: Update 1 of command 83 of module "STATE_0" doesn't do anything ("(s0'=1)", line 110, column 93)
+
+Warning: Update 1 of command 85 of module "STATE_0" doesn't do anything ("(s0'=1)", line 112, column 93)
+
+Warning: Update 1 of command 88 of module "STATE_0" doesn't do anything ("(s0'=1)", line 115, column 93)
+
+Warning: Update 1 of command 89 of module "STATE_0" doesn't do anything ("(s0'=1)", line 116, column 93)
+
+Warning: Update 1 of command 94 of module "STATE_0" doesn't do anything ("(s0'=1)", line 121, column 93)
+
+Warning: Update 1 of command 95 of module "STATE_0" doesn't do anything ("(s0'=1)", line 122, column 93)
+
+Warning: Update 1 of command 98 of module "STATE_0" doesn't do anything ("(s0'=1)", line 125, column 93)
+
+Warning: Update 1 of command 101 of module "STATE_0" doesn't do anything ("(s0'=1)", line 128, column 93)
+
+Warning: Update 1 of command 104 of module "STATE_0" doesn't do anything ("(s0'=1)", line 131, column 93)
+
+Warning: Update 1 of command 106 of module "STATE_0" doesn't do anything ("(s0'=1)", line 133, column 93)
+
+Warning: Update 1 of command 107 of module "STATE_0" doesn't do anything ("(s0'=1)", line 134, column 93)
+
+Warning: Update 1 of command 108 of module "STATE_0" doesn't do anything ("(s0'=1)", line 135, column 93)
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 9 iterations in 0.00 seconds (average 0.000222, setup 0.00)
+
+Time for model construction: 0.319 seconds.
+
+Type:        MDP
+States:      7023 (1 initial)
+Transitions: 1395074
+Choices:     1395073
+
+Transition matrix: 76809 nodes (4 terminal), 1395074 minterms, vars: 22r/22c/13nd
+
+Building deterministic Rabin automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.13 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 9 iterations in 0.00 seconds (average 0.000222, setup 0.00)
+States:      7023 (1 initial)
+Transitions: 1395074
+Choices:     1395073
+
+Transition matrix: 92975 nodes (4 terminal), 1395074 minterms, vars: 24r/24c/13nd
+
+Building deterministic Rabin automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.005 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 9 iterations in 0.00 seconds (average 0.000222, setup 0.00)
+States:      7023 (1 initial)
+Transitions: 1395074
+Choices:     1395073
+
+Transition matrix: 97603 nodes (4 terminal), 1395074 minterms, vars: 26r/26c/13nd
+Total time for product construction: 0.489 seconds.
+
+States:      7023 (1 initial)
+Transitions: 1395074
+Choices:     1395073
+
+Transition matrix: 97603 nodes (4 terminal), 1395074 minterms, vars: 26r/26c/13nd
+
+Finding accepting end components for X (F G ((!phi)|(!xi)))...
+Time for end component identification: 0.0 seconds.
+
+Finding accepting end components for X (G chi)...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 4 iterations in 0.12 seconds (average 0.030250, setup 0.00)
+
+yes = 3684, no = 0, maybe = 3339
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 7 iterations in 0.20 seconds (average 0.028143, setup 0.00)
+Optimal value for weights [1.000000,0.000000] from initial state: 1.000000
+Computed point: (1.0, 0.0)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 5 iterations in 0.14 seconds (average 0.028600, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.663737
+Computed point: (0.0, 0.6637369990348816)
+Optimising weighted sum of objectives: weights (0.39894346247027584, 0.6010565375297242)
+Iterative method: 5 iterations in 0.14 seconds (average 0.028600, setup 0.00)
+Optimal value for weights [0.398943,0.601057] from initial state: 0.533093
+Optimising weighted sum of objectives: weights (0.0, 1.0)
+Iterative method: 5 iterations in 0.14 seconds (average 0.028600, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.663737
+Optimising weighted sum of objectives: weights (0.5, 0.5)
+Iterative method: 5 iterations in 0.14 seconds (average 0.028600, setup 0.00)
+Optimal value for weights [0.500000,0.500000] from initial state: 0.500000
+The value iteration(s) took 1.537 seconds altogether.
+Number of weight vectors used: 3
+Multi-objective value iterations took 1.538 s.
+
+Value in the initial state: [(0.3362630009651184, 0.6637369990348816), (1.0, 0.0)]
+
+Time for model checking: 2.686 seconds.
+
+Result: [(0.3362630009651184, 0.6637369990348816), (1.0, 0.0)] (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 57 warnings during computation.
+

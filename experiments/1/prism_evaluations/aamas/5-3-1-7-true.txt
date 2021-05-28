@@ -1,0 +1,164 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:08:48 GMT 2021
+Hostname: arcus-htc-node040
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/5-3-1-7.prism /home/hert5888/almanac/experiments/1/prism_specs/5-3-1-7.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/5-3-1-7.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/5-3-1-7.props"...
+
+2 properties:
+(1) Pmax=? [ X ((!xi) U psi) ]
+(2) P=? [ X ((!xi) U psi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X ((!xi) U psi) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_0" doesn't do anything ("(s0'=1)", line 28, column 453)
+
+Warning: Update 1 of command 5 of module "STATE_0" doesn't do anything ("(s0'=1)", line 31, column 453)
+
+Warning: Update 1 of command 6 of module "STATE_0" doesn't do anything ("(s0'=1)", line 32, column 453)
+
+Warning: Update 1 of command 8 of module "STATE_0" doesn't do anything ("(s0'=1)", line 34, column 453)
+
+Warning: Update 1 of command 16 of module "STATE_0" doesn't do anything ("(s0'=1)", line 42, column 453)
+
+Warning: Update 1 of command 20 of module "STATE_0" doesn't do anything ("(s0'=1)", line 46, column 487)
+
+Warning: Update 2 of command 30 of module "STATE_0" doesn't do anything ("(s0'=0)", line 56, column 1063)
+
+Warning: Update 2 of command 31 of module "STATE_0" doesn't do anything ("(s0'=0)", line 57, column 1063)
+
+Warning: Update 2 of command 34 of module "STATE_0" doesn't do anything ("(s0'=0)", line 60, column 1063)
+
+Warning: Update 1 of command 38 of module "STATE_0" doesn't do anything ("(s0'=1)", line 64, column 537)
+
+Warning: Update 1 of command 47 of module "STATE_0" doesn't do anything ("(s0'=1)", line 73, column 537)
+
+Warning: Update 1 of command 48 of module "STATE_0" doesn't do anything ("(s0'=1)", line 74, column 537)
+
+Warning: Update 1 of command 52 of module "STATE_0" doesn't do anything ("(s0'=1)", line 78, column 537)
+
+Warning: Update 1 of command 22 of module "STATE_1" doesn't do anything ("(s1'=1)", line 110, column 430)
+
+Warning: Update 1 of command 23 of module "STATE_1" doesn't do anything ("(s1'=1)", line 111, column 430)
+
+Warning: Update 1 of command 24 of module "STATE_1" doesn't do anything ("(s1'=1)", line 112, column 430)
+
+Warning: Update 1 of command 26 of module "STATE_1" doesn't do anything ("(s1'=1)", line 114, column 430)
+
+Warning: Update 1 of command 29 of module "STATE_1" doesn't do anything ("(s1'=1)", line 117, column 430)
+
+Warning: Update 1 of command 32 of module "STATE_1" doesn't do anything ("(s1'=1)", line 120, column 430)
+
+Warning: Update 1 of command 33 of module "STATE_1" doesn't do anything ("(s1'=1)", line 121, column 430)
+
+Warning: Update 1 of command 36 of module "STATE_1" doesn't do anything ("(s1'=1)", line 124, column 430)
+
+Warning: Update 1 of command 37 of module "STATE_1" doesn't do anything ("(s1'=1)", line 125, column 430)
+
+Warning: Update 1 of command 10 of module "STATE_2" doesn't do anything ("(s2'=1)", line 160, column 463)
+
+Warning: Update 1 of command 15 of module "STATE_2" doesn't do anything ("(s2'=1)", line 165, column 463)
+
+Warning: Update 1 of command 17 of module "STATE_2" doesn't do anything ("(s2'=1)", line 167, column 463)
+
+Warning: Update 1 of command 18 of module "STATE_2" doesn't do anything ("(s2'=1)", line 168, column 463)
+
+Warning: Update 1 of command 22 of module "STATE_3" doesn't do anything ("(s3'=1)", line 234, column 430)
+
+Warning: Update 1 of command 23 of module "STATE_3" doesn't do anything ("(s3'=1)", line 235, column 430)
+
+Warning: Update 1 of command 24 of module "STATE_3" doesn't do anything ("(s3'=1)", line 236, column 430)
+
+Warning: Update 1 of command 26 of module "STATE_3" doesn't do anything ("(s3'=1)", line 238, column 430)
+
+Warning: Update 1 of command 29 of module "STATE_3" doesn't do anything ("(s3'=1)", line 241, column 430)
+
+Warning: Update 1 of command 32 of module "STATE_3" doesn't do anything ("(s3'=1)", line 244, column 430)
+
+Warning: Update 1 of command 33 of module "STATE_3" doesn't do anything ("(s3'=1)", line 245, column 430)
+
+Warning: Update 1 of command 36 of module "STATE_3" doesn't do anything ("(s3'=1)", line 248, column 430)
+
+Warning: Update 1 of command 37 of module "STATE_3" doesn't do anything ("(s3'=1)", line 249, column 430)
+
+Warning: Guard for command 2 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 6 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 10 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.000875, setup 0.00)
+
+Time for model construction: 0.811 seconds.
+
+Type:        MDP
+States:      2904 (1 initial)
+Transitions: 28388
+Choices:     23491
+
+Transition matrix: 25877 nodes (476 terminal), 28388 minterms, vars: 20r/20c/8nd
+
+Building deterministic automaton (for X ("L0" U "L1"))...
+DFA has 4 states, 1 goal states.
+Time for deterministic automaton translation: 0.27 seconds.
+
+Constructing MDP-DFA product...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.000750, setup 0.00)
+Time for product construction: 0.056 seconds.
+
+States:      2904 (1 initial)
+Transitions: 28388
+Choices:     23491
+
+Transition matrix: 34676 nodes (476 terminal), 28388 minterms, vars: 22r/22c/8nd
+
+Skipping accepting MEC computation since acceptance is defined via goal states...
+
+Computing reachability probabilities...
+
+Prob0A: 6 iterations in 0.05 seconds (average 0.008833, setup 0.00)
+
+Prob1E: 24 iterations in 0.04 seconds (average 0.001667, setup 0.00)
+
+yes = 1072, no = 1228, maybe = 604
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=20, levels=22, nodes=16034] [751.6 KB]
+Adding sparse bits... [levels=22-22, num=20, compact=20/20] [82.0 KB]
+Creating vector for yes... [dist=2, compact] [5.7 KB]
+Allocating iteration vectors... [3 x 22.7 KB]
+TOTAL: [907.3 KB]
+
+Starting iterations...
+
+Iterative method: 46 iterations in 0.06 seconds (average 0.000217, setup 0.05)
+
+Value in the initial state: 0.6520353081715422
+
+Time for model checking: 0.533 seconds.
+
+Result: 0.6520353081715422 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 38 warnings during computation.
+

@@ -1,0 +1,150 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 05:33:24 GMT 2021
+Hostname: arcus-htc-node016
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/8-3-2-7.prism /home/hert5888/almanac/experiments/1/prism_specs/8-3-2-7.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/8-3-2-7.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/8-3-2-7.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F xi) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+(2) P=? [ X (F xi) ]
+(3) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 q0 q1 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F xi) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_0" doesn't do anything ("(s0'=1)", line 28, column 1154)
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 29, column 1154)
+
+Warning: Update 1 of command 6 of module "STATE_0" doesn't do anything ("(s0'=1)", line 32, column 1154)
+
+Warning: Update 1 of command 7 of module "STATE_0" doesn't do anything ("(s0'=1)", line 33, column 1154)
+
+Warning: Update 1 of command 14 of module "STATE_0" doesn't do anything ("(s0'=1)", line 40, column 1154)
+
+Warning: Update 1 of command 19 of module "STATE_0" doesn't do anything ("(s0'=1)", line 45, column 1125)
+
+Warning: Update 1 of command 21 of module "STATE_0" doesn't do anything ("(s0'=1)", line 47, column 1125)
+
+Warning: Update 1 of command 25 of module "STATE_0" doesn't do anything ("(s0'=1)", line 51, column 1125)
+
+Warning: Update 1 of command 27 of module "STATE_0" doesn't do anything ("(s0'=1)", line 53, column 1125)
+
+Warning: Update 1 of command 28 of module "STATE_0" doesn't do anything ("(s0'=1)", line 54, column 1125)
+
+Warning: Update 1 of command 30 of module "STATE_0" doesn't do anything ("(s0'=1)", line 56, column 1125)
+
+Warning: Update 1 of command 53 of module "STATE_2" doesn't do anything ("(s2'=1)", line 223, column 1247)
+
+Warning: Update 1 of command 55 of module "STATE_2" doesn't do anything ("(s2'=1)", line 225, column 1247)
+
+Warning: Update 1 of command 35 of module "STATE_3" doesn't do anything ("(s3'=1)", line 277, column 1201)
+
+Warning: Update 1 of command 43 of module "STATE_3" doesn't do anything ("(s3'=1)", line 285, column 1201)
+
+Warning: Update 1 of command 48 of module "STATE_3" doesn't do anything ("(s3'=1)", line 290, column 1201)
+
+Warning: Update 2 of command 34 of module "STATE_6" doesn't do anything ("(s6'=0)", line 492, column 2420)
+
+Warning: Update 2 of command 36 of module "STATE_6" doesn't do anything ("(s6'=0)", line 494, column 2420)
+
+Warning: Update 2 of command 37 of module "STATE_6" doesn't do anything ("(s6'=0)", line 495, column 2420)
+
+Warning: Update 2 of command 38 of module "STATE_6" doesn't do anything ("(s6'=0)", line 496, column 2420)
+
+Warning: Update 1 of command 40 of module "STATE_6" doesn't do anything ("(s6'=1)", line 498, column 1166)
+
+Warning: Update 1 of command 42 of module "STATE_6" doesn't do anything ("(s6'=1)", line 500, column 1166)
+
+Warning: Update 1 of command 44 of module "STATE_6" doesn't do anything ("(s6'=1)", line 502, column 1166)
+
+Warning: Update 2 of command 45 of module "STATE_6" doesn't do anything ("(s6'=0)", line 503, column 2420)
+
+Warning: Update 1 of command 46 of module "STATE_6" doesn't do anything ("(s6'=1)", line 504, column 1166)
+
+Warning: Update 1 of command 49 of module "STATE_6" doesn't do anything ("(s6'=1)", line 507, column 1166)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.29 seconds (average 0.036375, setup 0.00)
+
+Time for model construction: 389.062 seconds.
+
+Type:        MDP
+States:      46166 (1 initial)
+Transitions: 1408652
+Choices:     371201
+
+Transition matrix: 2119801 nodes (44692 terminal), 1408652 minterms, vars: 31r/31c/7nd
+
+Building deterministic Rabin automaton (for X (F "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.303 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 29.17 seconds (average 3.646625, setup 0.00)
+States:      46166 (1 initial)
+Transitions: 1408652
+Choices:     371201
+
+Transition matrix: 2269615 nodes (44692 terminal), 1408652 minterms, vars: 33r/33c/7nd
+
+Building deterministic Rabin automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.013 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.23 seconds (average 0.023400, setup 0.00)
+States:      60402 (1 initial)
+Transitions: 1809176
+Choices:     499617
+
+Transition matrix: 2603006 nodes (44692 terminal), 1809176 minterms, vars: 35r/35c/7nd
+Total time for product construction: 35.348 seconds.
+
+States:      60402 (1 initial)
+Transitions: 1809176
+Choices:     499617
+
+Transition matrix: 2603006 nodes (44692 terminal), 1809176 minterms, vars: 35r/35c/7nd
+
+Finding accepting end components for X (F xi)...
+Time for end component identification: 0.008 seconds.
+
+Finding accepting end components for X (G ((!phi)|(X (chi))))...
+Time for end component identification: 0.007 seconds.
+
+Prob0A: 8 iterations in 0.26 seconds (average 0.032125, setup 0.00)
+
+yes = 12092, no = 0, maybe = 48310
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 2106.01 seconds (average 0.021060, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 100000 iterations in 2083.36 seconds (average 0.020834, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 26 warnings during computation.
+

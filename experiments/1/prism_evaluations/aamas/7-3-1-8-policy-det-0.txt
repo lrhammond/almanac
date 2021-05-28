@@ -1,0 +1,139 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:55:10 GMT 2021
+Hostname: arcus-htc-node056
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-3-1-8-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/7-3-1-8.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-3-1-8-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-3-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 6 of module "STATE_0" doesn't do anything ("(s0'=1)", line 33, column 822)
+
+Warning: Update 1 of command 7 of module "STATE_0" doesn't do anything ("(s0'=1)", line 34, column 822)
+
+Warning: Update 1 of command 8 of module "STATE_0" doesn't do anything ("(s0'=1)", line 35, column 822)
+
+Warning: Update 1 of command 14 of module "STATE_0" doesn't do anything ("(s0'=1)", line 41, column 822)
+
+Warning: Update 1 of command 17 of module "STATE_0" doesn't do anything ("(s0'=1)", line 44, column 822)
+
+Warning: Update 2 of command 23 of module "STATE_1" doesn't do anything ("(s1'=0)", line 113, column 1756)
+
+Warning: Update 2 of command 28 of module "STATE_1" doesn't do anything ("(s1'=0)", line 118, column 1756)
+
+Warning: Update 2 of command 29 of module "STATE_1" doesn't do anything ("(s1'=0)", line 119, column 1756)
+
+Warning: Update 2 of command 32 of module "STATE_1" doesn't do anything ("(s1'=0)", line 122, column 1756)
+
+Warning: Update 2 of command 34 of module "STATE_1" doesn't do anything ("(s1'=0)", line 124, column 1756)
+
+Warning: Update 2 of command 36 of module "STATE_1" doesn't do anything ("(s1'=0)", line 126, column 1756)
+
+Warning: Update 2 of command 20 of module "STATE_3" doesn't do anything ("(s3'=0)", line 236, column 2198)
+
+Warning: Update 2 of command 22 of module "STATE_3" doesn't do anything ("(s3'=0)", line 238, column 2198)
+
+Warning: Update 1 of command 23 of module "STATE_3" doesn't do anything ("(s3'=1)", line 239, column 873)
+
+Warning: Update 2 of command 24 of module "STATE_3" doesn't do anything ("(s3'=0)", line 240, column 2198)
+
+Warning: Update 1 of command 28 of module "STATE_3" doesn't do anything ("(s3'=1)", line 244, column 873)
+
+Warning: Update 1 of command 29 of module "STATE_3" doesn't do anything ("(s3'=1)", line 245, column 873)
+
+Warning: Update 2 of command 31 of module "STATE_3" doesn't do anything ("(s3'=0)", line 247, column 2198)
+
+Warning: Update 1 of command 32 of module "STATE_3" doesn't do anything ("(s3'=1)", line 248, column 873)
+
+Warning: Update 1 of command 34 of module "STATE_3" doesn't do anything ("(s3'=1)", line 250, column 873)
+
+Warning: Update 1 of command 36 of module "STATE_3" doesn't do anything ("(s3'=1)", line 252, column 873)
+
+Warning: Update 1 of command 42 of module "STATE_6" doesn't do anything ("(s6'=1)", line 447, column 919)
+
+Warning: Update 1 of command 48 of module "STATE_6" doesn't do anything ("(s6'=1)", line 453, column 919)
+
+Warning: Update 1 of command 53 of module "STATE_6" doesn't do anything ("(s6'=1)", line 458, column 919)
+
+Warning: Update 1 of command 55 of module "STATE_6" doesn't do anything ("(s6'=1)", line 460, column 919)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.02 seconds (average 0.002875, setup 0.00)
+
+Time for model construction: 45.241 seconds.
+
+Type:        DTMC
+States:      1033 (1 initial)
+Transitions: 3976
+
+Transition matrix: 73673 nodes (2802 terminal), 3976 minterms, vars: 27r/27c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.159 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 8 iterations in 0.01 seconds (average 0.000750, setup 0.00)
+
+States:      1033 (1 initial)
+Transitions: 3976
+
+Transition matrix: 75837 nodes (2802 terminal), 3976 minterms, vars: 29r/29c
+
+Finding accepting BSCCs...
+
+SCCs: 145, BSCCs: 143, non-BSCC states: 745
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 7 iterations in 0.00 seconds (average 0.000571, setup 0.00)
+
+Prob1: 11 iterations in 0.00 seconds (average 0.000364, setup 0.00)
+
+yes = 490, no = 42, maybe = 501
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=29, nodes=74004] [3.4 MB]
+Adding explicit sparse matrices... [levels=29, num=1, compact] [35.6 KB]
+Creating vector for diagonals... [dist=1, compact] [2.0 KB]
+Creating vector for RHS... [dist=2, compact] [2.0 KB]
+Allocating iteration vectors... [2 x 8.1 KB]
+TOTAL: [3.4 MB]
+
+Starting iterations...
+
+Jacobi: 35 iterations in 1.73 seconds (average 0.000000, setup 1.73)
+
+Value in the initial state: 0.9964836981883199
+
+Time for model checking: 4.534 seconds.
+
+Result: 0.9964836981883199 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 25 warnings during computation.
+

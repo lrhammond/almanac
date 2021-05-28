@@ -1,0 +1,144 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 03:20:00 GMT 2021
+Hostname: arcus-htc-node046
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/8-3-2-2.prism /home/hert5888/almanac/experiments/1/prism_specs/8-3-2-2.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/8-3-2-2.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/8-3-2-2.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X ((!xi) U psi) ], Pmax=? [ X (G chi) ])
+(2) P=? [ X ((!xi) U psi) ]
+(3) P=? [ X (G chi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 q0 q1 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X ((!xi) U psi) ], Pmax=? [ X (G chi) ])
+
+Building model...
+
+Warning: Update 1 of command 116 of module "STATE_0" doesn't do anything ("(s0'=1)", line 142, column 1161)
+
+Warning: Update 1 of command 129 of module "STATE_0" doesn't do anything ("(s0'=1)", line 155, column 1161)
+
+Warning: Update 1 of command 139 of module "STATE_0" doesn't do anything ("(s0'=1)", line 165, column 1161)
+
+Warning: Update 1 of command 142 of module "STATE_0" doesn't do anything ("(s0'=1)", line 168, column 1161)
+
+Warning: Update 1 of command 143 of module "STATE_0" doesn't do anything ("(s0'=1)", line 169, column 1161)
+
+Warning: Update 1 of command 38 of module "STATE_2" doesn't do anything ("(s2'=1)", line 368, column 1037)
+
+Warning: Update 1 of command 39 of module "STATE_2" doesn't do anything ("(s2'=1)", line 369, column 1037)
+
+Warning: Update 1 of command 40 of module "STATE_2" doesn't do anything ("(s2'=1)", line 370, column 1037)
+
+Warning: Update 1 of command 42 of module "STATE_2" doesn't do anything ("(s2'=1)", line 372, column 1037)
+
+Warning: Update 1 of command 57 of module "STATE_2" doesn't do anything ("(s2'=1)", line 387, column 1037)
+
+Warning: Update 1 of command 59 of module "STATE_2" doesn't do anything ("(s2'=1)", line 389, column 1037)
+
+Warning: Update 1 of command 61 of module "STATE_2" doesn't do anything ("(s2'=1)", line 391, column 1037)
+
+Warning: Update 1 of command 63 of module "STATE_2" doesn't do anything ("(s2'=1)", line 393, column 1037)
+
+Warning: Update 1 of command 3 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1093, column 1066)
+
+Warning: Update 1 of command 6 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1096, column 1066)
+
+Warning: Update 1 of command 7 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1097, column 1066)
+
+Warning: Update 1 of command 14 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1104, column 1066)
+
+Warning: Update 1 of command 18 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1108, column 1066)
+
+Warning: Update 1 of command 21 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1111, column 1066)
+
+Warning: Update 1 of command 24 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1114, column 1066)
+
+Warning: Update 1 of command 25 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1115, column 1066)
+
+Warning: Update 1 of command 28 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1118, column 1066)
+
+Warning: Update 1 of command 33 of module "STATE_7" doesn't do anything ("(s7'=1)", line 1123, column 1066)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.26 seconds (average 0.032250, setup 0.00)
+
+Time for model construction: 306.852 seconds.
+
+Type:        MDP
+States:      107999 (1 initial)
+Transitions: 4549030
+Choices:     1957609
+
+Transition matrix: 2692419 nodes (46928 terminal), 4549030 minterms, vars: 30r/30c/9nd
+
+Building deterministic Rabin automaton (for X ("L0" U "L1"))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.25 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.16 seconds (average 0.019500, setup 0.00)
+States:      107999 (1 initial)
+Transitions: 4549030
+Choices:     1957609
+
+Transition matrix: 2974904 nodes (46928 terminal), 4549030 minterms, vars: 32r/32c/9nd
+
+Building deterministic Rabin automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.003 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.21 seconds (average 0.026875, setup 0.00)
+States:      107999 (1 initial)
+Transitions: 4549030
+Choices:     1957609
+
+Transition matrix: 3543365 nodes (46928 terminal), 4549030 minterms, vars: 34r/34c/9nd
+Total time for product construction: 30.399 seconds.
+
+States:      107999 (1 initial)
+Transitions: 4549030
+Choices:     1957609
+
+Transition matrix: 3543365 nodes (46928 terminal), 4549030 minterms, vars: 34r/34c/9nd
+
+Finding accepting end components for X ((!xi) U psi)...
+Time for end component identification: 0.004 seconds.
+
+Finding accepting end components for X (G chi)...
+Time for end component identification: 0.003 seconds.
+
+Prob0A: 8 iterations in 0.31 seconds (average 0.038625, setup 0.00)
+
+yes = 26125, no = 33034, maybe = 48840
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 6201.13 seconds (average 0.062011, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 100000 iterations in 5946.45 seconds (average 0.059464, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 23 warnings during computation.
+

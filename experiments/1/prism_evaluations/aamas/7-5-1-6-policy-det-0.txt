@@ -1,0 +1,67 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:59:52 GMT 2021
+Hostname: arcus-htc-node068
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-5-1-6-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/7-5-1-6.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-5-1-6-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-5-1-6.props"...
+
+2 properties:
+(1) Pmax=? [ X (G chi) ]
+(2) P=? [ X (G chi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 ACTION_4 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 a2 a3 a4 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G chi) ]
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 6 iterations in 0.06 seconds (average 0.010333, setup 0.00)
+
+Time for model construction: 297.01 seconds.
+
+Type:        DTMC
+States:      1466 (1 initial)
+Transitions: 10107
+
+Transition matrix: 256964 nodes (6496 terminal), 10107 minterms, vars: 32r/32c
+
+Building deterministic automaton (for X (G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.298 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 6 iterations in 0.01 seconds (average 0.002500, setup 0.00)
+
+States:      1466 (1 initial)
+Transitions: 10107
+
+Transition matrix: 268228 nodes (6496 terminal), 10107 minterms, vars: 34r/34c
+
+Finding accepting BSCCs...
+
+SCCs: 28, BSCCs: 26, non-BSCC states: 1414
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+yes = 0, no = 1466, maybe = 0
+
+Value in the initial state: 0.0
+
+Time for model checking: 19.599 seconds.
+
+Result: 0.0 (value in the initial state)
+

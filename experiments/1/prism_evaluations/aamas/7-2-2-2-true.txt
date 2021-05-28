@@ -1,0 +1,106 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:13:40 GMT 2021
+Hostname: arcus-htc-node045
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-2-2-2.prism /home/hert5888/almanac/experiments/1/prism_specs/7-2-2-2.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-2-2-2.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-2-2-2.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X ((!xi) U psi) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+(2) P=? [ X ((!xi) U psi) ]
+(3) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 SPEC_1 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 q1 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X ((!xi) U psi) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+
+Building model...
+
+Warning: Update 1 of command 12 of module "STATE_5" doesn't do anything ("(s5'=1)", line 198, column 900)
+
+Warning: Guard for command 2 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 6 of module "SPEC_1" is never satisfied.
+
+Warning: Guard for command 10 of module "SPEC_1" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.04 seconds (average 0.004750, setup 0.00)
+
+Time for model construction: 14.713 seconds.
+
+Type:        MDP
+States:      15647 (1 initial)
+Transitions: 198538
+Choices:     64969
+
+Transition matrix: 231581 nodes (7374 terminal), 198538 minterms, vars: 26r/26c/6nd
+
+Building deterministic Rabin automaton (for X ("L0" U "L1"))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.159 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.03 seconds (average 0.003875, setup 0.00)
+States:      15647 (1 initial)
+Transitions: 198538
+Choices:     64969
+
+Transition matrix: 282055 nodes (7374 terminal), 198538 minterms, vars: 28r/28c/6nd
+
+Building deterministic Rabin automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.011 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.05 seconds (average 0.006625, setup 0.00)
+States:      15759 (1 initial)
+Transitions: 201002
+Choices:     65417
+
+Transition matrix: 410032 nodes (7374 terminal), 201002 minterms, vars: 30r/30c/6nd
+Total time for product construction: 0.948 seconds.
+
+States:      15759 (1 initial)
+Transitions: 201002
+Choices:     65417
+
+Transition matrix: 410032 nodes (7374 terminal), 201002 minterms, vars: 30r/30c/6nd
+
+Finding accepting end components for X ((!xi) U psi)...
+Time for end component identification: 0.003 seconds.
+
+Finding accepting end components for X (G ((!phi)|(X (chi))))...
+Time for end component identification: 0.004 seconds.
+
+Prob0A: 10 iterations in 0.06 seconds (average 0.006000, setup 0.00)
+
+yes = 4717, no = 3917, maybe = 7125
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 100000 iterations in 272.44 seconds (average 0.002724, setup 0.00)
+Ignoring the last multi-objective computation since it did not complete successfully
+Optimising weighted sum for probability objective 1/2: weights (0.9999000099990001, 9.999000099990002E-5)
+Iterative method: 100000 iterations in 273.84 seconds (average 0.002738, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 4 warnings during computation.
+

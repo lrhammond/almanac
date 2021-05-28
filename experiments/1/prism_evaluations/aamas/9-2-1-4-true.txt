@@ -1,0 +1,166 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:36:48 GMT 2021
+Hostname: arcus-htc-node067
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/9-2-1-4.prism /home/hert5888/almanac/experiments/1/prism_specs/9-2-1-4.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/9-2-1-4.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/9-2-1-4.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+(2) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 STATE_8 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 s8 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Warning: Guard for command 10 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_3" is never satisfied.
+
+Warning: Update 1 of command 2 of module "STATE_4" doesn't do anything ("(s4'=1)", line 124, column 1418)
+
+Warning: Update 1 of command 5 of module "STATE_4" doesn't do anything ("(s4'=1)", line 127, column 1418)
+
+Warning: Guard for command 10 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_5" is never satisfied.
+
+Warning: Update 1 of command 17 of module "STATE_5" doesn't do anything ("(s5'=1)", line 163, column 1447)
+
+Warning: Guard for command 10 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 10 of module "STATE_8" is never satisfied.
+
+Warning: Guard for command 11 of module "STATE_8" is never satisfied.
+
+Warning: Guard for command 12 of module "STATE_8" is never satisfied.
+
+Warning: Guard for command 13 of module "STATE_8" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.10 seconds (average 0.012375, setup 0.00)
+
+Time for model construction: 357.786 seconds.
+
+Type:        MDP
+States:      11849 (1 initial)
+Transitions: 416691
+Choices:     28985
+
+Transition matrix: 2083983 nodes (121448 terminal), 416691 minterms, vars: 26r/26c/5nd
+
+Building deterministic automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.252 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.13 seconds (average 0.012800, setup 0.00)
+Time for product construction: 18.614 seconds.
+
+States:      15799 (1 initial)
+Transitions: 554160
+Choices:     38713
+
+Transition matrix: 2478574 nodes (121448 terminal), 554160 minterms, vars: 28r/28c/5nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 3 iterations in 0.03 seconds (average 0.008667, setup 0.00)
+
+Prob1E: 8 iterations in 0.04 seconds (average 0.004625, setup 0.00)
+
+yes = 3138, no = 11680, maybe = 981
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=2, levels=28, nodes=1396239] [63.9 MB]
+Adding sparse bits... [levels=28-28, num=2, compact=2/2] [1.3 MB]
+Creating vector for yes... [dist=2, compact] [30.9 KB]
+Allocating iteration vectors... [3 x 123.4 KB]
+TOTAL: [65.6 MB]
+
+Starting iterations...
+
+Iterative method: 2 iterations in 4517.45 seconds (average 0.001000, setup 4517.45)
+
+Value in the initial state: 0.5341936213728341
+
+Time for model checking: 4566.869 seconds.
+
+Result: 0.5341936213728341 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 39 warnings during computation.
+

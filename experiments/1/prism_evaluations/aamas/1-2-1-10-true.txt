@@ -1,0 +1,103 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:20:47 GMT 2021
+Hostname: arcus-htc-node026
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/1-2-1-10.prism /home/hert5888/almanac/experiments/1/prism_specs/1-2-1-10.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/1-2-1-10.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/1-2-1-10.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_0" doesn't do anything ("(s0'=1)", line 29, column 72)
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 30, column 72)
+
+Warning: Update 1 of command 5 of module "STATE_0" doesn't do anything ("(s0'=1)", line 32, column 72)
+
+Warning: Update 1 of command 6 of module "STATE_0" doesn't do anything ("(s0'=1)", line 33, column 72)
+
+Warning: Update 1 of command 7 of module "STATE_0" doesn't do anything ("(s0'=1)", line 34, column 72)
+
+Warning: Update 1 of command 8 of module "STATE_0" doesn't do anything ("(s0'=1)", line 35, column 72)
+
+Warning: Update 1 of command 9 of module "STATE_0" doesn't do anything ("(s0'=1)", line 36, column 72)
+
+Warning: Update 1 of command 10 of module "STATE_0" doesn't do anything ("(s0'=1)", line 37, column 72)
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Time for model construction: 0.082 seconds.
+
+Type:        MDP
+States:      156 (1 initial)
+Transitions: 1042
+Choices:     1041
+
+Transition matrix: 1158 nodes (4 terminal), 1042 minterms, vars: 12r/12c/7nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.14 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000125, setup 0.00)
+Time for product construction: 0.004 seconds.
+
+States:      172 (1 initial)
+Transitions: 1298
+Choices:     1297
+
+Transition matrix: 1760 nodes (4 terminal), 1298 minterms, vars: 14r/14c/7nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.00 seconds (average 0.000200, setup 0.00)
+
+Prob1E: 6 iterations in 0.00 seconds (average 0.000167, setup 0.00)
+
+yes = 172, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.207 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 14 warnings during computation.
+

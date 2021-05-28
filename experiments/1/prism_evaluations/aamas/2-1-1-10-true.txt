@@ -1,0 +1,100 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:15:32 GMT 2021
+Hostname: arcus-htc-node093
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/2-1-1-10.prism /home/hert5888/almanac/experiments/1/prism_specs/2-1-1-10.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/2-1-1-10.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/2-1-1-10.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+(2) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Warning: Guard for command 2 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 6 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 10 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Time for model construction: 0.084 seconds.
+
+Type:        MDP
+States:      58 (1 initial)
+Transitions: 127
+Choices:     112
+
+Transition matrix: 317 nodes (10 terminal), 127 minterms, vars: 10r/10c/5nd
+
+Building deterministic automaton (for X (G ("L0"|(X !"L0"))))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.245 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000100, setup 0.00)
+Time for product construction: 0.004 seconds.
+
+States:      58 (1 initial)
+Transitions: 127
+Choices:     112
+
+Transition matrix: 553 nodes (10 terminal), 127 minterms, vars: 12r/12c/5nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 4 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Prob1E: 10 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 31, no = 23, maybe = 4
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=1, levels=12, nodes=51] [2.4 KB]
+Adding sparse bits... [levels=12-12, num=1, compact=1/1] [0.1 KB]
+Creating vector for yes... [dist=2, compact] [0.1 KB]
+Allocating iteration vectors... [3 x 0.5 KB]
+TOTAL: [4.0 KB]
+
+Starting iterations...
+
+Iterative method: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.319 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 6 warnings during computation.
+

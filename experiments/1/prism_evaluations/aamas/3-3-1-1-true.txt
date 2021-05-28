@@ -1,0 +1,117 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 01:39:00 GMT 2021
+Hostname: arcus-htc-node058
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/3-3-1-1.prism /home/hert5888/almanac/experiments/1/prism_specs/3-3-1-1.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/3-3-1-1.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/3-3-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 2 of command 2 of module "STATE_0" doesn't do anything ("(s0'=0)", line 29, column 587)
+
+Warning: Update 2 of command 5 of module "STATE_0" doesn't do anything ("(s0'=0)", line 32, column 587)
+
+Warning: Update 2 of command 7 of module "STATE_0" doesn't do anything ("(s0'=0)", line 34, column 587)
+
+Warning: Update 1 of command 10 of module "STATE_0" doesn't do anything ("(s0'=1)", line 37, column 173)
+
+Warning: Update 2 of command 11 of module "STATE_0" doesn't do anything ("(s0'=0)", line 38, column 587)
+
+Warning: Update 2 of command 12 of module "STATE_0" doesn't do anything ("(s0'=0)", line 39, column 587)
+
+Warning: Update 1 of command 13 of module "STATE_0" doesn't do anything ("(s0'=1)", line 40, column 173)
+
+Warning: Update 1 of command 10 of module "STATE_1" doesn't do anything ("(s1'=1)", line 70, column 173)
+
+Warning: Update 1 of command 13 of module "STATE_1" doesn't do anything ("(s1'=1)", line 73, column 173)
+
+Warning: Update 1 of command 21 of module "STATE_1" doesn't do anything ("(s1'=1)", line 81, column 235)
+
+Warning: Update 1 of command 24 of module "STATE_1" doesn't do anything ("(s1'=1)", line 84, column 235)
+
+Warning: Update 2 of command 3 of module "STATE_2" doesn't do anything ("(s2'=0)", line 96, column 611)
+
+Warning: Update 2 of command 9 of module "STATE_2" doesn't do anything ("(s2'=0)", line 102, column 611)
+
+Warning: Update 1 of command 10 of module "STATE_2" doesn't do anything ("(s2'=1)", line 103, column 173)
+
+Warning: Update 1 of command 13 of module "STATE_2" doesn't do anything ("(s2'=1)", line 106, column 173)
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 4 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 8 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 12 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Time for model construction: 0.253 seconds.
+
+Type:        MDP
+States:      1481 (1 initial)
+Transitions: 23369
+Choices:     23041
+
+Transition matrix: 8853 nodes (52 terminal), 23369 minterms, vars: 19r/19c/9nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.242 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+Time for product construction: 0.02 seconds.
+
+States:      1521 (1 initial)
+Transitions: 24809
+Choices:     24481
+
+Transition matrix: 13241 nodes (52 terminal), 24809 minterms, vars: 21r/21c/9nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.01 seconds (average 0.001800, setup 0.00)
+
+Prob1E: 6 iterations in 0.01 seconds (average 0.001000, setup 0.00)
+
+yes = 1521, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 0.424 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 21 warnings during computation.
+

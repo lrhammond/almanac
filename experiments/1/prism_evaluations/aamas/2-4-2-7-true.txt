@@ -1,0 +1,188 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:27:06 GMT 2021
+Hostname: arcus-htc-node091
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/2-4-2-7.prism /home/hert5888/almanac/experiments/1/prism_specs/2-4-2-7.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/2-4-2-7.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/2-4-2-7.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (F xi) ])
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+(3) P=? [ X (F xi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 ACTION_3 
+Variables:   i t s0 s1 q0 q1 a0 a1 a2 a3 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (F xi) ])
+
+Building model...
+
+Warning: Update 1 of command 2 of module "STATE_1" doesn't do anything ("(s1'=1)", line 134, column 138)
+
+Warning: Update 1 of command 6 of module "STATE_1" doesn't do anything ("(s1'=1)", line 138, column 152)
+
+Warning: Update 1 of command 7 of module "STATE_1" doesn't do anything ("(s1'=1)", line 139, column 152)
+
+Warning: Update 1 of command 8 of module "STATE_1" doesn't do anything ("(s1'=1)", line 140, column 138)
+
+Warning: Update 1 of command 11 of module "STATE_1" doesn't do anything ("(s1'=1)", line 143, column 152)
+
+Warning: Update 1 of command 12 of module "STATE_1" doesn't do anything ("(s1'=1)", line 144, column 138)
+
+Warning: Update 1 of command 13 of module "STATE_1" doesn't do anything ("(s1'=1)", line 145, column 138)
+
+Warning: Update 1 of command 17 of module "STATE_1" doesn't do anything ("(s1'=1)", line 149, column 152)
+
+Warning: Update 1 of command 18 of module "STATE_1" doesn't do anything ("(s1'=1)", line 150, column 152)
+
+Warning: Update 1 of command 19 of module "STATE_1" doesn't do anything ("(s1'=1)", line 151, column 152)
+
+Warning: Update 1 of command 22 of module "STATE_1" doesn't do anything ("(s1'=1)", line 154, column 152)
+
+Warning: Update 1 of command 23 of module "STATE_1" doesn't do anything ("(s1'=1)", line 155, column 152)
+
+Warning: Update 1 of command 33 of module "STATE_1" doesn't do anything ("(s1'=1)", line 165, column 152)
+
+Warning: Update 1 of command 34 of module "STATE_1" doesn't do anything ("(s1'=1)", line 166, column 138)
+
+Warning: Update 1 of command 36 of module "STATE_1" doesn't do anything ("(s1'=1)", line 168, column 138)
+
+Warning: Update 1 of command 40 of module "STATE_1" doesn't do anything ("(s1'=1)", line 172, column 152)
+
+Warning: Update 1 of command 43 of module "STATE_1" doesn't do anything ("(s1'=1)", line 175, column 152)
+
+Warning: Update 1 of command 44 of module "STATE_1" doesn't do anything ("(s1'=1)", line 176, column 138)
+
+Warning: Update 1 of command 48 of module "STATE_1" doesn't do anything ("(s1'=1)", line 180, column 138)
+
+Warning: Update 1 of command 49 of module "STATE_1" doesn't do anything ("(s1'=1)", line 181, column 152)
+
+Warning: Update 1 of command 53 of module "STATE_1" doesn't do anything ("(s1'=1)", line 185, column 152)
+
+Warning: Update 1 of command 54 of module "STATE_1" doesn't do anything ("(s1'=1)", line 186, column 138)
+
+Warning: Update 1 of command 55 of module "STATE_1" doesn't do anything ("(s1'=1)", line 187, column 138)
+
+Warning: Update 1 of command 60 of module "STATE_1" doesn't do anything ("(s1'=1)", line 192, column 138)
+
+Warning: Update 1 of command 62 of module "STATE_1" doesn't do anything ("(s1'=1)", line 194, column 152)
+
+Warning: Update 1 of command 64 of module "STATE_1" doesn't do anything ("(s1'=1)", line 196, column 138)
+
+Warning: Update 1 of command 68 of module "STATE_1" doesn't do anything ("(s1'=1)", line 200, column 152)
+
+Warning: Update 1 of command 72 of module "STATE_1" doesn't do anything ("(s1'=1)", line 204, column 138)
+
+Warning: Update 1 of command 76 of module "STATE_1" doesn't do anything ("(s1'=1)", line 208, column 152)
+
+Warning: Update 1 of command 77 of module "STATE_1" doesn't do anything ("(s1'=1)", line 209, column 138)
+
+Warning: Update 1 of command 78 of module "STATE_1" doesn't do anything ("(s1'=1)", line 210, column 152)
+
+Warning: Update 1 of command 80 of module "STATE_1" doesn't do anything ("(s1'=1)", line 212, column 138)
+
+Warning: Update 1 of command 81 of module "STATE_1" doesn't do anything ("(s1'=1)", line 213, column 138)
+
+Warning: Update 1 of command 82 of module "STATE_1" doesn't do anything ("(s1'=1)", line 214, column 138)
+
+Warning: Update 1 of command 83 of module "STATE_1" doesn't do anything ("(s1'=1)", line 215, column 152)
+
+Warning: Update 1 of command 85 of module "STATE_1" doesn't do anything ("(s1'=1)", line 217, column 152)
+
+Warning: Update 1 of command 89 of module "STATE_1" doesn't do anything ("(s1'=1)", line 221, column 138)
+
+Warning: Update 1 of command 91 of module "STATE_1" doesn't do anything ("(s1'=1)", line 223, column 138)
+
+Warning: Update 1 of command 95 of module "STATE_1" doesn't do anything ("(s1'=1)", line 227, column 138)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000700, setup 0.00)
+
+Time for model construction: 0.467 seconds.
+
+Type:        MDP
+States:      9290 (1 initial)
+Transitions: 992934
+Choices:     992701
+
+Transition matrix: 80932 nodes (12 terminal), 992934 minterms, vars: 22r/22c/13nd
+
+Building deterministic Rabin automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.236 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000700, setup 0.00)
+States:      9426 (1 initial)
+Transitions: 1033734
+Choices:     1033501
+
+Transition matrix: 104179 nodes (12 terminal), 1033734 minterms, vars: 24r/24c/13nd
+
+Building deterministic Rabin automaton (for X (F "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.007 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000700, setup 0.00)
+States:      9426 (1 initial)
+Transitions: 1033734
+Choices:     1033501
+
+Transition matrix: 115674 nodes (12 terminal), 1033734 minterms, vars: 26r/26c/13nd
+Total time for product construction: 0.8 seconds.
+
+States:      9426 (1 initial)
+Transitions: 1033734
+Choices:     1033501
+
+Transition matrix: 115674 nodes (12 terminal), 1033734 minterms, vars: 26r/26c/13nd
+
+Finding accepting end components for X (F G ((!phi)|(!xi)))...
+Time for end component identification: 0.223 seconds.
+
+Finding accepting end components for X (F xi)...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 4 iterations in 0.17 seconds (average 0.043000, setup 0.00)
+
+yes = 6093, no = 0, maybe = 3333
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 7 iterations in 0.15 seconds (average 0.021143, setup 0.00)
+Optimal value for weights [1.000000,0.000000] from initial state: 1.000000
+Computed point: (1.0, 0.30861041743298756)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 7 iterations in 0.15 seconds (average 0.021286, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.308610
+Computed point: (0.3048001090435264, 0.30861041743298756)
+Optimising weighted sum of objectives: weights (0.0, 1.0)
+Iterative method: 7 iterations in 0.15 seconds (average 0.021143, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.308610
+The value iteration(s) took 1.068 seconds altogether.
+Number of weight vectors used: 1
+Multi-objective value iterations took 1.068 s.
+
+Value in the initial state: [(1.0, 0.30861041743298756)]
+
+Time for model checking: 3.52 seconds.
+
+Result: [(1.0, 0.30861041743298756)] (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 39 warnings during computation.
+

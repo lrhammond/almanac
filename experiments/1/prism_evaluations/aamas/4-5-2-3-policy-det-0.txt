@@ -1,0 +1,768 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 23:53:11 GMT 2021
+Hostname: arcus-htc-node052
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/4-5-2-3-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/4-5-2-3.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/4-5-2-3-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/4-5-2-3.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F G ((!phi)|(!xi))) ], Pmax=? [ X (G F psi) ])
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+(3) P=? [ X (G F psi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 SPEC_0 SPEC_1 ACTION_0 ACTION_1 ACTION_2 ACTION_3 ACTION_4 
+Variables:   i t s0 s1 s2 s3 q0 q1 a0 a1 a2 a3 a4 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 3 of module "STATE_0" doesn't do anything ("(s0'=1)", line 30, column 330)
+
+Warning: Update 1 of command 12 of module "STATE_0" doesn't do anything ("(s0'=1)", line 39, column 330)
+
+Warning: Update 1 of command 17 of module "STATE_0" doesn't do anything ("(s0'=1)", line 44, column 330)
+
+Warning: Update 1 of command 19 of module "STATE_0" doesn't do anything ("(s0'=1)", line 46, column 330)
+
+Warning: Update 1 of command 20 of module "STATE_0" doesn't do anything ("(s0'=1)", line 47, column 330)
+
+Warning: Update 1 of command 28 of module "STATE_0" doesn't do anything ("(s0'=1)", line 55, column 330)
+
+Warning: Update 1 of command 29 of module "STATE_0" doesn't do anything ("(s0'=1)", line 56, column 330)
+
+Warning: Update 1 of command 32 of module "STATE_0" doesn't do anything ("(s0'=1)", line 59, column 330)
+
+Warning: Update 1 of command 36 of module "STATE_0" doesn't do anything ("(s0'=1)", line 63, column 330)
+
+Warning: Update 1 of command 39 of module "STATE_0" doesn't do anything ("(s0'=1)", line 66, column 330)
+
+Warning: Update 1 of command 40 of module "STATE_0" doesn't do anything ("(s0'=1)", line 67, column 330)
+
+Warning: Update 1 of command 42 of module "STATE_0" doesn't do anything ("(s0'=1)", line 69, column 330)
+
+Warning: Update 1 of command 48 of module "STATE_0" doesn't do anything ("(s0'=1)", line 75, column 330)
+
+Warning: Update 1 of command 49 of module "STATE_0" doesn't do anything ("(s0'=1)", line 76, column 330)
+
+Warning: Update 1 of command 58 of module "STATE_0" doesn't do anything ("(s0'=1)", line 85, column 330)
+
+Warning: Update 1 of command 63 of module "STATE_0" doesn't do anything ("(s0'=1)", line 90, column 330)
+
+Warning: Update 1 of command 80 of module "STATE_0" doesn't do anything ("(s0'=1)", line 107, column 330)
+
+Warning: Update 1 of command 96 of module "STATE_0" doesn't do anything ("(s0'=1)", line 123, column 330)
+
+Warning: Update 1 of command 97 of module "STATE_0" doesn't do anything ("(s0'=1)", line 124, column 330)
+
+Warning: Update 1 of command 98 of module "STATE_0" doesn't do anything ("(s0'=1)", line 125, column 330)
+
+Warning: Update 1 of command 100 of module "STATE_0" doesn't do anything ("(s0'=1)", line 127, column 330)
+
+Warning: Update 1 of command 103 of module "STATE_0" doesn't do anything ("(s0'=1)", line 130, column 330)
+
+Warning: Update 1 of command 115 of module "STATE_0" doesn't do anything ("(s0'=1)", line 142, column 330)
+
+Warning: Update 1 of command 126 of module "STATE_0" doesn't do anything ("(s0'=1)", line 153, column 330)
+
+Warning: Update 1 of command 133 of module "STATE_0" doesn't do anything ("(s0'=1)", line 160, column 330)
+
+Warning: Update 1 of command 134 of module "STATE_0" doesn't do anything ("(s0'=1)", line 161, column 330)
+
+Warning: Update 1 of command 140 of module "STATE_0" doesn't do anything ("(s0'=1)", line 167, column 330)
+
+Warning: Update 1 of command 146 of module "STATE_0" doesn't do anything ("(s0'=1)", line 173, column 330)
+
+Warning: Update 1 of command 159 of module "STATE_0" doesn't do anything ("(s0'=1)", line 186, column 330)
+
+Warning: Update 1 of command 164 of module "STATE_0" doesn't do anything ("(s0'=1)", line 191, column 330)
+
+Warning: Update 1 of command 175 of module "STATE_0" doesn't do anything ("(s0'=1)", line 202, column 330)
+
+Warning: Update 1 of command 184 of module "STATE_0" doesn't do anything ("(s0'=1)", line 211, column 330)
+
+Warning: Update 1 of command 188 of module "STATE_0" doesn't do anything ("(s0'=1)", line 215, column 330)
+
+Warning: Update 1 of command 196 of module "STATE_0" doesn't do anything ("(s0'=1)", line 223, column 330)
+
+Warning: Update 1 of command 201 of module "STATE_0" doesn't do anything ("(s0'=1)", line 228, column 330)
+
+Warning: Update 1 of command 204 of module "STATE_0" doesn't do anything ("(s0'=1)", line 231, column 330)
+
+Warning: Update 1 of command 223 of module "STATE_0" doesn't do anything ("(s0'=1)", line 250, column 330)
+
+Warning: Update 1 of command 228 of module "STATE_0" doesn't do anything ("(s0'=1)", line 255, column 330)
+
+Warning: Update 1 of command 234 of module "STATE_0" doesn't do anything ("(s0'=1)", line 261, column 330)
+
+Warning: Update 1 of command 245 of module "STATE_0" doesn't do anything ("(s0'=1)", line 272, column 330)
+
+Warning: Update 1 of command 250 of module "STATE_0" doesn't do anything ("(s0'=1)", line 277, column 330)
+
+Warning: Update 1 of command 257 of module "STATE_0" doesn't do anything ("(s0'=1)", line 284, column 330)
+
+Warning: Update 1 of command 266 of module "STATE_0" doesn't do anything ("(s0'=1)", line 293, column 330)
+
+Warning: Update 1 of command 272 of module "STATE_0" doesn't do anything ("(s0'=1)", line 299, column 330)
+
+Warning: Update 1 of command 284 of module "STATE_0" doesn't do anything ("(s0'=1)", line 311, column 330)
+
+Warning: Update 2 of command 2 of module "STATE_1" doesn't do anything ("(s1'=0)", line 614, column 694)
+
+Warning: Update 2 of command 10 of module "STATE_1" doesn't do anything ("(s1'=0)", line 622, column 694)
+
+Warning: Update 2 of command 13 of module "STATE_1" doesn't do anything ("(s1'=0)", line 625, column 694)
+
+Warning: Update 2 of command 18 of module "STATE_1" doesn't do anything ("(s1'=0)", line 630, column 694)
+
+Warning: Update 2 of command 22 of module "STATE_1" doesn't do anything ("(s1'=0)", line 634, column 694)
+
+Warning: Update 2 of command 24 of module "STATE_1" doesn't do anything ("(s1'=0)", line 636, column 694)
+
+Warning: Update 2 of command 30 of module "STATE_1" doesn't do anything ("(s1'=0)", line 642, column 694)
+
+Warning: Update 2 of command 33 of module "STATE_1" doesn't do anything ("(s1'=0)", line 645, column 694)
+
+Warning: Update 2 of command 52 of module "STATE_1" doesn't do anything ("(s1'=0)", line 664, column 694)
+
+Warning: Update 2 of command 54 of module "STATE_1" doesn't do anything ("(s1'=0)", line 666, column 694)
+
+Warning: Update 2 of command 62 of module "STATE_1" doesn't do anything ("(s1'=0)", line 674, column 694)
+
+Warning: Update 2 of command 65 of module "STATE_1" doesn't do anything ("(s1'=0)", line 677, column 694)
+
+Warning: Update 2 of command 82 of module "STATE_1" doesn't do anything ("(s1'=0)", line 694, column 694)
+
+Warning: Update 2 of command 83 of module "STATE_1" doesn't do anything ("(s1'=0)", line 695, column 694)
+
+Warning: Update 2 of command 86 of module "STATE_1" doesn't do anything ("(s1'=0)", line 698, column 694)
+
+Warning: Update 2 of command 90 of module "STATE_1" doesn't do anything ("(s1'=0)", line 702, column 694)
+
+Warning: Update 2 of command 91 of module "STATE_1" doesn't do anything ("(s1'=0)", line 703, column 694)
+
+Warning: Update 2 of command 93 of module "STATE_1" doesn't do anything ("(s1'=0)", line 705, column 694)
+
+Warning: Update 2 of command 101 of module "STATE_1" doesn't do anything ("(s1'=0)", line 713, column 694)
+
+Warning: Update 2 of command 111 of module "STATE_1" doesn't do anything ("(s1'=0)", line 723, column 694)
+
+Warning: Update 2 of command 114 of module "STATE_1" doesn't do anything ("(s1'=0)", line 726, column 694)
+
+Warning: Update 2 of command 131 of module "STATE_1" doesn't do anything ("(s1'=0)", line 743, column 694)
+
+Warning: Update 2 of command 132 of module "STATE_1" doesn't do anything ("(s1'=0)", line 744, column 694)
+
+Warning: Update 2 of command 135 of module "STATE_1" doesn't do anything ("(s1'=0)", line 747, column 694)
+
+Warning: Update 2 of command 142 of module "STATE_1" doesn't do anything ("(s1'=0)", line 754, column 694)
+
+Warning: Update 2 of command 155 of module "STATE_1" doesn't do anything ("(s1'=0)", line 767, column 694)
+
+Warning: Update 2 of command 156 of module "STATE_1" doesn't do anything ("(s1'=0)", line 768, column 694)
+
+Warning: Update 2 of command 160 of module "STATE_1" doesn't do anything ("(s1'=0)", line 772, column 694)
+
+Warning: Update 2 of command 161 of module "STATE_1" doesn't do anything ("(s1'=0)", line 773, column 694)
+
+Warning: Update 2 of command 162 of module "STATE_1" doesn't do anything ("(s1'=0)", line 774, column 694)
+
+Warning: Update 2 of command 165 of module "STATE_1" doesn't do anything ("(s1'=0)", line 777, column 694)
+
+Warning: Update 2 of command 166 of module "STATE_1" doesn't do anything ("(s1'=0)", line 778, column 694)
+
+Warning: Update 2 of command 179 of module "STATE_1" doesn't do anything ("(s1'=0)", line 791, column 694)
+
+Warning: Update 2 of command 193 of module "STATE_1" doesn't do anything ("(s1'=0)", line 805, column 694)
+
+Warning: Update 2 of command 206 of module "STATE_1" doesn't do anything ("(s1'=0)", line 818, column 694)
+
+Warning: Update 2 of command 207 of module "STATE_1" doesn't do anything ("(s1'=0)", line 819, column 694)
+
+Warning: Update 2 of command 208 of module "STATE_1" doesn't do anything ("(s1'=0)", line 820, column 694)
+
+Warning: Update 2 of command 209 of module "STATE_1" doesn't do anything ("(s1'=0)", line 821, column 694)
+
+Warning: Update 2 of command 217 of module "STATE_1" doesn't do anything ("(s1'=0)", line 829, column 694)
+
+Warning: Update 2 of command 219 of module "STATE_1" doesn't do anything ("(s1'=0)", line 831, column 694)
+
+Warning: Update 2 of command 229 of module "STATE_1" doesn't do anything ("(s1'=0)", line 841, column 694)
+
+Warning: Update 2 of command 233 of module "STATE_1" doesn't do anything ("(s1'=0)", line 845, column 694)
+
+Warning: Update 2 of command 236 of module "STATE_1" doesn't do anything ("(s1'=0)", line 848, column 694)
+
+Warning: Update 2 of command 241 of module "STATE_1" doesn't do anything ("(s1'=0)", line 853, column 694)
+
+Warning: Update 2 of command 243 of module "STATE_1" doesn't do anything ("(s1'=0)", line 855, column 694)
+
+Warning: Update 2 of command 261 of module "STATE_1" doesn't do anything ("(s1'=0)", line 873, column 694)
+
+Warning: Update 2 of command 269 of module "STATE_1" doesn't do anything ("(s1'=0)", line 881, column 694)
+
+Warning: Update 2 of command 273 of module "STATE_1" doesn't do anything ("(s1'=0)", line 885, column 694)
+
+Warning: Update 2 of command 282 of module "STATE_1" doesn't do anything ("(s1'=0)", line 894, column 694)
+
+Warning: Update 2 of command 288 of module "STATE_1" doesn't do anything ("(s1'=0)", line 900, column 694)
+
+Warning: Update 1 of command 2 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1199, column 346)
+
+Warning: Update 2 of command 3 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1200, column 666)
+
+Warning: Update 1 of command 10 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1207, column 346)
+
+Warning: Update 2 of command 12 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1209, column 666)
+
+Warning: Update 1 of command 13 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1210, column 346)
+
+Warning: Update 2 of command 17 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1214, column 666)
+
+Warning: Update 1 of command 18 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1215, column 346)
+
+Warning: Update 2 of command 19 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1216, column 666)
+
+Warning: Update 2 of command 20 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1217, column 666)
+
+Warning: Update 1 of command 22 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1219, column 346)
+
+Warning: Update 1 of command 24 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1221, column 346)
+
+Warning: Update 2 of command 28 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1225, column 666)
+
+Warning: Update 2 of command 29 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1226, column 666)
+
+Warning: Update 1 of command 30 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1227, column 346)
+
+Warning: Update 2 of command 32 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1229, column 666)
+
+Warning: Update 1 of command 33 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1230, column 346)
+
+Warning: Update 2 of command 36 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1233, column 666)
+
+Warning: Update 2 of command 39 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1236, column 666)
+
+Warning: Update 2 of command 40 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1237, column 666)
+
+Warning: Update 2 of command 42 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1239, column 666)
+
+Warning: Update 2 of command 48 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1245, column 666)
+
+Warning: Update 2 of command 49 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1246, column 666)
+
+Warning: Update 1 of command 52 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1249, column 346)
+
+Warning: Update 1 of command 54 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1251, column 346)
+
+Warning: Update 2 of command 58 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1255, column 666)
+
+Warning: Update 1 of command 62 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1259, column 346)
+
+Warning: Update 2 of command 63 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1260, column 666)
+
+Warning: Update 1 of command 65 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1262, column 346)
+
+Warning: Update 2 of command 80 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1277, column 666)
+
+Warning: Update 1 of command 82 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1279, column 346)
+
+Warning: Update 1 of command 83 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1280, column 346)
+
+Warning: Update 1 of command 86 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1283, column 346)
+
+Warning: Update 1 of command 90 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1287, column 346)
+
+Warning: Update 1 of command 91 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1288, column 346)
+
+Warning: Update 1 of command 93 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1290, column 346)
+
+Warning: Update 2 of command 96 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1293, column 666)
+
+Warning: Update 2 of command 97 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1294, column 666)
+
+Warning: Update 2 of command 98 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1295, column 666)
+
+Warning: Update 2 of command 100 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1297, column 666)
+
+Warning: Update 1 of command 101 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1298, column 346)
+
+Warning: Update 2 of command 103 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1300, column 666)
+
+Warning: Update 1 of command 111 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1308, column 346)
+
+Warning: Update 1 of command 114 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1311, column 346)
+
+Warning: Update 2 of command 115 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1312, column 666)
+
+Warning: Update 2 of command 126 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1323, column 666)
+
+Warning: Update 1 of command 131 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1328, column 346)
+
+Warning: Update 1 of command 132 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1329, column 346)
+
+Warning: Update 2 of command 133 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1330, column 666)
+
+Warning: Update 2 of command 134 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1331, column 666)
+
+Warning: Update 1 of command 135 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1332, column 346)
+
+Warning: Update 2 of command 140 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1337, column 666)
+
+Warning: Update 1 of command 142 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1339, column 346)
+
+Warning: Update 2 of command 146 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1343, column 666)
+
+Warning: Update 1 of command 155 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1352, column 346)
+
+Warning: Update 1 of command 156 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1353, column 346)
+
+Warning: Update 2 of command 159 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1356, column 666)
+
+Warning: Update 1 of command 160 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1357, column 346)
+
+Warning: Update 1 of command 161 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1358, column 346)
+
+Warning: Update 1 of command 162 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1359, column 346)
+
+Warning: Update 2 of command 164 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1361, column 666)
+
+Warning: Update 1 of command 165 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1362, column 346)
+
+Warning: Update 1 of command 166 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1363, column 346)
+
+Warning: Update 2 of command 175 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1372, column 666)
+
+Warning: Update 1 of command 179 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1376, column 346)
+
+Warning: Update 2 of command 184 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1381, column 666)
+
+Warning: Update 2 of command 188 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1385, column 666)
+
+Warning: Update 1 of command 193 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1390, column 346)
+
+Warning: Update 2 of command 196 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1393, column 666)
+
+Warning: Update 2 of command 201 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1398, column 666)
+
+Warning: Update 2 of command 204 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1401, column 666)
+
+Warning: Update 1 of command 206 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1403, column 346)
+
+Warning: Update 1 of command 207 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1404, column 346)
+
+Warning: Update 1 of command 208 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1405, column 346)
+
+Warning: Update 1 of command 209 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1406, column 346)
+
+Warning: Update 1 of command 217 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1414, column 346)
+
+Warning: Update 1 of command 219 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1416, column 346)
+
+Warning: Update 2 of command 223 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1420, column 666)
+
+Warning: Update 2 of command 228 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1425, column 666)
+
+Warning: Update 1 of command 229 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1426, column 346)
+
+Warning: Update 1 of command 233 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1430, column 346)
+
+Warning: Update 2 of command 234 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1431, column 666)
+
+Warning: Update 1 of command 236 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1433, column 346)
+
+Warning: Update 1 of command 241 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1438, column 346)
+
+Warning: Update 1 of command 243 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1440, column 346)
+
+Warning: Update 2 of command 245 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1442, column 666)
+
+Warning: Update 2 of command 250 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1447, column 666)
+
+Warning: Update 2 of command 257 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1454, column 666)
+
+Warning: Update 1 of command 261 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1458, column 346)
+
+Warning: Update 2 of command 266 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1463, column 666)
+
+Warning: Update 1 of command 269 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1466, column 346)
+
+Warning: Update 2 of command 272 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1469, column 666)
+
+Warning: Update 1 of command 273 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1470, column 346)
+
+Warning: Update 1 of command 282 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1479, column 346)
+
+Warning: Update 2 of command 284 of module "STATE_2" doesn't do anything ("(s2'=0)", line 1481, column 666)
+
+Warning: Update 1 of command 288 of module "STATE_2" doesn't do anything ("(s2'=1)", line 1485, column 346)
+
+Warning: Update 1 of command 4 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1786, column 373)
+
+Warning: Update 1 of command 14 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1796, column 373)
+
+Warning: Update 1 of command 15 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1797, column 373)
+
+Warning: Update 1 of command 16 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1798, column 373)
+
+Warning: Update 1 of command 27 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1809, column 373)
+
+Warning: Update 1 of command 35 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1817, column 373)
+
+Warning: Update 1 of command 41 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1823, column 373)
+
+Warning: Update 1 of command 44 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1826, column 373)
+
+Warning: Update 1 of command 46 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1828, column 373)
+
+Warning: Update 1 of command 47 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1829, column 373)
+
+Warning: Update 1 of command 70 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1852, column 373)
+
+Warning: Update 1 of command 71 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1853, column 373)
+
+Warning: Update 1 of command 73 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1855, column 373)
+
+Warning: Update 1 of command 89 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1871, column 373)
+
+Warning: Update 1 of command 99 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1881, column 373)
+
+Warning: Update 1 of command 102 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1884, column 373)
+
+Warning: Update 1 of command 104 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1886, column 373)
+
+Warning: Update 1 of command 107 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1889, column 373)
+
+Warning: Update 1 of command 109 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1891, column 373)
+
+Warning: Update 1 of command 122 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1904, column 373)
+
+Warning: Update 1 of command 129 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1911, column 373)
+
+Warning: Update 1 of command 130 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1912, column 373)
+
+Warning: Update 1 of command 143 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1925, column 373)
+
+Warning: Update 1 of command 145 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1927, column 373)
+
+Warning: Update 1 of command 147 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1929, column 373)
+
+Warning: Update 1 of command 149 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1931, column 373)
+
+Warning: Update 1 of command 152 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1934, column 373)
+
+Warning: Update 1 of command 158 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1940, column 373)
+
+Warning: Update 1 of command 174 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1956, column 373)
+
+Warning: Update 1 of command 176 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1958, column 373)
+
+Warning: Update 1 of command 178 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1960, column 373)
+
+Warning: Update 1 of command 185 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1967, column 373)
+
+Warning: Update 1 of command 186 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1968, column 373)
+
+Warning: Update 1 of command 189 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1971, column 373)
+
+Warning: Update 1 of command 192 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1974, column 373)
+
+Warning: Update 1 of command 198 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1980, column 373)
+
+Warning: Update 1 of command 214 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1996, column 373)
+
+Warning: Update 1 of command 230 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2012, column 373)
+
+Warning: Update 1 of command 237 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2019, column 373)
+
+Warning: Update 1 of command 242 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2024, column 373)
+
+Warning: Update 1 of command 251 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2033, column 373)
+
+Warning: Update 1 of command 255 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2037, column 373)
+
+Warning: Update 1 of command 258 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2040, column 373)
+
+Warning: Update 1 of command 259 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2041, column 373)
+
+Warning: Update 1 of command 262 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2044, column 373)
+
+Warning: Update 1 of command 286 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2068, column 373)
+
+Warning: Update 1 of command 290 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2072, column 345)
+
+Warning: Update 1 of command 291 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2073, column 345)
+
+Warning: Update 1 of command 295 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2077, column 345)
+
+Warning: Update 1 of command 296 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2078, column 345)
+
+Warning: Update 1 of command 304 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2086, column 345)
+
+Warning: Update 1 of command 312 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2094, column 345)
+
+Warning: Update 1 of command 315 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2097, column 345)
+
+Warning: Update 1 of command 317 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2099, column 345)
+
+Warning: Update 1 of command 327 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2109, column 345)
+
+Warning: Update 1 of command 329 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2111, column 345)
+
+Warning: Update 1 of command 338 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2120, column 345)
+
+Warning: Update 1 of command 339 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2121, column 345)
+
+Warning: Update 1 of command 340 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2122, column 345)
+
+Warning: Update 1 of command 348 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2130, column 345)
+
+Warning: Update 1 of command 355 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2137, column 345)
+
+Warning: Update 1 of command 359 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2141, column 345)
+
+Warning: Update 1 of command 360 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2142, column 345)
+
+Warning: Update 1 of command 365 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2147, column 345)
+
+Warning: Update 1 of command 373 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2155, column 345)
+
+Warning: Update 1 of command 382 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2164, column 345)
+
+Warning: Update 1 of command 383 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2165, column 345)
+
+Warning: Update 1 of command 384 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2166, column 345)
+
+Warning: Update 1 of command 385 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2167, column 345)
+
+Warning: Update 1 of command 386 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2168, column 345)
+
+Warning: Update 1 of command 388 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2170, column 345)
+
+Warning: Update 1 of command 393 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2175, column 345)
+
+Warning: Update 1 of command 397 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2179, column 345)
+
+Warning: Update 1 of command 399 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2181, column 345)
+
+Warning: Update 1 of command 400 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2182, column 345)
+
+Warning: Update 1 of command 404 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2186, column 345)
+
+Warning: Update 1 of command 407 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2189, column 345)
+
+Warning: Update 1 of command 410 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2192, column 345)
+
+Warning: Update 1 of command 415 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2197, column 345)
+
+Warning: Update 1 of command 418 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2200, column 345)
+
+Warning: Update 1 of command 419 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2201, column 345)
+
+Warning: Update 1 of command 420 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2202, column 345)
+
+Warning: Update 1 of command 422 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2204, column 345)
+
+Warning: Update 1 of command 423 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2205, column 345)
+
+Warning: Update 1 of command 426 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2208, column 345)
+
+Warning: Update 1 of command 435 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2217, column 345)
+
+Warning: Update 1 of command 438 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2220, column 345)
+
+Warning: Update 1 of command 440 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2222, column 345)
+
+Warning: Update 1 of command 442 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2224, column 345)
+
+Warning: Update 1 of command 444 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2226, column 345)
+
+Warning: Update 1 of command 449 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2231, column 345)
+
+Warning: Update 1 of command 450 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2232, column 345)
+
+Warning: Update 1 of command 454 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2236, column 345)
+
+Warning: Update 1 of command 455 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2237, column 345)
+
+Warning: Update 1 of command 456 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2238, column 345)
+
+Warning: Update 1 of command 457 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2239, column 345)
+
+Warning: Update 1 of command 465 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2247, column 345)
+
+Warning: Update 1 of command 466 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2248, column 345)
+
+Warning: Update 1 of command 474 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2256, column 345)
+
+Warning: Update 1 of command 479 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2261, column 345)
+
+Warning: Update 1 of command 482 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2264, column 345)
+
+Warning: Update 1 of command 485 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2267, column 345)
+
+Warning: Update 1 of command 486 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2268, column 345)
+
+Warning: Update 1 of command 489 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2271, column 345)
+
+Warning: Update 1 of command 490 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2272, column 345)
+
+Warning: Update 1 of command 492 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2274, column 345)
+
+Warning: Update 1 of command 493 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2275, column 345)
+
+Warning: Update 1 of command 494 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2276, column 345)
+
+Warning: Update 1 of command 495 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2277, column 345)
+
+Warning: Update 1 of command 497 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2279, column 345)
+
+Warning: Update 1 of command 499 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2281, column 345)
+
+Warning: Update 1 of command 500 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2282, column 345)
+
+Warning: Update 1 of command 501 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2283, column 345)
+
+Warning: Update 1 of command 503 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2285, column 345)
+
+Warning: Update 1 of command 508 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2290, column 345)
+
+Warning: Update 1 of command 513 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2295, column 345)
+
+Warning: Update 1 of command 514 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2296, column 345)
+
+Warning: Update 1 of command 515 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2297, column 345)
+
+Warning: Update 1 of command 517 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2299, column 345)
+
+Warning: Update 1 of command 518 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2300, column 345)
+
+Warning: Update 1 of command 522 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2304, column 345)
+
+Warning: Update 1 of command 523 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2305, column 345)
+
+Warning: Update 1 of command 524 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2306, column 345)
+
+Warning: Update 1 of command 525 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2307, column 345)
+
+Warning: Update 1 of command 527 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2309, column 345)
+
+Warning: Update 1 of command 529 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2311, column 345)
+
+Warning: Update 1 of command 531 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2313, column 345)
+
+Warning: Update 1 of command 533 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2315, column 345)
+
+Warning: Update 1 of command 535 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2317, column 345)
+
+Warning: Update 1 of command 536 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2318, column 345)
+
+Warning: Update 1 of command 539 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2321, column 345)
+
+Warning: Update 1 of command 541 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2323, column 345)
+
+Warning: Update 1 of command 542 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2324, column 345)
+
+Warning: Update 1 of command 546 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2328, column 345)
+
+Warning: Update 1 of command 549 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2331, column 345)
+
+Warning: Update 1 of command 552 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2334, column 345)
+
+Warning: Update 1 of command 557 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2339, column 345)
+
+Warning: Update 1 of command 559 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2341, column 345)
+
+Warning: Update 1 of command 563 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2345, column 345)
+
+Warning: Update 1 of command 566 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2348, column 345)
+
+Warning: Update 1 of command 567 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2349, column 345)
+
+Warning: Update 1 of command 570 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2352, column 345)
+
+Warning: Update 1 of command 573 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2355, column 345)
+
+Warning: Update 1 of command 574 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2356, column 345)
+
+Warning: Update 1 of command 576 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2358, column 345)
+
+Warning: Update 1 of command 577 of module "STATE_3" doesn't do anything ("(s3'=1)", line 2359, column 345)
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 7 iterations in 0.01 seconds (average 0.001286, setup 0.00)
+
+Time for model construction: 3.359 seconds.
+
+Type:        DTMC
+States:      73 (1 initial)
+Transitions: 88
+
+Transition matrix: 843 nodes (18 terminal), 88 minterms, vars: 28r/28c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.28 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 7 iterations in 0.00 seconds (average 0.000143, setup 0.00)
+
+States:      73 (1 initial)
+Transitions: 88
+
+Transition matrix: 923 nodes (18 terminal), 88 minterms, vars: 30r/30c
+
+Finding accepting BSCCs...
+
+SCCs: 16, BSCCs: 16, non-BSCC states: 41
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 4 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Prob1: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 60, no = 12, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=30, nodes=695] [32.6 KB]
+Adding explicit sparse matrices... [levels=30, num=1, compact] [0.3 KB]
+Creating vector for diagonals... [dist=1, compact] [0.2 KB]
+Creating vector for RHS... [dist=2, compact] [0.2 KB]
+Allocating iteration vectors... [2 x 0.6 KB]
+TOTAL: [34.3 KB]
+
+Starting iterations...
+
+Jacobi: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.9707703090633691
+
+Time for model checking: 0.423 seconds.
+
+Result: 0.9707703090633691 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 339 warnings during computation.
+

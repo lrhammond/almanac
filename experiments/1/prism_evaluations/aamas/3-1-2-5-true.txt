@@ -1,0 +1,116 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:28:28 GMT 2021
+Hostname: arcus-htc-node014
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/3-1-2-5.prism /home/hert5888/almanac/experiments/1/prism_specs/3-1-2-5.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/3-1-2-5.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/3-1-2-5.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (G ((!phi)|(X (chi)))) ], Pmax=? [ X ((!xi) U psi) ])
+(2) P=? [ X (G ((!phi)|(X (chi)))) ]
+(3) P=? [ X ((!xi) U psi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 SPEC_0 SPEC_1 ACTION_0 
+Variables:   i t s0 s1 s2 q0 q1 a0 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (G ((!phi)|(X (chi)))) ], Pmax=? [ X ((!xi) U psi) ])
+
+Building model...
+
+Warning: Guard for command 3 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 7 of module "SPEC_0" is never satisfied.
+
+Warning: Guard for command 11 of module "SPEC_0" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 13 iterations in 0.00 seconds (average 0.000077, setup 0.00)
+
+Time for model construction: 0.134 seconds.
+
+Type:        MDP
+States:      331 (1 initial)
+Transitions: 1036
+Choices:     793
+
+Transition matrix: 1229 nodes (26 terminal), 1036 minterms, vars: 15r/15c/5nd
+
+Building deterministic Rabin automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.221 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 13 iterations in 0.00 seconds (average 0.000077, setup 0.00)
+States:      331 (1 initial)
+Transitions: 1036
+Choices:     793
+
+Transition matrix: 1627 nodes (26 terminal), 1036 minterms, vars: 17r/17c/5nd
+
+Building deterministic Rabin automaton (for X ("L0" U "L1"))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.017 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 13 iterations in 0.00 seconds (average 0.000154, setup 0.00)
+States:      331 (1 initial)
+Transitions: 1036
+Choices:     793
+
+Transition matrix: 2653 nodes (26 terminal), 1036 minterms, vars: 19r/19c/5nd
+Total time for product construction: 0.267 seconds.
+
+States:      331 (1 initial)
+Transitions: 1036
+Choices:     793
+
+Transition matrix: 2653 nodes (26 terminal), 1036 minterms, vars: 19r/19c/5nd
+
+Finding accepting end components for X (G ((!phi)|(X (chi))))...
+Time for end component identification: 0.0 seconds.
+
+Finding accepting end components for X ((!xi) U psi)...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 7 iterations in 0.00 seconds (average 0.000286, setup 0.00)
+
+yes = 71, no = 76, maybe = 184
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 32 iterations in 0.00 seconds (average 0.000031, setup 0.00)
+Optimal value for weights [1.000000,0.000000] from initial state: 0.999877
+Computed point: (0.9998772361688418, 0.976418613914427)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 32 iterations in 0.00 seconds (average 0.000031, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.976419
+Computed point: (0.976418613914427, 0.976418613914427)
+Optimising weighted sum of objectives: weights (0.0, 1.0)
+Iterative method: 32 iterations in 0.00 seconds (average 0.000031, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.976419
+The value iteration(s) took 0.034 seconds altogether.
+Number of weight vectors used: 1
+Multi-objective value iterations took 0.034 s.
+
+Value in the initial state: [(0.9998772361688418, 0.976418613914427)]
+
+Time for model checking: 0.384 seconds.
+
+Result: [(0.9998772361688418, 0.976418613914427)] (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 3 warnings during computation.
+

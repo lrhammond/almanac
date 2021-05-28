@@ -12,7 +12,7 @@ import utils
 import numpy as np
 import specs
 
-random.seed(26)
+# random.seed(26)
 
 # from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
 # from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
