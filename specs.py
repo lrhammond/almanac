@@ -10,15 +10,68 @@ import os
 import re
 from itertools import chain, combinations
 import pickle
+from torch.nn.functional import one_hot as one_hot
+import torch.tensor as tt
+
+# Specification controller class
+
+class Spec_Controller:
+
+    def __init__(self, formulae):
+
+        self.specs = [Spec(f) for f in formulae]
+        self.num_specs = len(formulae)
+        self.acceptances = [False for spec in self.specs]
+        self.states = self.reset()
+        self.num_states = [spec.ldba.get_num_states() for spec in self.specs]
+        self.epsilon_act_sizes = [spec.ldba.get_num_eps_actions() for spec in self.specs]
+    
+    def reset(self):
+
+        self.acceptances = [False for spec in self.specs]
+
+        return [spec.ldba.reset()[0] for spec in self.specs]
+    
+    def is_epsilon_transition(self, joint_action, act_sizes):
+
+        e_ts = {}
+        for i in range(len(act_sizes)):
+            a = joint_action[i] - (act_sizes[i] - 1) 
+            if a <= 0:
+                continue
+            else:
+                is_e_t = True
+                j = -1
+                while a > 0:
+                    j += 1
+                    a -= self.epsilon_act_sizes[j]
+
+                e_ts[j] = a + self.epsilon_act_sizes[j] - 1
+            
+        return e_ts
+
+    def step(self, e_ts, label_set):
+
+        for j in range(self.num_specs):
+            if j in e_ts.keys():
+                if self.specs[j].ldba.check_epsilon(e_ts[j]):
+                    self.states[j], self.acceptances[j] = self.specs[j].ldba.step(None, epsilon=e_ts[j])
+            else:
+                self.states[j], self.acceptances[j] = self.specs[j].ldba.step(label_set)
+
+        return self.states
+
+    def featurise(self, state):
+
+        return [one_hot(tt(state[j]), self.num_states[j]) for j in range(self.num_specs)]
 
 
 # Specification class
 class Spec:
 
-    def __init__(self, formula, weight):
+    def __init__(self, formula):
 
         self.formula = formula
-        self.weight = weight
         self.ldba = LDBA(formula)
 
     def save(self, filename=None):
@@ -219,6 +272,7 @@ class LDBA:
         self.num_states = n_qs
         self.labels = set(flatten(self.delta[0].keys()))
         self.eps_actions = sorted(set(flatten(self.eps)))
+        self.accepted = False
 
     def get_num_states(self):
         
@@ -231,20 +285,21 @@ class LDBA:
     def reset(self):
 
         self.state = self.q0
-        return self.state
+        self.accepted = False
+        return self.state, self.accepted
 
     def step(self, label_set, epsilon=None):
 
         if epsilon == None:
             l = tuple(sorted(tuple(self.labels.intersection(set(label_set)))))
-            reward = 1.0 if self.acc[self.state][l][0] else 0.0
+            self.accepted = True if self.acc[self.state][l][0] else False
             self.state = self.delta[self.state][l]
         elif self.eps_actions[epsilon] in self.eps[self.state]:
-            reward = 0.0
+            self.accepted = False
             self.state = self.eps_actions[epsilon]
         else:
             print("Error: Epsilon transition not available!")
-        return (self.state, reward)
+        return self.state, self.accepted
 
     def check_epsilon(self, epsilon):
 

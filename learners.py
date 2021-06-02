@@ -62,25 +62,12 @@ class DNN(nn.Module):
         elif self.output == 'softmax':
             d = 0 if len(x.size()) == 1 else 1
             return [nn.functional.softmax(y) for y in torch.split(x, self.out_sizes, dim=d)]
+        elif self.output == 'beta':
+            pass
+        elif self.output == 'gaussian':
+            pass
         else:
-            print("Error: DNN output must be \'linear\' or \'softmax\'")
-
-
-# Module for natural gradient values
-class NaturalGradient(nn.Module):
-
-    def __init__(self, param_sizes):
-
-        super(NaturalGradient,self).__init__()
-
-        self.xs = nn.ParameterList([nn.Parameter(torch.zeros(p, requires_grad=True, dtype=torch.float)) for p in param_sizes])
-        for p in self.parameters():
-            p.requires_grad = True
-        
-    def forward(self, scores):
-
-        flat_xs = torch.cat([torch.flatten(x) for x in self.xs])
-        return torch.sum(flat_xs * scores, dim=1)
+            print("Error: DNN output must be \'linear\' or \'softmax\' or \'beta\' or \'gaussian\'")
 
 
 # Replay buffer module
@@ -131,25 +118,19 @@ class ReplayBuffer:
 
 
 # Set up actor functions 
-def set_up_actors(parametrization, local, obs_size, act_sizes, hidden):
+def set_up_actors(parametrization, obs_size, act_sizes, hidden):
 
     if parametrization == 'dnn':
-        if local:
-            actors = []
-            for i in range(len(act_sizes)):
-                actor = DNN(obs_size, [act_sizes[i]], 'softmax', hidden)
-                actors.append(actor)
-        else:
-            actors = [DNN(obs_size, act_sizes, 'softmax', hidden)]
+        actors = []
+        for i in range(len(act_sizes)):
+            actor = DNN(obs_size, [act_sizes[i]], 'softmax', hidden)
+            actors.append(actor)
 
     elif parametrization == 'linear':
-        if local:
-            actors = []
-            for i in range(len(act_sizes)):
-                actor = DNN(obs_size, [act_sizes[i]], 'softmax', [], bias=False)
-                actors.append(actor)
-        else:
-            actors = [DNN(obs_size, act_sizes, 'softmax', [], bias=False)]
+        actors = []
+        for i in range(len(act_sizes)):
+            actor = DNN(obs_size, [act_sizes[i]], 'softmax', [], bias=False)
+            actors.append(actor)
 
     else:
         print("Error: Actor must be \'dnn\' or \'linear\')")
@@ -164,7 +145,7 @@ def set_up_actors(parametrization, local, obs_size, act_sizes, hidden):
 def set_up_critics(parametrization, obs_size, num_specs, hidden):
 
     if parametrization == 'dnn':
-        critics = [DNN(obs_size, [1], 'linear', hidden) for j in range(num_specs)]
+        critics = [DNN(obs_size, [1], 'dnn', hidden) for j in range(num_specs)]
 
     elif parametrization == 'linear':
         critics = [DNN(obs_size, [1], 'linear', [], bias=False) for j in range(num_specs)]
@@ -215,16 +196,6 @@ def set_up_lrs(learning_rates):
                 print("Error: Contant decay parameter p must satisfy 0.0 < p")
                 return
             lr_lambda = lambda e: param
-        # elif method == 'onplateau_min':
-        #     if not (0.0 < param) and (param < 1.0):
-        #         print("Error: Plateau decay parameter p must satisfy 0.0 < p < 1.0")
-        #         return
-        #     schedulers = [optim.lr_scheduler.ReduceLROnPlateau(o, mode='min', factor=param, patience=10, threshold=0.001) for o in optimisers]
-        # elif method == 'onplateau_max':
-        #     if not (0.0 < param) and (param < 1.0):
-        #         print("Error: Plateau decay parameter p must satisfy 0.0 < p < 1.0")
-        #         return
-        #     schedulers = [optim.lr_scheduler.ReduceLROnPlateau(o, mode='max', factor=param, patience=10, threshold=0.001) for o in optimisers]
         else:
             print("Error: Learning rate must be \'robbinsmonro\' or \'exponential\' or \'constant\'")
 
@@ -236,7 +207,7 @@ def set_up_lrs(learning_rates):
 # Almanac module
 class Almanac:
 
-    def __init__(self, env, specifications, optimisers, buffers, models, local, model_constants):
+    def __init__(self, env, specifications, optimisers, buffers, models, model_constants):
 
         # Parameters
         self.obs_size = env.get_obs_size()
@@ -244,8 +215,10 @@ class Almanac:
         self.lrs = set_up_lrs(model_constants['lrs'])
         self.discounts = model_constants['discounts']
         self.num_specs = len(specifications)
+        self.num_rewards = len(rewards)
+        self.num_critics = self.num_specs + self.num_rewards
+        self.objectives = objectives
         self.num_players = len(self.act_sizes)
-        self.local = local
         self.models = models
         self.buffers = buffers
         self.env_name = env.get_name()
@@ -258,34 +231,18 @@ class Almanac:
         self.epsilon_act_sizes = [spec.ldba.get_num_eps_actions() for spec in self.specs]
        
         # Networks
-        self.actors = set_up_actors(self.models['actor'][0], local, self.obs_size + sum(self.ldba_state_sizes), [a_s + sum(self.epsilon_act_sizes) for a_s in self.act_sizes], hidden=self.models['actor'][1])
-        self.patient_critics = set_up_critics(self.models['critic'][0], self.obs_size + sum(self.ldba_state_sizes), self.num_specs, hidden=self.models['critic'][1])
-        self.hasty_critics = set_up_critics(self.models['critic'][0], self.obs_size + sum(self.ldba_state_sizes), self.num_specs, hidden=self.models['critic'][1])
-
-        # Natural gradients
-        self.param_shapes = []
-        for actor in self.actors:
-            model_params = filter(lambda p: p.requires_grad, actor.parameters())
-            self.param_shapes.append(tuple([p.shape for p in model_params]))
-        self.nat_grads = [NaturalGradient(params) for params in self.param_shapes]
-        for nat_grad in self.nat_grads:
-            nat_grad.to(device)
-        self.scores = [dict() for i in range(len(self.actors))]
-        self.current_patient_losses = [deque(maxlen=10) for a in self.nat_grads]
-        self.current_hasty_losses = [deque(maxlen=10) for a in self.nat_grads]
+        self.actors = set_up_actors(self.models['actor'][0], self.obs_size + sum(self.ldba_state_sizes), [a_s + sum(self.epsilon_act_sizes) for a_s in self.act_sizes], hidden=self.models['actor'][1])
+        self.critics = set_up_critics(self.models['critic'][0], self.obs_size + sum(self.ldba_state_sizes), self.num_critics, hidden=self.models['critic'][1])
         
         # Optimisers
         self.actor_optimisers = set_up_optimisers(self.actors, optimisers['actor'])
-        self.patient_critic_optimisers = set_up_optimisers(self.patient_critics, optimisers['critic'], l2=self.l2_reg)
-        self.hasty_critic_optimisers = set_up_optimisers(self.hasty_critics, optimisers['critic'], l2=self.l2_reg)
-        self.nat_grad_optimisers = set_up_optimisers(self.nat_grads, optimisers['nat_grad'], l2=self.l2_reg)
+        self.critic_optimisers = set_up_optimisers(self.critics, optimisers['critic'], l2=self.l2_reg)
 
         # Replay buffers
-        self.patient_buffer = ReplayBuffer(self.num_specs, buffer_size=self.buffers['size'], batch_size=self.buffers['batch'])
-        self.hasty_buffer = ReplayBuffer(self.num_specs, buffer_size=self.buffers['size'], batch_size=self.buffers['batch'])
+        self.buffer = ReplayBuffer(self.num_critics, buffer_size=self.buffers['size'], batch_size=self.buffers['batch'])
 
         # Lagrange multipliers
-        self.mu = [tt(0.0) for a in self.actors]
+        self.lam = [tt(0.0) for j in self.objectives]
         
         # Form possible state vectors for MMG experiments in order to extract policies
         if self.env_kind == 'mmg':
@@ -301,28 +258,69 @@ class Almanac:
             self.possible_state_tensors = torch.stack([tt(p_s).float() for p_s in self.possible_states])
             self.policy_dists = None
 
-    def update_critics(self, e, patient_experiences, hasty_experiences, continue_prob, sum_val_reg, c_neg_var_reg, max_critic_norm, actual_dist):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def update_critics(self, e, experiences, continue_prob, sum_val_reg, c_neg_var_reg, max_critic_norm, actual_dist):
         
         if len(self.scores[0]) != 0:
             o = self.obs_size + sum(self.ldba_state_sizes)
             unique_states = torch.stack([tt(state)[0:o] for state in self.scores[0].keys()]).to(device)
 
-        for j in range(self.num_specs):
+        for j in range(self.num_critics):
 
-            if patient_experiences[j] != None:
+            if experiences[j] != None:
 
                 ts, states, _, rewards, next_states, gammas, dones = patient_experiences[j]
-                self.patient_critics[j].train()
+                self.critics[j].train()
 
                 # Form state dists and state-dependent discounts
                 dist = self.state_dist('patient', actual_dist, continue_prob, ts, gammas).to(device)
                 patient_discounts = torch.ones_like(rewards).to(device) - ((1.0 - self.discounts['patient']) / utils.denom(torch.max(rewards))) * rewards.to(device)
 
                 # Compute losses
-                patient_prediction = self.patient_critics[j](states.to(device)).to(device)
+                patient_prediction = self.critics[j](states.to(device)).to(device)
                 with torch.no_grad():
-                    patient_target = rewards.to(device) + (patient_discounts * self.patient_critics[j](next_states.to(device)) * (1-dones)).to(device)
-                values = self.patient_critics[j](unique_states)
+                    patient_target = rewards.to(device) + (patient_discounts * self.critics[j](next_states.to(device)) * (1-dones)).to(device)
+                values = self.critics[j](unique_states)
                 t_v_r = (sum_val_reg * torch.sum(torch.square(values))).to(device)
                 if len(unique_states) == 1:
                     patient_loss = self.lrs['critic'](e) * (t_v_r + (dist * (patient_prediction - patient_target)**2).mean()).to(device)
@@ -331,11 +329,11 @@ class Almanac:
                     patient_loss = self.lrs['critic'](e) * (t_v_r + n_v_r + (dist * (patient_prediction - patient_target)**2).mean()).to(device)
                 
                 # Update networks
-                self.patient_critic_optimisers[j].zero_grad()
+                self.critic_optimisers[j].zero_grad()
                 patient_loss.backward()
-                nn.utils.clip_grad_norm_(self.patient_critics[j].parameters(), max_critic_norm)
-                self.patient_critic_optimisers[j].step()
-                self.patient_critics[j].eval()
+                nn.utils.clip_grad_norm_(self.critics[j].parameters(), max_critic_norm)
+                self.critic_optimisers[j].step()
+                self.critics[j].eval()
 
             if hasty_experiences[j] != None:
 
@@ -383,16 +381,13 @@ class Almanac:
                     patient_discounts = (torch.ones_like(rewards).to(device) - ((1.0 - self.discounts['patient']) / utils.denom(torch.max(rewards))) * rewards.to(device)).to(device)
 
                     # Retrieve saved scores
-                    if self.local:
-                        data_state_actions = torch.cat((states,joint_actions[i]), dim=1)
-                    else:
-                        data_state_actions = torch.cat((states,torch.cat(joint_actions, dim=1)), dim=1)
+                    data_state_actions = torch.cat((states,joint_actions[i]), dim=1)
                     scores = torch.stack([self.scores[i][tuple(d_s_a.tolist())] for d_s_a in data_state_actions])
 
                     prediction = self.nat_grads[i](scores).to(device)
 
                     with torch.no_grad():
-                        patient_target = rewards.to(device) + (patient_discounts * self.patient_critics[j](next_states.to(device)) * (1-dones)).to(device) - self.patient_critics[j](states.to(device)).to(device)
+                        patient_target = rewards.to(device) + (patient_discounts * self.critics[j](next_states.to(device)) * (1-dones)).to(device) - self.critics[j](states.to(device)).to(device)
                         hasty_target = rewards.to(device) + (self.discounts['hasty'] * self.hasty_critics[j](next_states.to(device)) * (1-dones)).to(device) - self.hasty_critics[j](states.to(device)).to(device)
                     patient_losses.append((self.specs[j].weight * (patient_dist * torch.square(prediction - torch.flatten(patient_target))).mean()).to(device))
                     hasty_losses.append((self.specs[j].weight * (hasty_dist * torch.square(prediction - torch.flatten(hasty_target))).mean()).to(device))
@@ -400,7 +395,7 @@ class Almanac:
             # Form losses
             l = tt(0.0) if len(self.current_patient_losses[i]) == 0 else tt(self.current_patient_losses[i]).float().mean()
             loss_1 = sum(patient_losses)
-            loss_2 = sum(hasty_losses) + max(self.mu[i] * (loss_1 - l), tt(0))
+            loss_2 = sum(hasty_losses) + max(self.lam[i] * (loss_1 - l), tt(0))
             self.current_patient_losses[i].append(loss_1)
             self.current_hasty_losses[i].append(loss_2)
             loss = (self.lrs['patient_nat_grad'](e) * loss_1) + (self.lrs['hasty_nat_grad'](e) * loss_2).to(device)
@@ -421,20 +416,12 @@ class Almanac:
         if len(self.scores[i]) > 1:
             o = self.obs_size + sum(self.ldba_state_sizes)
             states = torch.stack([tt(state)[0:o] for state in self.scores[i].keys()])
-            if self.local:
-                action_dist = self.actors[i](states)[0]
-                actual_mean_action_dist = action_dist.mean(dim=0)
-                mean_action_dist = (1e-10 * torch.ones_like(actual_mean_action_dist)) + actual_mean_action_dist
-                neg_entropy = torch.dot(mean_action_dist, torch.log(mean_action_dist))
-                non_determinism = torch.abs((0.5 * torch.ones_like(action_dist)) - action_dist).mean()
-                variance = torch.var(action_dist, dim=0).mean()
-            else:
-                joint_action_dists = self.actors[0](states)
-                action_dists = [joint_action_dists[i] for i in range(self.num_players)]
-                mean_action_dists = [1e-50 + joint_action_dists[i].mean(dim=0) for i in range(self.num_players)]
-                neg_entropy = sum([torch.dot(a.to(device), torch.log(a).to(device)).to(device) for a in mean_action_dists]).to(device)
-                non_determinism = sum([torch.square((0.5 * torch.ones_like(a_d)) - a_d).mean() for a in action_dists]).to(device)
-                # TODO variance regularisation
+            action_dist = self.actors[i](states)[0]
+            actual_mean_action_dist = action_dist.mean(dim=0)
+            mean_action_dist = (1e-10 * torch.ones_like(actual_mean_action_dist)) + actual_mean_action_dist
+            neg_entropy = torch.dot(mean_action_dist, torch.log(mean_action_dist))
+            non_determinism = torch.abs((0.5 * torch.ones_like(action_dist)) - action_dist).mean()
+            variance = torch.var(action_dist, dim=0).mean()
             regulariser_loss = 0.1 * ((neg_ent_reg * neg_entropy) - (non_det_reg * non_determinism) - (a_neg_var_reg * variance))
             regulariser_loss.backward()
 
@@ -453,33 +440,58 @@ class Almanac:
         self.actor_optimisers[i].step()
         self.actors[i].eval()
 
-    def update_mu(self, e, max_mu=100.0):
+    def update_lam(self, e, max_lam=100.0):
 
         with torch.no_grad():
             for i in range(len(self.nat_grads)):
                 l = tt(0.0) if len(self.current_patient_losses[i]) == 0 else tt(self.current_patient_losses[i]).float().mean()
-                self.mu[i] += self.lrs['mu'](e) * (self.current_patient_losses[i][-1] - l)
-                self.mu[i] = min(max(self.mu[i], tt(0.0)), max_mu)
+                self.lam[i] += self.lrs['lam'](e) * (self.current_patient_losses[i][-1] - l)
+                self.lam[i] = min(max(self.lam[i], tt(0.0)), max_lam)
 
     def policy(self, state, probs=False):
 
-        if self.local: 
-            action_dists = [actor(state) for actor in self.actors]
-            if probs:
-                return [a[0] for a in action_dists]
-            else:
-                return [Categorical(a[0]) for a in action_dists]
+        action_dists = [actor(state) for actor in self.actors]
+        if probs:
+            return [a[0] for a in action_dists]
         else:
-            joint_action_dists = self.actors[0](state)
-            action_dists = [joint_action_dists[i] for i in range(self.num_players)]
-            return [Categorical(a) for a in action_dists]
+            return [Categorical(a[0]) for a in action_dists]
+
+    # Perform joint action
+    def act(state, epsilon):
+        if random.random() < epsilon:
+            joint_action = [tt(random.choice(range(act_size))) for act_size in self.act_sizes]
+        else:
+            joint_action = [actions.sample() for actions in self.policy(state)]
+
+    def step():
+
+        # Temporarily save product state
+        for j in range(self.num_specs): 
+            self.Z[j][tuple(prod_state.tolist())] = (t, prod_state, joint_action)
+
+        # Compute rewards etc. from environment and automata
+        unweighted_rewards = [reward_multiplier * s_r[1] for spec, s_r in zip(specifications, new_spec_states_rewards)]
+        discounts = [self.discounts['patient'] if r > 0.0 else 1.0 for r in unweighted_rewards]
+        gammas = [g * d for g, d in zip(gammas, discounts)]
+
+        for j in range(self.num_specs):
+                
+            # Store patient critic experience when possible
+            if patient_updates:
+                if unweighted_rewards[j] > 0.0 or self.critics[j](new_prod_state) == 0.0:
+                    for k in Z[j].keys():
+                        (p_t, p_s, p_a) = Z[j][k]
+                        self.patient_buffer.add(j, p_t, p_s, p_a, unweighted_rewards[j], new_prod_state, gammas[j], done)
+                    Z[j] = dict()
+
+
 
     def train(self, steps, env, specs, actual_dist, patient_updates, train_constants, run_id, filename, score_interval=100):
         
         best = 0.0
         last_score_interval = deque(maxlen=score_interval)
 
-        if self.env_kind == 'mmg'
+        if self.env_kind == 'mmg':
             first_50 = []
             on2awinner = False
 
@@ -575,7 +587,7 @@ class Almanac:
                     
                     # Store patient critic experience when possible
                     if patient_updates:
-                        if unweighted_rewards[j] > 0.0 or self.patient_critics[j](new_prod_state) == 0.0:
+                        if unweighted_rewards[j] > 0.0 or self.critics[j](new_prod_state) == 0.0:
                             for k in Z[j].keys():
                                 (p_t, p_s, p_a) = Z[j][k]
                                 self.patient_buffer.add(j, p_t, p_s, p_a, unweighted_rewards[j], new_prod_state, gammas[j], done)
@@ -646,10 +658,7 @@ class Almanac:
             for d in data:
                 if d != None:
                     for i in range(len(self.actors)):
-                        if self.local:
-                            data_state_actions = torch.unique(torch.cat((d[1],d[2][i]), dim=1), dim=0)
-                        else:
-                            data_state_actions = torch.unique(torch.cat((d[1],torch.cat(d[2], dim=1)), dim=1), dim=0)
+                        data_state_actions = torch.unique(torch.cat((d[1],d[2][i]), dim=1), dim=0)
                         keys = [tuple(tens.tolist()) for tens in data_state_actions]
                         new_pairs = [(k, tens) for k, tens in zip(keys, data_state_actions) if k not in self.scores[i].keys()]
                         self.scores[i].update(self.get_scores(i, new_pairs))
@@ -657,7 +666,7 @@ class Almanac:
             # Update critics and natural gradients
             self.update_critics(e, patient_data, hasty_data, continue_prob, sum_val_reg, c_neg_var_reg, max_critic_norm, actual_dist)
             self.update_nat_grads(e, hasty_data, continue_prob, max_nat_grad_norm, actual_dist)
-            self.update_mu(e)
+            self.update_lam(e)
 
             # If natural gradients have converged, update the policy and clear buffers and old scores
             for i in range(len(self.actors)):
@@ -679,12 +688,9 @@ class Almanac:
 
     def get_scores(self, i, new_pairs):
 
-        if self.local:
-            scores = dict()
-            for (k, t) in new_pairs:
-                scores[k] = torch.cat([torch.flatten(g) for g in torch.autograd.grad(self.policy(t[0:-1])[i].log_prob(t[-1]).to(device), self.actors[i].parameters(), retain_graph=True)])
-        else:
-            scores = dict([(k, torch.autograd.grad(sum([self.policy(t[0:-self.num_players])[j].log_prob(t[j-self.num_players]) for j in range(self.num_players)]).to(device), self.actors[i].parameters(), retain_graph=True)) for (k, t) in new_pairs]) 
+        scores = dict()
+        for (k, t) in new_pairs:
+            scores[k] = torch.cat([torch.flatten(g) for g in torch.autograd.grad(self.policy(t[0:-1])[i].log_prob(t[-1]).to(device), self.actors[i].parameters(), retain_graph=True)])
 
         return scores
 
@@ -721,32 +727,6 @@ class Almanac:
                 return False
         
         return True 
-
-    def is_epsilon_transition(self, joint_action):
-
-        is_e_t = False
-        eps_trans = []
-        for i in range(len(self.act_sizes)):
-            a = joint_action[i] - (self.act_sizes[i] - 1) 
-            if a <= 0:
-                continue
-            else:
-                is_e_t = True
-                j = -1
-                while a > 0:
-                    j += 1
-                    a -= self.epsilon_act_sizes[j]
-                eps_trans.append((j, a + self.epsilon_act_sizes[j] - 1))
-        eps_trans = [(j, e_t) for (j, e_t) in eps_trans if self.specs[j].ldba.check_epsilon(e_t)]
-        if is_e_t:
-            if len(eps_trans) > 0:
-                (j, e_t) = random.choice(eps_trans)
-            else:
-                j, e_t = None, None
-        else:
-            j, e_t = None, None
-
-        return is_e_t, j, e_t
 
     def evaluate(self, policy=None, play=False, iterations=10, steps=100, continue_prob=0.9):
 

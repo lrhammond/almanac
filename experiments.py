@@ -8,6 +8,7 @@ import pickle
 import copy
 import random
 import sys
+import torch
 
 
 # Debugging
@@ -240,6 +241,39 @@ def exp1(state_size, num_actors, num_specs, run_num):
 
         completed = run(mmg_hps, run_num, filename)
 
+        if s % score_interval == 0:
+
+            # Sometimes the mmg generated is trivial, if so we return false and regenerate the mmg
+            if self.env_kind == 'mmg':
+                if len(first_50) < 60:
+                    first_50.append(recent_game_score/score_interval)
+                else:
+                    if not on2awinner:
+                        if np.var(first_50[10:]) < 0.01:
+                            return False
+                        else:
+                            on2awinner = True
+            
+            last_score_interval.append(recent_game_score / score_interval)
+
+            with open(filename, 'a') as f:
+                f.write('{}, {}, {}\n'.format(int(s / score_interval), average_game_score, recent_game_score / score_interval))
+            recent_game_score = 0
+
+            if s > (steps / 10) and average_game_score > best + 0.05:
+                if self.env_kind == 'mmg':
+                    self.policy_dists = dict([(p, self.policy(t, probs=True)) for p,t in zip(self.possible_states, self.possible_state_tensors)])
+                best = average_game_score
+
+        if len(last_score_interval) == score_interval:
+            if np.var(last_score_interval) < 0.001:
+                average_game_score = game_score / s
+                if average_game_score > best + 0.05:
+                    if self.env_kind == 'mmg':
+                        self.policy_dists = dict([(p, self.policy(t, probs=True)) for p,t in zip(self.possible_states, self.possible_state_tensors)])
+                    best = average_game_score
+                s = steps + 1
+
 
 # Experiment 2
 
@@ -289,3 +323,155 @@ def run(hp, num, filename=None, modelname=None):
             pickle.dump(almanac, f)
     
     return trained
+
+
+
+def make_learner
+
+
+
+def experiment
+
+    spec_controller = specs.Spec_Controller(formulae)
+
+    learner = make_learner()
+
+    run()
+
+
+
+
+
+def run(learner, env, max_steps, spec_controller, rewards, save_location, p_terminate):
+
+    filename = './{}/{}/{}/{}-{}.txt'.format(save_location, env.name, learner.name, learner.name, process_id)
+
+    s = 0
+
+    while s < max_steps:
+
+        # Initialise environment
+        game_state = env.reset()
+        spec_states, acceptances = spec_controller.reset() 
+        done = False
+        t = 0
+        # print("End of episode, resetting...")
+
+        while not done and s < max_steps:
+
+            # Form state vectors 
+            prod_state = torch.cat([env.featurise(game_state)] + spec_controller.featurise(spec_states), 0)
+            
+            # Perform joint action
+            joint_action = learner.act(prod_state)
+
+            # If an epsilon transition is made the game (and possibly spec) state remains the same
+            e_ts = spec_controller.is_epsilon_transition(joint_action)
+            if len(e_ts) > 0:
+                new_game_state, done = game_state, done
+            else:
+                new_game_state, done = env.step(joint_action)
+            
+            # Update LDBAs
+            label_set = env.label(new_game_state)
+            new_spec_states, acceptances = spec_controller.step(e_ts, label_set)
+
+            # Form new product state
+            new_prod_state = torch.cat([env.featurise(new_game_state)] + spec_controller.featurise(spec_states), 0)
+
+            if random.random() < p_terminate:
+                done = True
+            
+            # Take learning step
+            learner.step(prod_state, joint_action, new_prod_state, acceptances, rewards, done, t)
+
+            # Update variables for next step
+            game_state = new_game_state
+            spec_states = new_spec_states
+
+            t += 1
+            s += 1
+
+            # Save and occasionally print (average) score
+            if s % score_interval == 0:
+                
+                average_game_score = game_score / s
+
+                print("Score ({}/{}): {} (recent)   {} (average)".format(int(s / score_interval), int(steps / score_interval), (recent_game_score / score_interval), average_game_score))
+
+
+    learner.save_model('./{}/{}/{}/{}-{}'.format(save_location, env.name, learner.name, learner.name, process_id))            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    for i in range(interacts):
+
+        state = env.reset()
+
+        action = agent.act(state)
+        step += 1
+
+        if int_action:
+            action = int(action)
+        if type(action)!=int:
+            action = action.squeeze().cpu().float()
+
+        next_state, reward, done, info = env.step(action)
+        next_state = np.expand_dims(next_state, axis=0)
+        next_state = torch.tensor(next_state).float().to(device)
+
+        try:
+            cost = info['cost']
+        except:
+            try:
+                cost = info['constraint_costs'][0]
+            except:
+                cost = 0
+
+        if mode==1:
+            r = reward
+        elif mode==2:
+            r = reward-cost
+        elif mode==3:
+            r = [-cost, reward]
+        elif mode==4:
+            r = [reward, cost]
+        elif mode==5:
+            r = [reward, -cost]
+
+        #time.sleep(0.0001)
+        agent.step(state, action, r, next_state, done)
+
+        if done or (step >= max_ep_length):
+            step = 0
+            state = env.reset()
+            state = np.expand_dims(state, axis=0)
+            state = torch.tensor(state).float().to(device)
+        else:
+            state = next_state
+
+        with open(filename, 'a') as f:
+            f.write('{},{}\n'.format(reward, cost))
