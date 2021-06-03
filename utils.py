@@ -32,6 +32,26 @@ def remove_nans(x):
     return x
 
 
+# Checks if a sequence of losses have converged
+def losses_converged(losses, tolerance=0.1, bound=0.01, minimum_updates=10):
+
+    # If not enough updates have been performed, assume not converged
+    if len(losses) < minimum_updates:
+        return False
+    else:
+        # If the mean loss is lower than some absolute bound, assume converged
+        l_mean = tensor(losses).mean().float()
+        if l_mean < bound:
+            return True
+        # Else check if the max of the recent losses are sufficiently close to the mean, if so then assume converged
+        else:
+            l_max = max(losses).float()
+            if l_max > (1.0 + tolerance) * l_mean:
+                return False
+    
+    return True
+
+
 # Writes .sh files for running mmg experiments on ARC
 def write_mmg_sh_files(range_repetitions, range_actions, range_states, range_specs):
 

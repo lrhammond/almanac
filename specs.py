@@ -10,7 +10,7 @@ import os
 import re
 from itertools import chain, combinations
 import pickle
-from torch.nn.functional import one_hot as one_hot
+from torch.nn.functional import feature_alpha_dropout, one_hot as one_hot
 import torch.tensor as tt
 
 # Specification controller class
@@ -40,7 +40,6 @@ class Spec_Controller:
             if a <= 0:
                 continue
             else:
-                is_e_t = True
                 j = -1
                 while a > 0:
                     j += 1
@@ -64,6 +63,33 @@ class Spec_Controller:
     def featurise(self, state):
 
         return [one_hot(tt(state[j]), self.num_states[j]) for j in range(self.num_specs)]
+
+    def get_transitions(self, e_ts, label_set):
+
+        s_1s, s_2s, acceptances = [], [], []
+        for s_1 in []:
+            s_1s.append(self.featurise(s_1))
+            s_2 = []
+            accepted = []
+            for j in range(len(self.specs)):
+                if j in e_ts.keys():
+                    if self.specs[j].ldba.check_epsilon(e_ts[j]):
+                        s_2.append(self.specs[j].ldba.eps_actions[e_ts[j]])
+                    else:
+                        s_2.append(s_1[j])
+                    accepted.append(False)
+                else:
+                    l = tuple(sorted(tuple(self.specs[j].ldba.labels.intersection(set(label_set)))))
+                    s_2.append(self.specs[j].ldba.delta[s_1[j]][l])
+                    accepted.append(True if self.specs[j].ldba.acc[s_1[j]][l][0] else False)
+            s_2s.append(self.featurise(s_2))
+            acceptances.append(accepted)
+        
+        return [s_1s, s_2s, acceptances]
+
+    def save_model(self, location):
+
+        pass
 
 
 # Specification class

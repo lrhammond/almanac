@@ -70,12 +70,12 @@ class DNN(nn.Module):
             print("Error: DNN output must be \'linear\' or \'softmax\' or \'beta\' or \'gaussian\'")
 
 
-# Replay buffer module
-class ReplayBuffer:
+# Critic buffer module
+class CriticBuffer:
 
-    def __init__(self, num_specs, buffer_size, batch_size):
+    def __init__(self, buffer_size, batch_size):
 
-        self.memory = [deque(maxlen=buffer_size) for j in range(num_specs)]
+        self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
         self.experiences = namedtuple("Experience", 
                                         field_names=["time",
@@ -86,19 +86,20 @@ class ReplayBuffer:
                                                     "gamma",
                                                     "done"])     
 
-    def add(self, j, time, state, joint_action, reward, next_state, gamma, done):
+    def add(self, time, state, joint_action, reward, next_state, gamma, done):
         
         e = self.experiences(time, state, joint_action, reward, next_state, gamma, done)
-        self.memory[j].append(e)
+        self.memory.append(e)
         
-    def sample(self, j, sample_all=False):
+    def sample(self, sample_all=False):
 
-        if len(self.memory[j]) == 0:
+        if len(self.memory) == 0:
             return None
-        elif sample_all or len(self.memory[j]) < self.batch_size:
-            experiences = self.memory[j]
+        elif sample_all or len(self.memory) < self.batch_size:
+            experiences = self.memory
         else:
-            experiences = random.sample(self.memory[j], k=self.batch_size)
+            experiences = random.sample(self.memory, k=self.batch_size)
+
         times = tt([e.time for e in experiences if e is not None]).view(-1,1).float().to(device)
         states = torch.stack([e.state for e in experiences if e is not None]).float().to(device)
         joint_actions = [tt([e.joint_action[i] for e in experiences if e is not None]).view(-1,1).float().to(device) for i in range(len(experiences[0].joint_action))]
@@ -106,6 +107,7 @@ class ReplayBuffer:
         next_states = torch.stack([e.next_state for e in experiences if e is not None]).float().to(device)
         gammas = tt([e.gamma for e in experiences if e is not None]).view(-1,1).float().to(device)
         dones = tt([int(e.done) for e in experiences if e is not None]).view(-1,1).float().to(device)
+        
         return (times, states, joint_actions, rewards, next_states, gammas, dones)
     
     def clear(self):
@@ -113,8 +115,61 @@ class ReplayBuffer:
         for m in self.memory:
             m.clear()
     
-    def __len__(self, j):
-        return len(self.memory[j])
+    def __len__(self):
+        return len(self.memory)
+
+
+# Actor buffer module
+class ActorBuffer:
+
+    def __init__(self, buffer_size, batch_size):
+
+        self.memory = deque(maxlen=buffer_size)
+        self.batch_size = batch_size
+        self.experiences = namedtuple("Experience", 
+                                        field_names=["time",
+                                                    "state",
+                                                    "joint_action",
+                                                    "reward",
+                                                    "next_state",
+                                                    "discount",
+                                                    "gamma",
+                                                    "done",
+                                                    "true_state"])     
+
+    def add(self, time, state, joint_action, reward, next_state, discount, gamma, done, true_state):
+        
+        e = self.experiences(time, state, joint_action, reward, next_state, discount, gamma, done, true_state)
+        self.memory.append(e)
+        
+    def sample(self, sample_all=False):
+
+        if len(self.memory) == 0:
+            return None
+        elif sample_all or len(self.memory) < self.batch_size:
+            experiences = self.memory
+        else:
+            experiences = random.sample(self.memory, k=self.batch_size)
+
+        times = tt([e.time for e in experiences if e is not None]).view(-1,1).float().to(device)
+        states = torch.stack([e.state for e in experiences if e is not None]).float().to(device)
+        joint_actions = [tt([e.joint_action[i] for e in experiences if e is not None]).view(-1,1).float().to(device) for i in range(len(experiences[0].joint_action))]
+        rewards = [tt([e.reward[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].reward))]
+        next_states = torch.stack([e.next_state for e in experiences if e is not None]).float().to(device)
+        gammas = [tt([e.gamma[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].gamma))]
+        discounts = [tt([e.discount[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].discount))]
+        dones = tt([int(e.done) for e in experiences if e is not None]).view(-1,1).float().to(device)
+        true_states = torch.stack([e.true_state for e in experiences if e is not None]).float().to(device)
+
+        return (times, states, joint_actions, rewards, next_states, gammas, discounts, dones, true_states)
+    
+    def clear(self):
+
+        for m in self.memory:
+            m.clear()
+    
+    def __len__(self):
+        return len(self.memory)
 
 
 # Set up actor functions 
@@ -207,247 +262,173 @@ def set_up_lrs(learning_rates):
 # Almanac module
 class Almanac:
 
-    def __init__(self, env, specifications, optimisers, buffers, models, model_constants):
+    def __init__(self, obs_size, act_sizes, num_rewards, num_objectives, hps):
 
         # Parameters
-        self.obs_size = env.get_obs_size()
-        self.act_sizes = env.get_act_sizes()
-        self.lrs = set_up_lrs(model_constants['lrs'])
-        self.discounts = model_constants['discounts']
-        self.num_specs = len(specifications)
-        self.num_rewards = len(rewards)
-        self.num_critics = self.num_specs + self.num_rewards
-        self.objectives = objectives
+        self.act_sizes = act_sizes
+        self.hps = hps
+        self.lrs = set_up_lrs(self.hps['lrs'])
+        self.num_objectives = num_objectives
         self.num_players = len(self.act_sizes)
-        self.models = models
-        self.buffers = buffers
-        self.env_name = env.get_name()
-        self.env_kind = env.get_kind()
-        self.l2_reg = model_constants['l2_reg']
-
-        # Automata
-        self.specs = specifications
-        self.ldba_state_sizes = [spec.ldba.get_num_states() for spec in self.specs]
-        self.epsilon_act_sizes = [spec.ldba.get_num_eps_actions() for spec in self.specs]
+        self.num_rewards = num_rewards
+        self.obs_size = obs_size
+        self.gammas = self.num_rewards * [1.0]
+        self.u = [0.0 for _ in range(num_objectives - 1)]
+        self.recent_losses = [deque(maxlen=25) for i in range(num_objectives)]
        
         # Networks
-        self.actors = set_up_actors(self.models['actor'][0], self.obs_size + sum(self.ldba_state_sizes), [a_s + sum(self.epsilon_act_sizes) for a_s in self.act_sizes], hidden=self.models['actor'][1])
-        self.critics = set_up_critics(self.models['critic'][0], self.obs_size + sum(self.ldba_state_sizes), self.num_critics, hidden=self.models['critic'][1])
+        self.actors = set_up_actors(self.hps['models']['actor'][0], self.obs_size, self.act_sizes, hidden=self.hps['models']['actor'][1])
+        self.critics = set_up_critics(self.hps['models']['critic'][0], self.obs_size, self.num_rewards, hidden=self.hps['models']['critic'][1])
         
         # Optimisers
-        self.actor_optimisers = set_up_optimisers(self.actors, optimisers['actor'])
-        self.critic_optimisers = set_up_optimisers(self.critics, optimisers['critic'], l2=self.l2_reg)
+        self.actor_optimisers = set_up_optimisers(self.actors, self.hps['optimisers']['actor'])
+        self.critic_optimisers = set_up_optimisers(self.critics, self.hps['optimisers']['critic'])
 
-        # Replay buffers
-        self.buffer = ReplayBuffer(self.num_critics, buffer_size=self.buffers['size'], batch_size=self.buffers['batch'])
+        # Buffers
+        self.critic_buffers = [CriticBuffer(buffer_size=self.hps['buffers']['critic_size'], batch_size=self.hps['buffers']['critic_batch']) for c in self.critics]
+        self.actor_buffer = ActorBuffer(buffer_size=self.hps['buffers']['actor_size'], batch_size=self.hps['buffers']['actor_batch'])
 
         # Lagrange multipliers
-        self.lam = [tt(0.0) for j in self.objectives]
+        self.lagrange_multipliers = (self.num_objectives - 1) * [tt(0.0)]
         
-        # Form possible state vectors for MMG experiments in order to extract policies
-        if self.env_kind == 'mmg':
-            possible_game_states = list(itertools.product([0, 1], repeat=self.obs_size))
-            possible_spec_states = []
-            for s_s in self.ldba_state_sizes:
-                spec_states = [[0 for i in range(s_s)] for j in range(s_s)]
-                for k in range(s_s):
-                    spec_states[k][k] = 1
-                possible_spec_states.append([tuple(s_s) for s_s in spec_states])
-            possible_product_states = itertools.product(possible_game_states, *possible_spec_states)
-            self.possible_states = [tuple(utils.flatten(p_s)) for p_s in possible_product_states]
-            self.possible_state_tensors = torch.stack([tt(p_s).float() for p_s in self.possible_states])
-            self.policy_dists = None
+    def update_critic(self, j, e, data, continue_prob, until_converged=True, num_updates=None):
 
+        times, states, _, rewards, next_states, gammas, dones = data
+        self.critics[j].train()
 
+        # Form state dists for weighting samples
+        dist = self.state_dist(continue_prob, times, gammas).to(device)
 
+        # Compute target
+        with torch.no_grad():
+            target = rewards.to(device) + (self.discounts[j] * self.critics[j](next_states.to(device)) * (1-dones)).to(device)
 
+        # Update networks
+        finished = False
+        temp_recent_losses = deque(max_len=25)
+        if num_updates == None:
+            num_updates = len(times)
+        e = 0
+        while not finished:
 
+            # Form loss
+            prediction = self.critics[j](states.to(device)).to(device)
+            loss = self.lrs["alpha"](e) * ((dist * (prediction - target)**2).mean()).to(device)
 
+            # Backpropagate
+            self.critic_optimisers[j].zero_grad()
+            loss.backward()
+            self.critic_optimisers[j].step()
+            self.critics[j].eval()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def update_critics(self, e, experiences, continue_prob, sum_val_reg, c_neg_var_reg, max_critic_norm, actual_dist):
-        
-        if len(self.scores[0]) != 0:
-            o = self.obs_size + sum(self.ldba_state_sizes)
-            unique_states = torch.stack([tt(state)[0:o] for state in self.scores[0].keys()]).to(device)
-
-        for j in range(self.num_critics):
-
-            if experiences[j] != None:
-
-                ts, states, _, rewards, next_states, gammas, dones = patient_experiences[j]
-                self.critics[j].train()
-
-                # Form state dists and state-dependent discounts
-                dist = self.state_dist('patient', actual_dist, continue_prob, ts, gammas).to(device)
-                patient_discounts = torch.ones_like(rewards).to(device) - ((1.0 - self.discounts['patient']) / utils.denom(torch.max(rewards))) * rewards.to(device)
-
-                # Compute losses
-                patient_prediction = self.critics[j](states.to(device)).to(device)
-                with torch.no_grad():
-                    patient_target = rewards.to(device) + (patient_discounts * self.critics[j](next_states.to(device)) * (1-dones)).to(device)
-                values = self.critics[j](unique_states)
-                t_v_r = (sum_val_reg * torch.sum(torch.square(values))).to(device)
-                if len(unique_states) == 1:
-                    patient_loss = self.lrs['critic'](e) * (t_v_r + (dist * (patient_prediction - patient_target)**2).mean()).to(device)
-                else:
-                    n_v_r = -(c_neg_var_reg * torch.var(values))
-                    patient_loss = self.lrs['critic'](e) * (t_v_r + n_v_r + (dist * (patient_prediction - patient_target)**2).mean()).to(device)
-                
-                # Update networks
-                self.critic_optimisers[j].zero_grad()
-                patient_loss.backward()
-                nn.utils.clip_grad_norm_(self.critics[j].parameters(), max_critic_norm)
-                self.critic_optimisers[j].step()
-                self.critics[j].eval()
-
-            if hasty_experiences[j] != None:
-
-                ts, states, _, rewards, next_states, _, dones = hasty_experiences[j]
-                self.hasty_critics[j].train()
-
-                # Form state dists and state-dependent discounts
-                dist = self.state_dist('hasty', actual_dist, continue_prob, ts, None).to(device)
-
-                # Compute losses
-                hasty_prediction = self.hasty_critics[j](states.to(device)).to(device)
-                with torch.no_grad():
-                    hasty_target = rewards.to(device) + (self.discounts['hasty'] * self.hasty_critics[j](next_states.to(device)) * (1-dones)).to(device)
-                values = self.hasty_critics[j](unique_states)
-                t_v_r = (sum_val_reg * torch.sum(torch.abs(values))).to(device)
-                if len(unique_states) == 1:
-                    hasty_loss = self.lrs['critic'](e) * (t_v_r + (dist * (hasty_prediction - hasty_target)**2).mean()).to(device)
-                else:
-                    n_v_r = -(c_neg_var_reg * torch.var(values))
-                    hasty_loss = self.lrs['critic'](e) * (t_v_r + n_v_r + (dist * (hasty_prediction - hasty_target)**2).mean()).to(device)
-                
-                # Update networks
-                self.hasty_critic_optimisers[j].zero_grad()
-                hasty_loss.backward()
-                nn.utils.clip_grad_norm_(self.hasty_critics[j].parameters(), max_critic_norm)
-                self.hasty_critic_optimisers[j].step()
-                self.hasty_critics[j].eval()
-
-    def update_nat_grads(self, e, hasty_experiences, continue_prob, max_nat_grad_norm, actual_dist):
-
-        for i in range(len(self.nat_grads)):
-
-            self.nat_grads[i].train()
-            patient_losses = []
-            hasty_losses = []
-
-            for j in range(self.num_specs):
-                if hasty_experiences[j] != None:
-
-                    ts, states, joint_actions, rewards, next_states, gammas, dones = hasty_experiences[j]
-
-                    # Form state dists and state-dependent discounts
-                    patient_dist = self.state_dist('patient', actual_dist, continue_prob, ts, gammas).to(device)
-                    hasty_dist = self.state_dist('hasty', actual_dist, continue_prob, ts, None).to(device)
-                    patient_discounts = (torch.ones_like(rewards).to(device) - ((1.0 - self.discounts['patient']) / utils.denom(torch.max(rewards))) * rewards.to(device)).to(device)
-
-                    # Retrieve saved scores
-                    data_state_actions = torch.cat((states,joint_actions[i]), dim=1)
-                    scores = torch.stack([self.scores[i][tuple(d_s_a.tolist())] for d_s_a in data_state_actions])
-
-                    prediction = self.nat_grads[i](scores).to(device)
-
-                    with torch.no_grad():
-                        patient_target = rewards.to(device) + (patient_discounts * self.critics[j](next_states.to(device)) * (1-dones)).to(device) - self.critics[j](states.to(device)).to(device)
-                        hasty_target = rewards.to(device) + (self.discounts['hasty'] * self.hasty_critics[j](next_states.to(device)) * (1-dones)).to(device) - self.hasty_critics[j](states.to(device)).to(device)
-                    patient_losses.append((self.specs[j].weight * (patient_dist * torch.square(prediction - torch.flatten(patient_target))).mean()).to(device))
-                    hasty_losses.append((self.specs[j].weight * (hasty_dist * torch.square(prediction - torch.flatten(hasty_target))).mean()).to(device))
-
-            # Form losses
-            l = tt(0.0) if len(self.current_patient_losses[i]) == 0 else tt(self.current_patient_losses[i]).float().mean()
-            loss_1 = sum(patient_losses)
-            loss_2 = sum(hasty_losses) + max(self.lam[i] * (loss_1 - l), tt(0))
-            self.current_patient_losses[i].append(loss_1)
-            self.current_hasty_losses[i].append(loss_2)
-            loss = (self.lrs['patient_nat_grad'](e) * loss_1) + (self.lrs['hasty_nat_grad'](e) * loss_2).to(device)
-
-            # Update natural gradient
-            if loss != 0.0:
-                self.nat_grad_optimisers[i].zero_grad()
-                loss.backward()
-                nn.utils.clip_grad_norm_(self.nat_grads[i].parameters(), max_nat_grad_norm)
-                self.nat_grad_optimisers[i].step()
-            self.nat_grads[i].eval()
+            # Check whether to finish updating
+            e += 1
+            if (not until_converged and e > num_updates) or utils.losses_converged(temp_recent_losses):
+                finished = True
      
-    def update_actors(self, i, e, neg_ent_reg, non_det_reg, a_neg_var_reg):
+    def update_actors(self, data, e, continue_prob, objectives, until_converged=True, num_updates=None):
 
-        self.actors[i].train()
-        self.actor_optimisers[i].zero_grad()
+        times, states, joint_actions, rewards, next_states, gammas, discounts, dones, true_states = data
+        for i in range(self.num_players):
+            self.actors[i].train()
+
+        # Form state dists for weighting samples
+        dists = [self.state_dist(continue_prob, times, gamma).to(device) for gamma in gammas]
+        obj_dists = [sum([o[j] * dists[j] for j in range(self.num_rewards)]) for o in objectives]
+
+        with torch.no_grad():
+
+            # Form advantages
+            advantages = [rewards[j].to(device) + (discounts[j] * self.critics[j](next_states.to(device)) * (1-dones)).to(device) - self.critics[j](states.to(device)) for j in range(self.num_rewards)]
+            obj_advantages = [sum([o[j] * advantages[j] for j in range(self.num_rewards)]) for o in objectives]
+
+            # Form old probability factors
+            action_dists = self.policy(true_states)
+            old_log_probs = sum([action_dists[i].log_prob(joint_actions[i]) for i in range(self.num_players)])
         
-        if len(self.scores[i]) > 1:
-            o = self.obs_size + sum(self.ldba_state_sizes)
-            states = torch.stack([tt(state)[0:o] for state in self.scores[i].keys()])
-            action_dist = self.actors[i](states)[0]
-            actual_mean_action_dist = action_dist.mean(dim=0)
-            mean_action_dist = (1e-10 * torch.ones_like(actual_mean_action_dist)) + actual_mean_action_dist
-            neg_entropy = torch.dot(mean_action_dist, torch.log(mean_action_dist))
-            non_determinism = torch.abs((0.5 * torch.ones_like(action_dist)) - action_dist).mean()
-            variance = torch.var(action_dist, dim=0).mean()
-            regulariser_loss = 0.1 * ((neg_ent_reg * neg_entropy) - (non_det_reg * non_determinism) - (a_neg_var_reg * variance))
-            regulariser_loss.backward()
+        # Update networks
+        finished = False
+        temp_recent_losses = deque(max_len=25)
+        if num_updates == None:
+            num_updates = len(times)
+        e = 0
+        while not finished:
 
-        # Form natural gradients
-        with torch.no_grad():
-            # xs = [- (self.lrs['actor'](e) * ones_like(p) * p) / utils.denom(torch.sqrt(torch.sum(ones_like(p) * p * p)))  for p in self.nat_grads[i].parameters()]
-            xs = [(- self.lrs['actor'](e) * ones_like(p) * p).to(device) for p in self.nat_grads[i].parameters()]
+            # Form weights
+            objective_range = self.k + 1 if self.k != None else self.num_objectives
+            objective_weights =  self.compute_weights(objective_range)
+            relative_kl_weights = [self.kl_weight * objective_weights[i] / sum(objective_weights) for i in range()] + [0.0 for _ in range(objective_range, self.num_objectives)]
 
-        for p, x in zip(self.actors[i].parameters(), xs):
-            if p.size() !=  x.size():
-                print("Error: Mismatch between natural gradient and score dimensions!")
-                return None
-            if p.grad != None:
-                p.grad = utils.remove_nans(p.grad + x).to(device)
+            # Form loss
+            new_log_probs = sum([action_dists[i].log_prob(joint_actions[i]) for i in range(self.num_players)])
+            kl_penalty = (new_log_probs - old_log_probs).to(device)
+            ratio = torch.exp(kl_penalty)
+            loss = sum([(objective_weights[k] * obj_dists[k] * (ratio * obj_advantages[k] - self.kl_weight * kl_penalty) for k in range(len(objective_weights))).mean()])
 
-        self.actor_optimisers[i].step()
-        self.actors[i].eval()
+            # Backpropagate
+            for i in range(self.num_players):
+                self.actor_optimisers[i].zero_grad()
+                loss.backward()
+                self.actor_optimisers[i].step()
+                self.actors[i].eval()
 
-    def update_lam(self, e, max_lam=100.0):
+            # Update KL weight term as in the original PPO paper
+            if kl_penalty.mean() < self.hps["kl_target"] / 1.5:
+                self.kl_weight *= 0.5
+            else:
+                self.kl_weight *= 2
 
-        with torch.no_grad():
-            for i in range(len(self.nat_grads)):
-                l = tt(0.0) if len(self.current_patient_losses[i]) == 0 else tt(self.current_patient_losses[i]).float().mean()
-                self.lam[i] += self.lrs['lam'](e) * (self.current_patient_losses[i][-1] - l)
-                self.lam[i] = min(max(self.lam[i], tt(0.0)), max_lam)
+            # Update Lagrange multipliers
+            for k in range(self.num_objectives):
+                self.recent_losses[k].append((ratio * obj_advantages[k] - relative_kl_weights[k] * kl_penalty).mean())
+            self.update_lagrange_multipliers(e)
 
+            # Check whether to finish updating
+            e += 1
+            self.recent_actor_losses.append(loss)
+            if until_converged:
+                if self.k == None:
+                    finished = utils.losses_converged(temp_recent_losses)
+                elif self.k == self.num_objectives - 1 and utils.losses_converged(self.recent_losses[self.k]):
+                    finished = True
+            elif e > num_updates:
+                finished = True
+
+    # Udpate Lagrange multipliers
+    def update_lagrange_multipliers(self, e, max_lm=100.0):
+        
+        # Save relevant loss information for updating Lagrange parameters
+        if self.k != None:
+            if not utils.converged(self.recent_losses[self.k]):
+                if self.k != self.num_objectives - 1:
+                    self.u[self.k] = -torch.tensor(self.recent_losses[self.k]).mean()
+            else:
+                self.k = 0 if self.k == self.num_objectives - 1 else self.k + 1
+        else:
+            for i in range(self.num_objectives - 1):
+                self.u[i] = -torch.tensor(self.recent_losses[i]).mean()
+
+        # Update Lagrange parameters
+        r = self.k if self.k != None else self.num_objectives - 1
+        for i in range(r):
+            self.lagrange_multipliers[i] += self.lrs["eta"][i](e) * (self.u[i] - self.recent_losses[i][-1])
+            self.lagrange_multipliers[i] = min(max(self.lagrange_multipliers[i], 0.0), max_lm)
+
+    # Compute weights for lexicographic objectives
+    def compute_weights(self, objective_range):
+
+        objective_weights = []
+        for k in range(objective_range - 1):
+            if self.k != None:
+                w = self.lrs["beta"][objective_range - 1] * self.lagrange_multipliers[k]
+            else:
+                w = self.lrs["beta"][k] + self.lagrange_multipliers[k] * sum([self.lrs["beta"][kk] for kk in range(k+1, objective_range)])
+            objective_weights.append(w)
+        objective_weights.append(self.lrs["beta"][objective_range - 1])
+
+        return objective_weights
+
+    # Output policy distribution at a particular state
     def policy(self, state, probs=False):
 
         action_dists = [actor(state) for actor in self.actors]
@@ -456,33 +437,108 @@ class Almanac:
         else:
             return [Categorical(a[0]) for a in action_dists]
 
-    # Perform joint action
-    def act(state, epsilon):
+    # Perform (epsilon-greedy) joint action
+    def act(self, state, epsilon=0.0):
+
         if random.random() < epsilon:
             joint_action = [tt(random.choice(range(act_size))) for act_size in self.act_sizes]
         else:
             joint_action = [actions.sample() for actions in self.policy(state)]
 
-    def step():
+        return joint_action
 
-        # Temporarily save product state
-        for j in range(self.num_specs): 
-            self.Z[j][tuple(prod_state.tolist())] = (t, prod_state, joint_action)
+    # Take a learning step
+    def step(self, info, augment_data, continue_prob):
 
-        # Compute rewards etc. from environment and automata
-        unweighted_rewards = [reward_multiplier * s_r[1] for spec, s_r in zip(specifications, new_spec_states_rewards)]
-        discounts = [self.discounts['patient'] if r > 0.0 else 1.0 for r in unweighted_rewards]
-        gammas = [g * d for g, d in zip(gammas, discounts)]
+        # Reset Gamma terms if needed
+        if info["t"] == 0:
+            self.gammas = self.num_rewards * [1.0]
 
-        for j in range(self.num_specs):
-                
-            # Store patient critic experience when possible
-            if patient_updates:
-                if unweighted_rewards[j] > 0.0 or self.critics[j](new_prod_state) == 0.0:
-                    for k in Z[j].keys():
-                        (p_t, p_s, p_a) = Z[j][k]
-                        self.patient_buffer.add(j, p_t, p_s, p_a, unweighted_rewards[j], new_prod_state, gammas[j], done)
-                    Z[j] = dict()
+        # Form product states
+        prod_state = torch.cat([info["f(s)"]] + info["f(q)"], 0)
+        new_prod_state = torch.cat([info["f(s')"]] + info["f(q')"], 0)
+
+        # Form scalar rewards
+        if info["is_e_t"]:
+            scalar_rewards = [0.0 for _ in info["R"]]
+            scalar_discounts = [1.0 for _ in info["R"]]
+        else:
+            scalar_rewards = [r_f(info["s"], info["a"], info["s'"]) for r_f in info["R"]]
+            scalar_discounts = info["D"]
+
+        for j in range(self.num_critics):
+
+            # Temporarily save product state
+            self.Z[j][tuple(prod_state.tolist())] = (info["t"], prod_state, info["a"])
+        
+            # Perform patient updates if possible
+            add_stored_experiences = False
+            if (j < self.num_specs and info["F"][j]):
+                self.gammas[j] *= self.hps['gamma_Phi']
+                r = self.hps['spec_reward']
+                add_stored_experiences = True
+            elif (j >= self.num_specs and not info["is_e_t"]):
+                self.gammas[j] *= info["D"][j]
+                r = info["R"][j - self.num_specs](info["s"], info["a"], info["s'"])
+                add_stored_experiences = True
+            elif self.critics[j](new_prod_state) == 0.0:
+                r = 0.0
+                add_stored_experiences = True
+            if add_stored_experiences:
+                for k in self.Z[j].keys():
+                    (t, s, a) = self.Z[j][k]
+                    self.critic_buffers[j].add(t, s, a, r, new_prod_state, self.gammas[j], info["d"])
+                self.Z[j] = dict()
+
+        # Store (augmented) data for actors
+        for q_1, q_2, f_s in info["f(q)_s"], info["f(q')_s"], info["F_s"]:
+            s_q_1 = torch.cat([info["f(s)"]] + q_1, 0)
+            s_q_2 = torch.cat([info["f(s')"]] + q_2, 0)
+            r = [self.hps['spec_reward'] * f for f in f_s] + scalar_rewards
+            d_s = [1 - f * (1 - self.hps['gamma_Phi']) for f in f_s] + scalar_discounts
+            self.actor_buffer.add(info["t"], s_q_1, info["a"], r, s_q_2, d_s, self.gammas, info["d"], prod_state)
+
+            # Store augmented data for critics when possible
+            if augment_data:
+                # Avoid oversampling the true transition
+                if torch.eq(s_q_1, prod_state).all():
+                    continue
+                # Add data for alternative transitions
+                else:
+                    for j in range(self.num_critics):
+                        add_experience = False
+                        if (j < self.num_specs and info["F"][j]):
+                            r_j = self.hps['spec_reward']
+                            add_experience = True
+                        elif (j >= self.num_specs and not info["is_e_t"]):
+                            r_j = scalar_rewards[j]
+                            add_experience = True
+                        elif self.critics[j](s_q_2) == 0.0:
+                            r_j = 0.0
+                            add_experience = True
+                        if add_experience:
+                            self.critic_buffers[j].add(info["t"], s_q_1, info["a"], r_j, s_q_2, self.gammas[j], info["d"])
+                        
+        # If enough data has been collected update the critics
+        for j in range(self.num_critics):
+            if len(self.critic_buffers[j]) > self.hps['update_after']['critics']:
+                data = self.critic_buffers[j].sample(sample_all=True)
+                self.update_critic(j, self.update["critic"][j], data, continue_prob)
+                self.critic_buffers[j].clear()
+        
+        # If enough data has been collected update the actors and the Lagrange multipliers
+        if len(self.actor_buffer) > self.hps['update_after']['actors']:
+            data = self.actor_buffer.sample(sample_all=True)
+            self.update_actors(data, self.update["actors"])
+            self.actor_buffer.clear()
+
+
+
+
+
+
+
+
 
 
 
@@ -686,121 +742,15 @@ class Almanac:
 
         return True
 
-    def get_scores(self, i, new_pairs):
 
-        scores = dict()
-        for (k, t) in new_pairs:
-            scores[k] = torch.cat([torch.flatten(g) for g in torch.autograd.grad(self.policy(t[0:-1])[i].log_prob(t[-1]).to(device), self.actors[i].parameters(), retain_graph=True)])
+    def state_dist(self, continue_prob, ts, gammas):
 
-        return scores
-
-    def state_dist(self, loss, actual_dist, continue_prob, ts, gammas):
-
-        if loss == 'patient':
-            if actual_dist:
-                dist = power(continue_prob * ones_like(ts), -ts) * gammas
-            else:
-                dist = power(continue_prob * ones_like(ts), -ts)
-        elif loss == 'hasty':
-            if actual_dist:
-                dist = power((self.discounts['hasty'] / continue_prob) * ones_like(ts), ts)
-            else:
-                dist = power(continue_prob * ones_like(ts), -ts)
-        else:
-            print("Error: State dist must use loss \'patient\' or \'hasty\'")
-        return dist
-    
-    def nat_grads_converged(self, i, tolerance=0.01, bound=0.1):
-
-        if len(self.current_patient_losses[i]) == 0 or len(self.current_hasty_losses[i]) == 0:
-            return False
-
-        pls = tt(self.current_patient_losses[i]).float()
-        hls = tt(self.current_hasty_losses[i]).float()
-        mean_pls = pls.mean()
-        mean_hls = hls.mean()
-
-        if mean_pls > bound or mean_hls > bound:
-            if pls.min() < (1.0 - tolerance) * mean_pls or pls.max() > (1.0 + tolerance) * mean_pls:
-                return False
-            if hls.min() < (1.0 - tolerance) * mean_hls or hls.max() > (1.0 + tolerance) * mean_hls:
-                return False
-        
-        return True 
-
-    def evaluate(self, policy=None, play=False, iterations=10, steps=100, continue_prob=0.9):
-
-        results = []
-
-        for it in range(iterations):
-
-            s = 1
-            game_score = 0.0
-
-            # Run episodes
-            while s < steps:
-                
-                # Initialise environment
-                game_state = env.reset()
-                spec_states_rewards = [(spec.ldba.reset(), 0.0) for spec in self.specs]
-                done = False
-                if play or policy != None:
-                    print("End of episode, resetting...")
-
-                while not random.random() > continue_prob and not done:
-
-                    if play or policy != None:
-                        spec_states = [ssr[0] for ssr in spec_states_rewards]
-                        rewards = [ssr[1] for ssr in spec_states_rewards]
-                        print("Game state: {}, Spec states: {}, Rewards: {}".format(game_state, spec_states, rewards))
-
-                    spec_state_vectors = [one_hot(tt(spec_states_rewards[j][0]), self.specs[j].ldba.get_num_states()) for j in range(self.num_specs)]
-                    prod_state = torch.cat([env.featurise(game_state)] + spec_state_vectors, 0)
-
-                    # Get action
-                    if play:
-                        joint_action = list(map(lambda x: tt(int(x)),input("Enter actions: ").strip().split()))[:self.num_players] 
-                    elif policy!= None:
-                        joint_action = [torch.argmax(policy(prod_state))]
-                    else:
-                        joint_action = [actions.sample() for actions in self.policy(prod_state)]
-                    
-                    # If an epsilon transition is made the game (and possibly spec) state remains the same
-                    is_e_t, j, e_t = self.is_epsilon_transition(joint_action) 
-                    if is_e_t:
-                        new_game_state, done = game_state, done
-                        new_spec_states_rewards = [(state, 0.0) for (state, reward) in spec_states_rewards]
-
-                        # If the chosen epsilon transition is available in this state then it is made
-                        if e_t != None:
-                            new_spec_states_rewards[j] = self.specs[j].ldba.step(None, epsilon=e_t)
-
-                    # Otherwise a standard action is performed in the MG
-                    else:
-                        new_game_state, done = env.step(joint_action)
-                        label_set = env.label(new_game_state)
-                        new_spec_states_rewards = [spec.ldba.step(label_set) for spec in self.specs]
-
-                    # Compute rewards etc. from environment and automata
-                    rewards = [spec.weight * s_r[1] for spec, s_r in zip(self.specs, new_spec_states_rewards)]
-                    new_spec_state_vectors = [one_hot(tt(new_spec_states_rewards[j][0]), self.specs[j].ldba.get_num_states()) for j in range(self.num_specs)]
-                    new_prod_state = torch.cat([env.featurise(new_game_state)] + new_spec_state_vectors, 0)
-
-                    # Update variables for next step
-                    game_state = new_game_state
-                    spec_states_rewards = new_spec_states_rewards
-
-                    game_score += sum(rewards)
-                    s += 1
-
-            results.append(game_score / s)
-
-        print(results)
+        return power(continue_prob * ones_like(ts), -ts) * gammas if self.actual_dist else power(continue_prob * ones_like(ts), -ts)
 
     def save(self):
 
         pass
 
-    def get_policy_dists(self, save=False):
+    def get_policy_dists(self, possible_states, possible_state_tensors):
 
-        return self.policy_dists
+        return dict([(p, self.policy(t, probs=True)) for p,t in zip(possible_states, possible_state_tensors)])

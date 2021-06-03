@@ -241,6 +241,18 @@ def exp1(state_size, num_actors, num_specs, run_num):
 
         completed = run(mmg_hps, run_num, filename)
 
+        possible_game_states = list(itertools.product([0, 1], repeat=env.get_obs_size()))
+        possible_spec_states = []
+        for s_s in self.ldba_state_sizes:
+            spec_states = [[0 for i in range(s_s)] for j in range(s_s)]
+            for k in range(s_s):
+                spec_states[k][k] = 1
+            possible_spec_states.append([tuple(s_s) for s_s in spec_states])
+        possible_product_states = itertools.product(possible_game_states, *possible_spec_states)
+        self.possible_states = [tuple(utils.flatten(p_s)) for p_s in possible_product_states]
+        self.possible_state_tensors = torch.stack([tt(p_s).float() for p_s in self.possible_states])
+        self.policy_dists = None
+
         if s % score_interval == 0:
 
             # Sometimes the mmg generated is trivial, if so we return false and regenerate the mmg
@@ -326,26 +338,46 @@ def run(hp, num, filename=None, modelname=None):
 
 
 
-def make_learner
+def make_learner(learner_name, obs_size, act_sizes):
+
+    pass
 
 
 
-def experiment
+def experiment(env, formulae, learner_name):
 
     spec_controller = specs.Spec_Controller(formulae)
 
-    learner = make_learner()
+    if augment_data:
+        spec_states_transition_matrix = spec_controller.get_transition_matrix()
+
+    obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+    act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+    learner = make_learner(learner_name, obs_size, act_sizes)
 
     run()
 
+    # Save experiment inputs
+    spec_controller.save_model(location)
+    rewards, objectives  
 
 
+def run(learner, env, max_steps, spec_controller, reward_functions, objectives, save_location, continue_prob=0.99, augment_data=True, num_plot_points=1000):
 
+    score_interval = int(max_steps / num_plot_points)
+    recent_scores = [0.0 for o in objectives]
+    total_scores = [0.0 for o in objectives]
 
-def run(learner, env, max_steps, spec_controller, rewards, save_location, p_terminate):
+    if augment_data:
+        transitions = dict()
 
-    filename = './{}/{}/{}/{}-{}.txt'.format(save_location, env.name, learner.name, learner.name, process_id)
+    location = './{}/{}/{}/'.format(save_location, env.name, learner.name)
 
+    with open(location + 'scores.txt', 'w') as f:
+        f.write('Average Scores\n')
+
+    num_objectives = len(objectives)
     s = 0
 
     while s < max_steps:
@@ -360,7 +392,9 @@ def run(learner, env, max_steps, spec_controller, rewards, save_location, p_term
         while not done and s < max_steps:
 
             # Form state vectors 
-            prod_state = torch.cat([env.featurise(game_state)] + spec_controller.featurise(spec_states), 0)
+            f_game_state = env.featurise(game_state)
+            f_spec_states = spec_controller.featurise(spec_states)
+            prod_state = torch.cat([f_game_state] + f_spec_states, 0)
             
             # Perform joint action
             joint_action = learner.act(prod_state)
@@ -368,41 +402,71 @@ def run(learner, env, max_steps, spec_controller, rewards, save_location, p_term
             # If an epsilon transition is made the game (and possibly spec) state remains the same
             e_ts = spec_controller.is_epsilon_transition(joint_action)
             if len(e_ts) > 0:
+                is_e_t = True
                 new_game_state, done = game_state, done
             else:
+                is_e_t = False
                 new_game_state, done = env.step(joint_action)
             
             # Update LDBAs
             label_set = env.label(new_game_state)
             new_spec_states, acceptances = spec_controller.step(e_ts, label_set)
 
-            # Form new product state
-            new_prod_state = torch.cat([env.featurise(new_game_state)] + spec_controller.featurise(spec_states), 0)
+            # Form new state vectors
+            f_new_game_state = env.featurise(new_game_state)
+            f_new_spec_states = spec_controller.featurise(new_spec_states)
 
-            if random.random() < p_terminate:
+            if random.random() > continue_prob:
                 done = True
+
+            # Form learning input
+            info = {"s": game_state,
+                    "f(s)": f_game_state,
+                    "q": spec_states,
+                    "f(q)": f_spec_states,
+                    "a": joint_action,
+                    "s'": new_game_state,
+                    "f(s')": f_new_game_state,
+                    "q'": new_spec_states,
+                    "f(q')": f_new_spec_states,
+                    "R": reward_functions,
+                    "F": acceptances,
+                    "t": t,
+                    "o_s": objectives,
+                    "d": done,
+                    "is_e_t": is_e_t}
+            if augment_data:
+                if (e_ts, label_set) not in transitions.keys():
+                    transitions((e_ts, label_set)) = spec_controller.get_transitions(e_ts, label_set)
+                info["f(q)_s"], info["f(q')_s"], info["F_s"] = transitions[(e_ts, label_set)]
+            else:
+                info["f(q)_s"], info["f(q')_s"], info["F_s"] = [f_spec_states], [f_new_spec_states], [acceptances]
             
-            # Take learning step
-            learner.step(prod_state, joint_action, new_prod_state, acceptances, rewards, done, t)
+            # Update learners
+            payoffs = learner.step(info, augment_data, continue_prob)
+            recent_scores = [recent_scores[i] + payoffs[i] for i in range(num_objectives)]
 
             # Update variables for next step
             game_state = new_game_state
             spec_states = new_spec_states
-
             t += 1
             s += 1
 
             # Save and occasionally print (average) score
             if s % score_interval == 0:
-                
-                average_game_score = game_score / s
+                total_scores = [total_scores[i] + recent_scores[i] for i in range(num_objectives)]
+                print("Average Score ({}/{}): {} (recent)   {} (total)".format(s / score_interval, num_plot_points, recent_scores / score_interval, total_scores / s))
+                with open(location + 'scores.txt', 'a') as f:
+                    for r_s in recent_scores:
+                        f.write('{},'.format(r_s / score_interval))
+                    for t_s in recent_scores:
+                        f.write('{},'.format(t_s / s))
+                    f.write('\n')
+                recent_scores = [0.0 for o in objectives]
 
-                print("Score ({}/{}): {} (recent)   {} (average)".format(int(s / score_interval), int(steps / score_interval), (recent_game_score / score_interval), average_game_score))
-
-
-    learner.save_model('./{}/{}/{}/{}-{}'.format(save_location, env.name, learner.name, learner.name, process_id))            
-
-
+    # Save model
+    learner.save_model(location)
+    
 
 
 
