@@ -17,9 +17,21 @@ import torch.tensor as tt
 
 class Spec_Controller:
 
-    def __init__(self, formulae):
-
-        self.specs = [Spec(f) for f in formulae]
+    def __init__(self, formulae, load_from=None):
+        
+        if load_from != None:
+            self.specs = []
+            for f in formulae:
+                filename = load_from + 'specs/{}.pickle'.format(f)
+                if os.path.isfile(f):
+                    old_spec = pickle.load(open(filename, "rb"))
+                    self.specs.append(old_spec)
+                else:
+                    new_spec = Spec(f)
+                    new_spec.save()
+                    self.specs.append(new_spec)
+        else:
+            self.specs = [Spec(f) for f in formulae]
         self.num_specs = len(formulae)
         self.acceptances = [False for spec in self.specs]
         self.states = self.reset()

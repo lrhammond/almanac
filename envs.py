@@ -221,6 +221,7 @@ class MatrixMarkovGame:
         self.action_sizes = action_sizes
         self.num_players = len(action_sizes)
         self.labels = labels
+        self.labeller = lambda s: self.label(s) 
         self.sparsity = sparsity
         self.nonlinearities = nonlinearities
         self.masks = self.create_masks(int(state_size * nonlinearities))
@@ -300,12 +301,11 @@ class MatrixMarkovGame:
             print("Action: ", joint_action)
             self.step(joint_action)
     
-    def create_prism_model(self, num, ldbas, policy=None, det=False, filename=None):
+    def create_prism_model(self, num, ldbas, location, policy=None, det=False):
         
         p = '' if policy == None else '-policy'
         d = '' if det == False else '-det'
-        if filename == None:
-            filename = 'environments/markov_games/mmg/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
+        filename = location + '/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
 
         with open(filename, 'w') as f:
             

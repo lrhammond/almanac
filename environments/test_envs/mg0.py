@@ -44,7 +44,7 @@ def transition(s, a):
         if a == ('a',):
             return s
         else:
-            return d0.sample()
+            return d1.sample()
 
 # Labelling function
 def labeller(state):
@@ -52,6 +52,25 @@ def labeller(state):
         return ('phi',)
     else:
         return ('psi',)
+
+# Reward functions
+def reward_1(s_1, a, s_2):
+
+    if (s_1, a, s_2) == (tt(0), ('a',), tt(0)):
+        return 2.0
+    elif (s_1, a, s_2) == (tt(0), ('a',), tt(1)):
+        return 4.0
+    elif (s_1, a) == (tt(0), ('b',)):
+        return -1.0
+    elif s_1 == tt(1):
+        return 0.0
+
+def reward_2(s_1, a, s_2):
+
+    if a == ('a',):
+        return 1.0
+    else:
+        return 2.0
 
 ### MARKOV GAME 0.1 ###
 # Two players, single spec

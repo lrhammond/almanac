@@ -31,10 +31,12 @@ d4 = Categorical(tt([ 0.2, 0.2, 0.4, 0.2 ]))
 
 # Initial state dist
 def initial(states):
+
     return d3.sample()
 
 # Transition function
 def transition(s, a):
+
     if s == tt(0):
         if a[0] == 'a':
             return d0.sample()
@@ -64,6 +66,7 @@ def transition(s, a):
 
 # Labelling function
 def labeller(s):
+
     if s == tt(0):
         return ('phi','psi')
     elif s == tt(1):
@@ -72,3 +75,8 @@ def labeller(s):
         return ()
     elif s == tt(3):
         return ('psi',)
+
+# Reward functions
+def reward_1(s_1, a, s_2):
+
+    pass

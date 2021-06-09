@@ -38,6 +38,7 @@ def initial(states):
 
 # Transition function
 def transition(s, a):
+
     if s == tt(0):
         if a[0] == 'a' and a[1] == 'y':
             return d0.sample()
@@ -121,4 +122,10 @@ def transition(s, a):
         
 # Labelling function # TODO
 def labeller(s):
+
     return None
+
+# Reward functions
+def reward_1(s_1, a, s_2):
+
+    pass

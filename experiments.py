@@ -3,200 +3,229 @@
 import learners
 import specs
 import envs
-from os import path
+import os
 import pickle
 import copy
 import random
+import numpy as np
+import utils
+import itertools
+from csv import reader
 import sys
 import torch
+from torch import tensor as tt
 
+from environments.test_envs import mg0
 
 # Debugging
-debug   = { 'actor_neg_entropy_regulariser_weight': 0.1,
-            'actual_state_dist': True,
-            'buffers': { 'size': 1000,
-                         'batch': 32 },
+test_hps = {'actual_dist': True,
+            'augment_data': True,
+            'buffers': { 'actor': {'size': 1000, 'batch': 32},
+                         'critic': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
-            'discounts': { 'hasty': 0.8,
-                           'patient': 0.9 },
-            'env': envs.mg_0,
-            'env_name': 'debug_mg0',
-            'env_type': 'mg',
-            'epsilon': lambda e: 0.01,
-            'nat_grad_l2_regulariser_weight': 0.001,
-            'labeller': envs.l_0,
-            'learning_rates': { 'actor': ('constant', 0.01),
-                                'critic': ('constant', 1.0),
-                                'patient_nat_grad': ('constant', 0.1),
-                                'hasty_nat_grad': ('constant', 0.1),
-                                'mu': ('constant', 0.01) },
-            'local': True,
-            'nat_grad_convergence_tolerance': 0.05,
-            'max_nat_grad_norm': 10.0,
-            'models': { 'actor': ('dnn', [32, 32, 32]),
-                        'critic': ('dnn', [32, 32, 32]) },
-            'model_id': None,
+            'epsilon': 0,
+            'gamma_Phi' : 0.99,
+            'kl_target' : 0.025,
+            'learning_rates': { 'actor': (('constant', 0.001),),
+                                'critic': ('constant', 0.01),
+                                'lagrange_multiplier': (('constant', 0.01),) },
+            'models': { 'actor': {'type':'dnn', 'shape':[12]},
+                        'critic': {'type':'dnn', 'shape':[12]} },
             'optimisers': { 'actor': 'sgd',
-                            'nat_grad': 'sgd',
                             'critic': 'sgd' },
             'patient_updates': True,
-            'run_id': None,
-            'reward_weight': 10,
-            'specs': [ ('F G psi', 0.7),
-                       ('F phi', 0.3) ],
-            'steps': 100000 }
+            'spec_reward': 10,
+            'update_after': { 'actor': 1000,
+                              'critic': 1000 }}
+
+def debug(root, max_steps, hps=test_hps, repetitions=2):
+
+    location = './{}/experiments/debug'.format(root)
+
+    env = envs.mg_0
+    specifications = ('G F phi', 'G F psi')
+    reward_functions = (mg0.reward_1, mg0.reward_2)
+    objectives = ((0.5, 0.5, 0.0, 0.0), (0.0, 0.0, 0.8, 0.2))
+
+    spec_controller = specs.Spec_Controller(specifications, load_from=root)
+    obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+    act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+    for r in range(repetitions):
+
+        # Create learner
+        learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], r)
+
+        run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000)
 
 
 # Experiment 0
-
-# MG 1
-exp_0_1 = { 'actor_neg_entropy_regulariser_weight': 0.1,
-            'actual_state_dist': True,
-            'buffers': { 'size': 1000,
-                         'batch': 32 },
+exp0_hps = {'actual_dist': True,
+            'augment_data': True,
+            'buffers': { 'actor': {'size': 1000, 'batch': 32},
+                         'critic': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
-            'discounts': { 'hasty': 0.8,
-                           'patient': 0.9 },
-            'env': envs.mg_0,
-            'env_name': 'exp1_mg1',
-            'env_type': 'mg',
-            'epsilon': lambda e: 0.1,
-            'nat_grad_l2_regulariser_weight': 0.001,
-            'labeller': envs.l_0,
-            'learning_rates': { 'actor': ('constant', 0.1),
-                                'critic': ('constant', 0.1),
-                                'patient_nat_grad': ('constant', 0.01),
-                                'hasty_nat_grad': ('constant', 0.01),
-                                'mu': ('constant', 0.01), },
-            'local': True,
-            'nat_grad_convergence_tolerance': 0.05,
-            'max_nat_grad_norm': 10.0,
-            'models': { 'actor': ('dnn', [16, 24, 16]),
-                        'critic': ('dnn', [16, 24, 16]) },
-            'model_id': None,
+            'epsilon': 0,
+            'gamma_Phi' : 0.99,
+            'kl_target' : 0.025,
+            'learning_rates': { 'actor': (('constant', 0.001),),
+                                'critic': ('constant', 0.01),
+                                'lagrange_multiplier': (('constant', 0.01),) },
+            'models': { 'actor': {'type':'dnn', 'shape':[12]},
+                        'critic': {'type':'dnn', 'shape':[12]} },
             'optimisers': { 'actor': 'sgd',
-                            'nat_grad': 'sgd',
-                            'critic': 'sgd' },
-            'run_id': None,
-            'reward_weight': 10,
-            'specs': [ ('G (phi & psi)', 0.7),
-                       ('(!chi) U phi', 0.3) ],
-            'steps': 100000 }
-
-# MG 2
-exp_0_2 = { 'actor_neg_entropy_regulariser_weight': 0.1,
-            'actual_state_dist': True,
-            'buffers': { 'size': 1000,
-                         'batch': 32 },
-            'continue_prob': 0.9,
-            'discounts': { 'hasty': 0.8,
-                           'patient': 0.9 },
-            'env': envs.mg_0,
-            'env_name': 'exp1_mg1',
-            'env_type': 'mg',
-            'epsilon': lambda e: 0.1,
-            'nat_grad_l2_regulariser_weight': 0.001,
-            'labeller': envs.l_0,
-            'learning_rates': { 'actor': ('constant', 0.1),
-                                'critic': ('constant', 1.0),
-                                'patient_nat_grad': ('constant', 0.1),
-                                'hasty_nat_grad': ('constant', 0.1),
-                                'mu': ('constant', 0.1) },
-            'local': True,
-            'nat_grad_convergence_tolerance': 0.05,
-            'max_nat_grad_norm': 10.0,
-            'models': { 'actor': ('dnn', [16, 24, 16]),
-                        'critic': ('dnn', [16, 24, 16]) },
-            'model_id': None,
-            'optimisers': { 'actor': 'sgd',
-                            'nat_grad': 'sgd',
-                            'critic': 'sgd' },
-            'run_id': None,
-            'reward_weight': 10,
-            'specs': [ ('G !chi', 0.4),
-                       ('G F phi', 0.4),
-                       ('F psi', 0.2) ],
-            'steps': 100000 }
-
-# MG 3
-exp_0_3 = { 'actor_neg_entropy_regulariser_weight': 0.1,
-            'actual_state_dist': True,
-            'buffers': { 'size': 1000,
-                         'batch': 32 },
-            'continue_prob': 0.9,
-            'discounts': { 'hasty': 0.8,
-                           'patient': 0.9 },
-            'env': envs.mg_0,
-            'env_name': 'exp1_mg1',
-            'env_type': 'mg',
-            'epsilon': lambda e: 0.1,
-            'nat_grad_l2_regulariser_weight': 0.001,
-            'labeller': envs.l_0,
-            'learning_rates': { 'actor': ('constant', 0.05),
-                                'critic': ('constant', 1.0),
-                                'patient_nat_grad': ('constant', 0.1),
-                                'hasty_nat_grad': ('constant', 0.1),
-                                'mu': ('constant', 0.01), },
-            'local': True,
-            'nat_grad_convergence_tolerance': 0.05,
-            'max_nat_grad_norm': 10.0,
-            'models': { 'actor': ('dnn', [16, 24, 16]),
-                        'critic': ('dnn', [16, 24, 16]) },
-            'model_id': None,
-            'optimisers': { 'actor': 'sgd',
-                            'nat_grad': 'sgd',
-                            'critic': 'sgd' },
-            'run_id': None,
-            'reward_weight': 10,
-            'specs': [ ('F G psi', 0.7),
-                       ('F phi', 0.3) ],
-            'steps': 500000 }
-
-
-# Experiment 1
-mmg_hps = { 'actor_neg_entropy_regulariser_weight': 0.5,
-            'actor_neg_variance_regulariser_weight': 5.0,
-            'actor_nondeterminism_regulariser_weight': 0.0,
-            'actual_state_dist': True,
-            'buffers': { 'size': 1000,
-                         'batch': 32 },
-            'continue_prob': 0.95,
-            'critic_sum_value_regulariser_weight': 0.5,
-            'critic_neg_variance_regulariser_weight': 0.5,
-            'discounts': { 'hasty': 0.85,
-                           'patient': 0.95 },
-            'env': None,
-            'env_name': None,
-            'env_type': 'mmg',
-            'epsilon': lambda e: 0.05,
-            'l2_regulariser_weight': 0.001,
-            'labeller': None,
-            'learning_rates': { 'actor': ('constant', 0.001),
-                                'critic': ('constant', 0.75),
-                                'patient_nat_grad': ('constant', 1.00),
-                                'hasty_nat_grad': ('constant', 1.00),
-                                'mu': ('constant', 0.01) },
-            'local': True,
-            'nat_grad_convergence_tolerance': 0.25,
-            'max_critic_norm': 10.0,
-            'max_nat_grad_norm': 10.0,
-            'models': { 'actor': ('dnn', [24, 32, 24]),
-                        'critic': ('dnn', [24, 24, 24]) },
-            'model_id': None,
-            'optimisers': { 'actor': 'sgd',
-                            'nat_grad': 'adam',
                             'critic': 'sgd' },
             'patient_updates': True,
-            'run_id': None,
-            'reward_weight': 10,
-            'specs': None,
-            'steps': 5000 }
+            'spec_reward': 10,
+            'update_after': { 'actor': 1000,
+                              'critic': 1000 }}
 
-labels = ['phi','psi','chi','xi']
-possible_specs = ['G F psi', 'F G ((!phi) | (!xi))', 'G ((!phi) | (X (chi)))', 'F xi', 'G ((!psi) | (F phi))', 'G chi', '(!xi) U psi']
-possible_weights = [0.2, 0.5, 0.8]
+def exp0(root, id, max_steps, hps=exp0_hps, repetitions=10):
 
-def exp1(state_size, num_actors, num_specs, run_num):
+    location = './{}/experiments/0'.format(root)
+
+    if id["run"] == 1:
+        env = envs.mg_1
+        specifications = ('G (phi & psi)', '(!chi) U phi')
+        reward_functions = ()
+        objectives = ()
+    elif id["run"] == 2:
+        env = envs.mg_2
+        specifications = ('G !chi', 'G F phi', 'F psi')
+        reward_functions = ()
+        objectives = ()
+    elif id["run"] == 3:
+        env = envs.mg_3
+        specifications = ('F G psi', 'F phi')
+        reward_functions = ()
+        objectives = ()
+    else:
+        pass
+
+    spec_controller = specs.Spec_Controller(specifications, load_from=root)
+    obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+    act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+    for r in range(repetitions):
+
+        # Create learner
+        learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], r)
+
+        run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000)
+
+# Experiment 1
+exp1_hps = {'actual_dist': True,
+            'augment_data': True,
+            'buffers': { 'actor': {'size': 1000, 'batch': 32},
+                         'critic': {'size': 1000, 'batch': 32} },
+            'continue_prob': 0.9,
+            'epsilon': 0,
+            'gamma_Phi' : 0.99,
+            'kl_target' : 0.025,
+            'learning_rates': { 'actor': (('constant', 0.001),),
+                                'critic': ('constant', 0.75),
+                                'lagrange_multiplier': (('constant', 0.01),) },
+            'models': { 'actor': {'type':'dnn', 'shape':[24, 32, 24]},
+                        'critic': {'type':'dnn', 'shape':[24, 24, 24]} },
+            'optimisers': { 'actor': 'sgd',
+                            'critic': 'sgd' },
+            'patient_updates': True,
+            'spec_reward': 10,
+            'update_after': { 'actor': 1000,
+                              'critic': 1000 }}
+
+def exp1(root, id, max_steps, num_specs, num_actors, state_size, hps=exp1_hps, repetitions=10):
+
+    # location = './{}/experiments/{}'.format(root, id["num"])
+    location = './{}/experiments/1'.format(root)
+
+    # Range of specifications
+    labels = ['phi','psi','chi','xi']
+    possible_specs = ['G F psi', 'F G ((!phi) | (!xi))', 'G ((!phi) | (X (chi)))', 'F xi', 'G ((!psi) | (F phi))', 'G chi', '(!xi) U psi']
+    possible_weights = [2, 5, 8]
+
+    # Run experiment
+    for r in range(repetitions):
+        
+        completed = False
+        while not completed:
+
+            # Form objectives
+            specifications = random.sample(possible_specs, num_specs)
+            weights = random.sample(possible_weights, num_specs)
+            sum_weights = sum(weights)
+            objectives = [w / sum_weights for w in weights]
+
+            # Form game
+            action_sizes = [random.randint(2,4) for _ in range(num_actors)]
+            mmg = envs.MatrixMarkovGame(state_size, action_sizes, labels, sparsity=0.6, structured_labels=True, nonlinearities=0.4)
+            env = envs.EnvWrapper('mmg-{}-{}'.format(id["run"],r), 'mmg', mmg, mmg.labeller)
+
+            # Form input parameters and LDBAs
+            spec_controller = specs.Spec_Controller(specifications, load_from=root)
+            obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+            act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+            # Create learner
+            learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
+            prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], r)
+
+            # Sometimes the MMG and spec combination generated is trivial, if so we retry
+            run(learner, env, 10000, spec_controller, [], objectives, location, prefix, num_plot_points=1000)
+            with open('{}/scores/{}-scores.txt'.format(location, prefix), 'r') as f:
+                data = list(reader(f))
+                if np.var(np.array(d[0] for d in data[10:60])) > 0.01:
+                    completed = True
+            if completed:
+                run(learner, env, max_steps - 10000, spec_controller, [], objectives, location, prefix)
+            else:
+                continue
+
+            # Save specs and weights
+            specs_name = location + '/specs/{}-{}-{}-{}.props'.format(state_size, num_actors, num_specs, r)
+            with open(specs_name, 'w') as f:
+                if num_specs == 1:
+                    f.write('Pmax=? [ X ( ' + specifications[0] + ' ) ]\n\n')
+                    f.write('P=? [ X ( ' + specifications[0] + ' ) ]\n\n')
+                else:
+                    f.write('multi( Pmax=? [ X ( ' + specifications[0] + ' ) ] , Pmax=? [ X ( ' + specifications[1] + ' ) ] )\n\n')
+                    f.write('P=? [ X ( ' + specifications[0] + ' ) ]\n\n')
+                    f.write('P=? [ X ( ' + specifications[1] + ' ) ]\n\n')
+            weights_name = location + '/specs/{}-{}-{}-{}.weights'.format(state_size, num_actors, num_specs, r)
+            with open(weights_name, 'w') as f:
+                for w in weights:
+                    f.write('{}\n'.format(w))
+
+            # Save policy distributions
+            possible_game_states = list(itertools.product([0, 1], repeat=env.get_obs_size()))
+            possible_spec_states = []
+            for s_s in spec_controller.num_states:
+                spec_states = [[0 for i in range(s_s)] for j in range(s_s)]
+                for k in range(s_s):
+                    spec_states[k][k] = 1
+                possible_spec_states.append([tuple(s_s) for s_s in spec_states])
+            possible_product_states = itertools.product(possible_game_states, *possible_spec_states)
+            possible_states = [tuple(utils.flatten(p_s)) for p_s in possible_product_states]
+            possible_state_tensors = torch.stack([tt(p_s).float() for p_s in possible_states])
+            p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
+            
+            # Create PRISM models
+            num = '{}-{}'.format(id["run"], r)
+            env.model.create_prism_model(num, spec_controller.specs, location)
+            env.model.create_prism_model(num, spec_controller.specs, location, policy=p_dists)
+            env.model.create_prism_model(num, spec_controller.specs, location, policy=p_dists, det=True)
+
+    # Save information about objectives
+    # spec_controller.save_model(location, env.name, id["run"])
+    # # with open("{}/{}-{}-reward_functions.pickle".format(location, env.name, id["run"]), 'wb') as f:
+    # #     pickle.dump(reward_functions, f)
+    # with open("{}/objectives/{}-{}-objectives.pickle".format(location, env.name, id["run"]), 'wb') as f:
+    #     pickle.dump(objectives, f)
+
+
+def old_exp1(state_size, num_actors, num_specs, run_num):
 
     completed = False
     while not completed:
@@ -207,7 +236,7 @@ def exp1(state_size, num_actors, num_specs, run_num):
         weights = [w / sum_weights for w in weights]
         action_sizes = [random.randint(2,4) for r in range(num_actors)]
         mmg = envs.MatrixMarkovGame(state_size, action_sizes, labels, sparsity=0.6, structured_labels=True, nonlinearities=0.4)
-
+        
         mmg_hps['env'] = mmg
         mmg_hps['env_name'] = None
         mmg_hps['labeller'] = mmg.labeller
@@ -294,13 +323,13 @@ def exp1(state_size, num_actors, num_specs, run_num):
 
 
 # Run experiment instance
-def run(hp, num, filename=None, modelname=None):
+def old_run(hp, num, filename=None, modelname=None):
 
     env = envs.EnvWrapper(hp['env_name'], hp['env_type'], hp['env'], hp['labeller'])
     spec = []
     for s in hp['specs']:
         f = "specs/" + s[0] + '.pickle'
-        if path.isfile(f):
+        if os.path.isfile(f):
             old_spec = pickle.load(open(f, "rb"))
             spec.append(old_spec)
         else:
@@ -336,50 +365,71 @@ def run(hp, num, filename=None, modelname=None):
     
     return trained
 
+def make_learner(learner_name, obs_size, act_sizes, num_rewards, num_objectives, hps):
+
+    if learner_name == 'almanac':
+        learner = learners.Almanac(obs_size, act_sizes, num_rewards, num_objectives, hps)
+    else:
+        print("Error: Agent name must be \'almanac\' or")
+        return
+
+    return learner
 
 
-def make_learner(learner_name, obs_size, act_sizes):
 
-    pass
+def experiment(root, id, env, formulae, max_steps, reward_functions, objectives, learner_name, repetitions=1):
 
-
-
-def experiment(env, formulae, learner_name):
-
+    # Form input parameters and LDBAs
+    location = './{}/experiments/{}'.format(root, id["num"])
     spec_controller = specs.Spec_Controller(formulae)
-
-    if augment_data:
-        spec_states_transition_matrix = spec_controller.get_transition_matrix()
-
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
     act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
-    learner = make_learner(learner_name, obs_size, act_sizes)
+    # Run experiment
+    for r in range(repetitions):
 
-    run()
+        learner = make_learner(learner_name, obs_size, act_sizes)
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], r)
+        run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix)
 
-    # Save experiment inputs
-    spec_controller.save_model(location)
-    rewards, objectives  
+    # Save information about objectives
+    spec_controller.save_model(location, env.name, id["run"])
+    with open("{}/{}-{}-reward_functions.pickle".format(location, env.name, id["run"]), 'wb') as f:
+        pickle.dump(reward_functions, f)
+    with open("{}/objectives/{}-{}-objectives.pickle".format(location, env.name, id["run"]), 'wb') as f:
+        pickle.dump(objectives, f)
 
 
-def run(learner, env, max_steps, spec_controller, reward_functions, objectives, save_location, continue_prob=0.99, augment_data=True, num_plot_points=1000):
+def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000):
 
+    # Check for stupid mistakes
+    num_specs = len(spec_controller.specs)
+    num_rewards = len(reward_functions)
+    num_objectives = len(objectives)
+    for o in objectives:
+        if len(o) != num_specs + num_rewards:
+            print('Error: Objectives must contain weights for every spec and reward function')
+            return
+        if sum(o[:num_rewards]) > 0 and sum(o[num_rewards:]) > 0:
+            print('Error: Objectives must combine only specs or only reward functions')
+            return
+    if learner.hps['lrs']['actor'] != num_objectives or learner.hps['lrs']['lagrange_multipliers'] != num_objectives:
+        print('Error: Must be the same number of learning rates for actors and Lagrange multipliers as objectives')
+        return
+
+    # Prepare for saving scores
     score_interval = int(max_steps / num_plot_points)
-    recent_scores = [0.0 for o in objectives]
-    total_scores = [0.0 for o in objectives]
+    recent_scores = [0.0 for _ in objectives]
+    total_scores = [0.0 for _ in objectives]
+    with open('{}/scores/{}-scores.txt'.format(location, prefix), 'w') as f:
+        obj_list = [str(i) for i in range(num_objectives)]
+        f.write("recent_" + ",recent_".join(obj_list) + ",total_" + ",total_".join(obj_list) + ",\n")
 
-    if augment_data:
+    # Save duplicating the computation of automaton transitions
+    if learner.hps['augment_data']:
         transitions = dict()
 
-    location = './{}/{}/{}/'.format(save_location, env.name, learner.name)
-
-    with open(location + 'scores.txt', 'w') as f:
-        f.write('Average Scores\n')
-
-    num_objectives = len(objectives)
     s = 0
-
     while s < max_steps:
 
         # Initialise environment
@@ -416,7 +466,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             f_new_game_state = env.featurise(new_game_state)
             f_new_spec_states = spec_controller.featurise(new_spec_states)
 
-            if random.random() > continue_prob:
+            if random.random() > learner.hps['continue_prob']:
                 done = True
 
             # Form learning input
@@ -435,15 +485,15 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
                     "o_s": objectives,
                     "d": done,
                     "is_e_t": is_e_t}
-            if augment_data:
+            if learner.hps['augment_data']:
                 if (e_ts, label_set) not in transitions.keys():
-                    transitions((e_ts, label_set)) = spec_controller.get_transitions(e_ts, label_set)
+                    transitions[(e_ts, label_set)] = spec_controller.get_transitions(e_ts, label_set)
                 info["f(q)_s"], info["f(q')_s"], info["F_s"] = transitions[(e_ts, label_set)]
             else:
                 info["f(q)_s"], info["f(q')_s"], info["F_s"] = [f_spec_states], [f_new_spec_states], [acceptances]
             
             # Update learners
-            payoffs = learner.step(info, augment_data, continue_prob)
+            payoffs = learner.step(info)
             recent_scores = [recent_scores[i] + payoffs[i] for i in range(num_objectives)]
 
             # Update variables for next step
@@ -456,86 +506,20 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             if s % score_interval == 0:
                 total_scores = [total_scores[i] + recent_scores[i] for i in range(num_objectives)]
                 print("Average Score ({}/{}): {} (recent)   {} (total)".format(s / score_interval, num_plot_points, recent_scores / score_interval, total_scores / s))
-                with open(location + 'scores.txt', 'a') as f:
+                with open('{}/scores/{}-scores.txt'.format(location, prefix), 'a') as f:
                     for r_s in recent_scores:
                         f.write('{},'.format(r_s / score_interval))
-                    for t_s in recent_scores:
+                    for t_s in total_scores:
                         f.write('{},'.format(t_s / s))
                     f.write('\n')
-                recent_scores = [0.0 for o in objectives]
+                recent_scores = [0.0 for _ in objectives]
 
     # Save model
-    learner.save_model(location)
-    
+    learner.save_model(location, prefix)
+
+    return 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    for i in range(interacts):
-
-        state = env.reset()
-
-        action = agent.act(state)
-        step += 1
-
-        if int_action:
-            action = int(action)
-        if type(action)!=int:
-            action = action.squeeze().cpu().float()
-
-        next_state, reward, done, info = env.step(action)
-        next_state = np.expand_dims(next_state, axis=0)
-        next_state = torch.tensor(next_state).float().to(device)
-
-        try:
-            cost = info['cost']
-        except:
-            try:
-                cost = info['constraint_costs'][0]
-            except:
-                cost = 0
-
-        if mode==1:
-            r = reward
-        elif mode==2:
-            r = reward-cost
-        elif mode==3:
-            r = [-cost, reward]
-        elif mode==4:
-            r = [reward, cost]
-        elif mode==5:
-            r = [reward, -cost]
-
-        #time.sleep(0.0001)
-        agent.step(state, action, r, next_state, done)
-
-        if done or (step >= max_ep_length):
-            step = 0
-            state = env.reset()
-            state = np.expand_dims(state, axis=0)
-            state = torch.tensor(state).float().to(device)
-        else:
-            state = next_state
-
-        with open(filename, 'a') as f:
-            f.write('{},{}\n'.format(reward, cost))
+root = os.getcwd()
+debug(root, 10000)
