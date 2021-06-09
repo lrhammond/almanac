@@ -20,31 +20,36 @@ from environments.test_envs import mg0
 # Debugging
 test_hps = {'actual_dist': True,
             'augment_data': True,
-            'buffers': { 'actor': {'size': 1000, 'batch': 32},
-                         'critic': {'size': 1000, 'batch': 32} },
+            'buffers': { 'actors': {'size': 1000, 'batch': 32},
+                         'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
             'epsilon': 0,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
-            'learning_rates': { 'actor': (('constant', 0.001),),
-                                'critic': ('constant', 0.01),
-                                'lagrange_multiplier': (('constant', 0.01),) },
-            'models': { 'actor': {'type':'dnn', 'shape':[12]},
-                        'critic': {'type':'dnn', 'shape':[12]} },
-            'optimisers': { 'actor': 'sgd',
-                            'critic': 'sgd' },
+            'learning_rates': { 'actors': (('constant', 0.005),('constant', 0.001)),
+                                'critics': ('constant', 0.01),
+                                'lagrange_multiplier': (('constant', 0.05),('constant', 0.01)) },
+            'models': { 'actors': {'type':'dnn', 'shape':[12]},
+                        'critics': {'type':'dnn', 'shape':[12]} },
+            'num_updates' : { 'actors': None,
+                              'critics': None },
+            'optimisers': { 'actors': 'sgd',
+                            'critics': 'sgd' },
             'patient_updates': True,
+            'sequential': False,
             'spec_reward': 10,
-            'update_after': { 'actor': 1000,
-                              'critic': 1000 }}
+            'until_converged' : { 'actors': True,
+                                  'critics': True },
+            'update_after': { 'actors': 100,
+                              'critics': 100 }}
 
-def debug(root, max_steps, hps=test_hps, repetitions=2):
+def debug(root, max_steps, hps=test_hps, repetitions=1):
 
-    location = './{}/experiments/debug'.format(root)
+    location = '{}/experiments/debug'.format(root)
 
-    env = envs.mg_0
+    env = envs.EnvWrapper('debug_game', 'mg', envs.mg_0)
     specifications = ('G F phi', 'G F psi')
-    reward_functions = (mg0.reward_1, mg0.reward_2)
+    reward_functions = ({'reward':mg0.reward_1, 'discount':0.8}, {'reward':mg0.reward_2, 'discount':0.9})
     objectives = ((0.5, 0.5, 0.0, 0.0), (0.0, 0.0, 0.8, 0.2))
 
     spec_controller = specs.Spec_Controller(specifications, load_from=root)
@@ -54,8 +59,8 @@ def debug(root, max_steps, hps=test_hps, repetitions=2):
     for r in range(repetitions):
 
         # Create learner
-        learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
-        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], r)
+        learner = make_learner('almanac', obs_size, act_sizes, len(objectives[0]), len(objectives), hps)
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, 0, r)
 
         run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000)
 
@@ -63,27 +68,27 @@ def debug(root, max_steps, hps=test_hps, repetitions=2):
 # Experiment 0
 exp0_hps = {'actual_dist': True,
             'augment_data': True,
-            'buffers': { 'actor': {'size': 1000, 'batch': 32},
-                         'critic': {'size': 1000, 'batch': 32} },
+            'buffers': { 'actors': {'size': 1000, 'batch': 32},
+                         'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
             'epsilon': 0,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
-            'learning_rates': { 'actor': (('constant', 0.001),),
-                                'critic': ('constant', 0.01),
+            'learning_rates': { 'actors': (('constant', 0.001),),
+                                'critics': ('constant', 0.01),
                                 'lagrange_multiplier': (('constant', 0.01),) },
-            'models': { 'actor': {'type':'dnn', 'shape':[12]},
-                        'critic': {'type':'dnn', 'shape':[12]} },
-            'optimisers': { 'actor': 'sgd',
-                            'critic': 'sgd' },
+            'models': { 'actors': {'type':'dnn', 'shape':[12]},
+                        'critics': {'type':'dnn', 'shape':[12]} },
+            'optimisers': { 'actors': 'sgd',
+                            'critics': 'sgd' },
             'patient_updates': True,
             'spec_reward': 10,
-            'update_after': { 'actor': 1000,
-                              'critic': 1000 }}
+            'update_after': { 'actors': 1000,
+                              'critics': 1000 }}
 
 def exp0(root, id, max_steps, hps=exp0_hps, repetitions=10):
 
-    location = './{}/experiments/0'.format(root)
+    location = '{}/experiments/0'.format(root)
 
     if id["run"] == 1:
         env = envs.mg_1
@@ -118,28 +123,28 @@ def exp0(root, id, max_steps, hps=exp0_hps, repetitions=10):
 # Experiment 1
 exp1_hps = {'actual_dist': True,
             'augment_data': True,
-            'buffers': { 'actor': {'size': 1000, 'batch': 32},
-                         'critic': {'size': 1000, 'batch': 32} },
+            'buffers': { 'actors': {'size': 1000, 'batch': 32},
+                         'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
             'epsilon': 0,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
-            'learning_rates': { 'actor': (('constant', 0.001),),
-                                'critic': ('constant', 0.75),
+            'learning_rates': { 'actors': (('constant', 0.001),),
+                                'critics': ('constant', 0.75),
                                 'lagrange_multiplier': (('constant', 0.01),) },
-            'models': { 'actor': {'type':'dnn', 'shape':[24, 32, 24]},
-                        'critic': {'type':'dnn', 'shape':[24, 24, 24]} },
-            'optimisers': { 'actor': 'sgd',
-                            'critic': 'sgd' },
+            'models': { 'actors': {'type':'dnn', 'shape':[24, 32, 24]},
+                        'critics': {'type':'dnn', 'shape':[24, 24, 24]} },
+            'optimisers': { 'actors': 'sgd',
+                            'critics': 'sgd' },
             'patient_updates': True,
             'spec_reward': 10,
-            'update_after': { 'actor': 1000,
-                              'critic': 1000 }}
+            'update_after': { 'actors': 1000,
+                              'critics': 1000 }}
 
 def exp1(root, id, max_steps, num_specs, num_actors, state_size, hps=exp1_hps, repetitions=10):
 
     # location = './{}/experiments/{}'.format(root, id["num"])
-    location = './{}/experiments/1'.format(root)
+    location = '{}/experiments/1'.format(root)
 
     # Range of specifications
     labels = ['phi','psi','chi','xi']
@@ -380,7 +385,7 @@ def make_learner(learner_name, obs_size, act_sizes, num_rewards, num_objectives,
 def experiment(root, id, env, formulae, max_steps, reward_functions, objectives, learner_name, repetitions=1):
 
     # Form input parameters and LDBAs
-    location = './{}/experiments/{}'.format(root, id["num"])
+    location = '{}/experiments/{}'.format(root, id["num"])
     spec_controller = specs.Spec_Controller(formulae)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
     act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
@@ -413,7 +418,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
         if sum(o[:num_rewards]) > 0 and sum(o[num_rewards:]) > 0:
             print('Error: Objectives must combine only specs or only reward functions')
             return
-    if learner.hps['lrs']['actor'] != num_objectives or learner.hps['lrs']['lagrange_multipliers'] != num_objectives:
+    if len(learner.lrs['actors']) != num_objectives or len(learner.lrs['lagrange_multiplier']) != num_objectives:
         print('Error: Must be the same number of learning rates for actors and Lagrange multipliers as objectives')
         return
 
@@ -423,7 +428,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
     total_scores = [0.0 for _ in objectives]
     with open('{}/scores/{}-scores.txt'.format(location, prefix), 'w') as f:
         obj_list = [str(i) for i in range(num_objectives)]
-        f.write("recent_" + ",recent_".join(obj_list) + ",total_" + ",total_".join(obj_list) + ",\n")
+        f.write("recent_" + ",recent_".join(obj_list) + ",total_" + ",total_".join(obj_list) + "\n")
 
     # Save duplicating the computation of automaton transitions
     if learner.hps['augment_data']:
@@ -450,7 +455,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             joint_action = learner.act(prod_state)
 
             # If an epsilon transition is made the game (and possibly spec) state remains the same
-            e_ts = spec_controller.is_epsilon_transition(joint_action)
+            e_ts = spec_controller.is_epsilon_transition(joint_action, env.get_act_sizes())
             if len(e_ts) > 0:
                 is_e_t = True
                 new_game_state, done = game_state, done
@@ -483,7 +488,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
                     "F": acceptances,
                     "t": t,
                     "o_s": objectives,
-                    "d": done,
+                    "D": done,
                     "is_e_t": is_e_t}
             if learner.hps['augment_data']:
                 if (e_ts, label_set) not in transitions.keys():
@@ -493,8 +498,9 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
                 info["f(q)_s"], info["f(q')_s"], info["F_s"] = [f_spec_states], [f_new_spec_states], [acceptances]
             
             # Update learners
-            payoffs = learner.step(info)
-            recent_scores = [recent_scores[i] + payoffs[i] for i in range(num_objectives)]
+            discounted_rewards = learner.step(info, objectives)
+            utilities = [sum(z[0] * z[1] for z in zip(o, discounted_rewards)) for o in objectives]
+            recent_scores = [recent_scores[i] + utilities[i] for i in range(num_objectives)]
 
             # Update variables for next step
             game_state = new_game_state
@@ -505,14 +511,14 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             # Save and occasionally print (average) score
             if s % score_interval == 0:
                 total_scores = [total_scores[i] + recent_scores[i] for i in range(num_objectives)]
-                print("Average Score ({}/{}): {} (recent)   {} (total)".format(s / score_interval, num_plot_points, recent_scores / score_interval, total_scores / s))
+                rs_s = ",".join(["{:.5f}".format(rs / score_interval) for rs in recent_scores])
+                ts_s = ",".join(["{:.5f}".format(ts / s) for ts in total_scores])
+                print("Average Score ({}/{}): {} (recent)   {} (total)".format(int(s / score_interval), num_plot_points, rs_s, ts_s))
                 with open('{}/scores/{}-scores.txt'.format(location, prefix), 'a') as f:
-                    for r_s in recent_scores:
-                        f.write('{},'.format(r_s / score_interval))
-                    for t_s in total_scores:
-                        f.write('{},'.format(t_s / s))
-                    f.write('\n')
+                    f.write(rs_s + ',' + ts_s + '\n')
                 recent_scores = [0.0 for _ in objectives]
+
+        
 
     # Save model
     learner.save_model(location, prefix)

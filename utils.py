@@ -1,6 +1,6 @@
 ### Utilities ###
 
-from torch import clamp, isnan, tensor
+from torch import clamp, isnan, tensor, equal
 import ast
 
 
@@ -14,6 +14,12 @@ def flatten(l):
 def denom(x):
 
     return x if x != 0.0 else 1.0
+
+
+# Checks if two state-action-state triples are equal
+def sas_eq(sas_1, sas_2):
+    
+    return equal(sas_1[0],sas_2[0]) and sas_1[1] == sas_1[1] and equal(sas_1[2],sas_2[2])
 
 
 # Clips network weights

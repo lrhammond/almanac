@@ -268,11 +268,11 @@ class MatrixMarkovGame:
         if self.structured_labels:
             labels = []
             for l, s in zip(self.labels, self.state_labels):
-                if any([torch.dot(state, x) == torch.sum(x) for x in s]):
+                if any([torch.equal(torch.dot(state, x), torch.sum(x)) for x in s]):
                     labels.append(l)
             return tuple(labels)
         else:
-            return tuple([l for l, s in zip(self.labels, self.state_labels) if any([(state == x).all() for x in s])])
+            return tuple([l for l, s in zip(self.labels, self.state_labels) if any([(state == x).all() for x in s])]) #check this works with == etc. TODO
 
     def reset(self):
 
@@ -281,7 +281,7 @@ class MatrixMarkovGame:
     def step(self, joint_action):
         
         for i in range(len(self.masks)):
-            if torch.dot(self.state, self.masks[i]) == torch.sum(self.masks[i]):
+            if torch.equal(torch.dot(self.state, self.masks[i]), torch.sum(self.masks[i])):
                 dist = torch.matmul(self.state, self.transitions[i][joint_action])
                 self.state = torch.distributions.bernoulli.Bernoulli(dist / utils.denom(dist.max())).sample()
                 return self.state

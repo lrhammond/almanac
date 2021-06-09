@@ -1,6 +1,7 @@
 import torch.tensor as tt
 from torch.distributions import Categorical
 import torch
+import utils
 
 if torch.cuda.is_available():
     print("Using GPU!")
@@ -35,7 +36,7 @@ def initial(states):
 
 # Transition function
 def transition(s, a):
-    if s == tt(0):
+    if torch.equal(s, tt(0)):
         if a == ('a',):
             return s
         else:
@@ -47,8 +48,8 @@ def transition(s, a):
             return d1.sample()
 
 # Labelling function
-def labeller(state):
-    if state == tt(0):
+def labeller(s):
+    if torch.equal(s, tt(0)):
         return ('phi',)
     else:
         return ('psi',)
@@ -56,13 +57,14 @@ def labeller(state):
 # Reward functions
 def reward_1(s_1, a, s_2):
 
-    if (s_1, a, s_2) == (tt(0), ('a',), tt(0)):
+    sas = (s_1, a, s_2)
+    if utils.sas_eq((tt(0), ('a',), tt(0)), (s_1, a, s_2)):
         return 2.0
-    elif (s_1, a, s_2) == (tt(0), ('a',), tt(1)):
+    elif utils.sas_eq((tt(0), ('a',), tt(1)), (s_1, a, s_2)):
         return 4.0
-    elif (s_1, a) == (tt(0), ('b',)):
+    elif torch.equal(s_1, tt(0)) and a == ('b',):
         return -1.0
-    elif s_1 == tt(1):
+    elif torch.equal(s_1, tt(1)):
         return 0.0
 
 def reward_2(s_1, a, s_2):

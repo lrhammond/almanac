@@ -62,7 +62,7 @@ class DNN(nn.Module):
         elif self.output == 'softmax':
             d = 0 if len(x.size()) == 1 else 1
             return [nn.functional.softmax(y) for y in torch.split(x, self.out_sizes, dim=d)]
-        elif self.output == 'actor':
+        elif self.output == 'actors':
             pass
         elif self.output == 'gaussian':
             pass
@@ -87,9 +87,9 @@ class CriticBuffer:
                                                     "gamma",
                                                     "done"])     
 
-    def add(self, time, state, joint_action, reward, next_state, gamma, done):
+    def add(self, time, state, joint_action, reward, next_state, discount, gamma, done):
         
-        e = self.experiences(time, state, joint_action, reward, next_state, gamma, done)
+        e = self.experiences(time, state, joint_action, reward, next_state, discount, gamma, done)
         self.memory.append(e)
         
     def sample(self, sample_all=False):
@@ -114,8 +114,7 @@ class CriticBuffer:
     
     def clear(self):
 
-        for m in self.memory:
-            m.clear()
+        self.memory.clear()
     
     def __len__(self):
         return len(self.memory)
@@ -167,8 +166,7 @@ class ActorBuffer:
     
     def clear(self):
 
-        for m in self.memory:
-            m.clear()
+        self.memory.clear()
     
     def __len__(self):
         return len(self.memory)
@@ -196,12 +194,12 @@ def set_up_actors(parametrization, obs_size, act_sizes, hidden):
 
 
 # Set up critic functions 
-def set_up_critics(parametrization, obs_size, num_specs, hidden):
+def set_up_critics(parametrization, obs_size, num_rewards, hidden):
 
     if parametrization == 'dnn':
-        critics = [DNN(obs_size, [1], 'dnn', hidden) for j in range(num_specs)]
+        critics = [DNN(obs_size, [1], 'linear', hidden) for j in range(num_rewards)]
     elif parametrization == 'linear':
-        critics = [DNN(obs_size, [1], 'linear', [], bias=False) for j in range(num_specs)]
+        critics = [DNN(obs_size, [1], 'linear', [], bias=False) for j in range(num_rewards)]
     else:
         print("Error: Critic must be \'dnn\' or \'linear\')")
     for critic in critics:
@@ -227,11 +225,11 @@ def set_up_optimisers(networks, optimiser, l2=0.0):
 
 # Set up learning rates
 def set_up_lrs(learning_rates):
+    
+    def make_lr_function(lr_settings):
 
-    lrs = dict()
+        (method, param) = lr_settings
 
-    for k in learning_rates.keys():
-        (method, param) = learning_rates[k]
         if method == 'robbinsmonro':
             if not (0.5 < param) and (param < 1.0):
                 print("Error: Robbins-Monro decay parameter p must satisfy 0.5 < p < 1.0")
@@ -250,7 +248,16 @@ def set_up_lrs(learning_rates):
         else:
             print("Error: Learning rate must be \'robbinsmonro\' or \'exponential\' or \'constant\'")
 
-        lrs[k] = lr_lambda    
+        return lr_lambda
+
+    lrs = dict()
+    for k in learning_rates.keys():
+        if k == 'critics':
+            lrs[k] = make_lr_function(learning_rates[k])
+        else:
+            lrs[k] = []
+            for lr in (learning_rates[k]):
+                lrs[k].append(make_lr_function(lr))
 
     return lrs
 
@@ -266,6 +273,8 @@ class Almanac:
         else:
             pass
 
+        self.name = 'almanac'
+
         # Parameters
         self.act_sizes = act_sizes
         self.hps = hps
@@ -274,26 +283,32 @@ class Almanac:
         self.num_players = len(self.act_sizes)
         self.num_rewards = num_rewards
         self.obs_size = obs_size
+
+        # Values to maintain
+        self.updates = {'critics':[0 for _ in range(self.num_rewards)], 'actors':0}
         self.gammas = self.num_rewards * [1.0]
         self.u = [0.0 for _ in range(num_objectives - 1)]
+        self.k = 0 if self.hps['sequential'] else None
         self.recent_losses = [deque(maxlen=25) for i in range(num_objectives)]
+        self.Z = [dict() for _ in range(num_rewards)]
+        self.kl_weight = 1.0
        
         # Networks
-        self.actors = set_up_actors(self.hps['models']['actor']['type'], self.obs_size, self.act_sizes, hidden=self.hps['models']['actor']['shape'])
-        self.critics = set_up_critics(self.hps['models']['critic']['type'], self.obs_size, self.num_rewards, hidden=self.hps['models']['critic']['shape'])
+        self.actors = set_up_actors(self.hps['models']['actors']['type'], self.obs_size, self.act_sizes, hidden=self.hps['models']['actors']['shape'])
+        self.critics = set_up_critics(self.hps['models']['critics']['type'], self.obs_size, self.num_rewards, hidden=self.hps['models']['critics']['shape'])
         
         # Optimisers
-        self.actor_optimisers = set_up_optimisers(self.actors, self.hps['optimisers']['actor'])
-        self.critic_optimisers = set_up_optimisers(self.critics, self.hps['optimisers']['critic'])
+        self.actor_optimisers = set_up_optimisers(self.actors, self.hps['optimisers']['actors'])
+        self.critic_optimisers = set_up_optimisers(self.critics, self.hps['optimisers']['critics'])
 
         # Buffers
-        self.critic_buffers = [CriticBuffer(buffer_size=self.hps['buffers']['critic']['size'], batch_size=self.hps['buffers']['critic']['batch']) for c in self.critics]
-        self.actor_buffer = ActorBuffer(buffer_size=self.hps['buffers']['actor_size'], batch_size=self.hps['buffers']['actor_batch'])
+        self.critic_buffers = [CriticBuffer(buffer_size=self.hps['buffers']['critics']['size'], batch_size=self.hps['buffers']['critics']['batch']) for c in self.critics]
+        self.actor_buffer = ActorBuffer(buffer_size=self.hps['buffers']['actors']['size'], batch_size=self.hps['buffers']['actors']['size'])
 
         # Lagrange multipliers
         self.lagrange_multipliers = (self.num_objectives - 1) * [tt(0.0)]
         
-    def update_critic(self, j, e, data, until_converged=True, num_updates=None):
+    def update_critic(self, j, data, until_converged=True, num_updates=None):
 
         times, states, _, rewards, next_states, discounts, gammas, dones = data
         self.critics[j].train()
@@ -307,7 +322,7 @@ class Almanac:
 
         # Update networks
         finished = False
-        temp_recent_losses = deque(max_len=25)
+        temp_recent_losses = deque(maxlen=25)
         if num_updates == None:
             num_updates = len(times)
         e = 0
@@ -315,7 +330,7 @@ class Almanac:
 
             # Form loss
             prediction = self.critics[j](states.to(device)).to(device)
-            loss = self.lrs['critic'](e) * ((dist * (prediction - target)**2).mean()).to(device)
+            loss = self.lrs['critics'](e) * ((dist * (prediction - target)**2).mean()).to(device)
 
             # Backpropagate
             self.critic_optimisers[j].zero_grad()
@@ -325,10 +340,11 @@ class Almanac:
 
             # Check whether to finish updating
             e += 1
+            temp_recent_losses.append(loss)
             if (not until_converged and e > num_updates) or utils.losses_converged(temp_recent_losses):
                 finished = True
     
-    def update_actors(self, data, e, objectives, until_converged=True, num_updates=None):
+    def update_actors(self, data, objectives, until_converged=True, num_updates=None):
 
         times, states, joint_actions, rewards, next_states, gammas, discounts, dones, true_states = data
         for i in range(self.num_players):
@@ -345,12 +361,12 @@ class Almanac:
             obj_advantages = [sum([o[j] * advantages[j] for j in range(self.num_rewards)]) for o in objectives]
 
             # Form old probability factors
-            action_dists = self.policy(true_states)
-            old_log_probs = sum([action_dists[i].log_prob(joint_actions[i]) for i in range(self.num_players)])
+            old_action_dists = self.policy(true_states)
+            old_log_probs = sum([old_action_dists[i].log_prob(joint_actions[i]) for i in range(self.num_players)])
         
         # Update networks
         finished = False
-        temp_recent_losses = deque(max_len=25)
+        temp_recent_losses = deque(maxlen=25)
         if num_updates == None:
             num_updates = len(times)
         e = 0
@@ -358,36 +374,39 @@ class Almanac:
 
             # Form weights
             objective_range = self.k + 1 if self.k != None else self.num_objectives
-            objective_weights = self.compute_weights(objective_range)
-            relative_kl_weights = [self.kl_weight * objective_weights[i] / sum(objective_weights) for i in range()] + [0.0 for _ in range(objective_range, self.num_objectives)]
+            objective_weights = self.compute_weights(objective_range, e)
+            relative_kl_weights = [self.kl_weight * objective_weights[i] / sum(objective_weights) for i in range(objective_range)] + [0.0 for _ in range(objective_range, self.num_objectives)]
 
             # Form loss
-            new_log_probs = sum([action_dists[i].log_prob(joint_actions[i]) for i in range(self.num_players)])
+            new_action_dists = self.policy(true_states)
+            new_log_probs = sum([new_action_dists[i].log_prob(joint_actions[i]) for i in range(self.num_players)])
             kl_penalty = (new_log_probs - old_log_probs).to(device)
             ratio = torch.exp(kl_penalty)
-            loss = sum([(objective_weights[k] * obj_dists[k] * (ratio * obj_advantages[k] - self.kl_weight * kl_penalty) for k in range(len(objective_weights))).mean()])
+            loss = sum([(objective_weights[k] * obj_dists[k] * (ratio * obj_advantages[k] - self.kl_weight * kl_penalty)).mean() for k in range(len(objective_weights))])
 
             # Backpropagate
             for i in range(self.num_players):
                 self.actor_optimisers[i].zero_grad()
-                loss.backward()
+            loss.backward()
+            for i in range(self.num_players):
                 self.actor_optimisers[i].step()
                 self.actors[i].eval()
 
             # Update KL weight term as in the original PPO paper
-            if kl_penalty.mean() < self.hps['kl_target'] / 1.5:
+            if kl_penalty.mean() < self.hps['kl_target'] / 1.5: #TODO where's this 1.5 coming from?
                 self.kl_weight *= 0.5
             else:
                 self.kl_weight *= 2
 
             # Update Lagrange multipliers
-            for k in range(self.num_objectives):
-                self.recent_losses[k].append((ratio * obj_advantages[k] - relative_kl_weights[k] * kl_penalty).mean())
+            with torch.no_grad():
+                for k in range(self.num_objectives):
+                    self.recent_losses[k].append((ratio * obj_advantages[k] - relative_kl_weights[k] * kl_penalty).mean())
             self.update_lagrange_multipliers(e)
 
             # Check whether to finish updating
             e += 1
-            self.recent_actor_losses.append(loss)
+            temp_recent_losses.append(loss)
             if until_converged:
                 if self.k == None:
                     finished = utils.losses_converged(temp_recent_losses)
@@ -416,16 +435,16 @@ class Almanac:
             self.lagrange_multipliers[i] = min(max(self.lagrange_multipliers[i], 0.0), max_lm)
 
     # Compute weights for lexicographic objectives
-    def compute_weights(self, objective_range):
+    def compute_weights(self, objective_range, e):
 
         objective_weights = []
         for k in range(objective_range - 1):
             if self.k != None:
-                w = self.lrs['actor'][objective_range - 1] * self.lagrange_multipliers[k]
+                w = self.lrs['actors'][objective_range - 1] * self.lagrange_multipliers[k]
             else:
-                w = self.lrs['actor'][k] + self.lagrange_multipliers[k] * sum([self.lrs['actor'][kk] for kk in range(k+1, objective_range)])
+                w = self.lrs['actors'][k](e) + self.lagrange_multipliers[k] * sum([self.lrs['actors'][kk](e) for kk in range(k+1, objective_range)])
             objective_weights.append(w)
-        objective_weights.append(self.lrs['actor'][objective_range - 1])
+        objective_weights.append(self.lrs['actors'][objective_range - 1](e))
 
         return objective_weights
 
@@ -454,7 +473,7 @@ class Almanac:
         return joint_action
 
     # Take a learning step
-    def step(self, info):
+    def step(self, info, objectives):
 
         # Reset Gamma terms if needed
         if info["t"] == 0:
@@ -469,29 +488,30 @@ class Almanac:
             scalar_rewards = [0.0 for _ in info["R"]]
             scalar_discounts = [1.0 for _ in info["R"]]
         else:
-            scalar_rewards = [r_f(info["s"], info["a"], info["s'"]) for r_f in info["R"]]
-            scalar_discounts = info["D"]
+            scalar_rewards = [r_f['reward'](info["s"], info["a"], info["s'"]) for r_f in info["R"]]
+            scalar_discounts = [r_f['discount'] for r_f in info["R"]]
 
         rewards = [self.hps['spec_reward'] * f for f in info["F"]] + scalar_rewards
         discounts = [1 - f * (1 - self.hps['gamma_Phi']) for f in info["F"]] + scalar_discounts
 
-        for j in range(self.num_critics):
+        num_specs = len(info["F"])
+        for j in range(self.num_rewards):
 
             # Temporarily save product state
             self.Z[j][tuple(prod_state.tolist())] = (info["t"], prod_state, info["a"])
         
             # Perform patient updates if possible
-            if self.hps['patient_update']:
+            if self.hps['patient_updates']:
                 add_stored_experiences = False
-                if (j < self.num_specs and info["F"][j]):
+                if (j < num_specs and info["F"][j]):
                     self.gammas[j] *= self.hps['gamma_Phi']
                     # r = self.hps['spec_reward']
                     add_stored_experiences = True
-                elif (j >= self.num_specs and not info["is_e_t"]):
+                elif (j >= num_specs and not info["is_e_t"]):
                     self.gammas[j] *= discounts[j]
                     # r = info["R"][j - self.num_specs](info["s"], info["a"], info["s'"])
                     add_stored_experiences = True
-                elif self.critics[j](new_prod_state) == 0.0:
+                elif torch.allclose(self.critics[j](new_prod_state), tt(0.0), rtol=0.0, atol=1e-02):
                     # r = 0.0
                     add_stored_experiences = True
             else:
@@ -499,53 +519,57 @@ class Almanac:
             if add_stored_experiences:
                 for k in self.Z[j].keys():
                     (t, s, a) = self.Z[j][k]
-                    self.critic_buffers[j].add(t, s, a, rewards[j], new_prod_state, discounts[j], self.gammas[j], info["d"])
+                    self.critic_buffers[j].add(t, s, a, rewards[j], new_prod_state, discounts[j], self.gammas[j], info["D"])
                 self.Z[j] = dict()
 
         # Store (augmented) data for actors
-        for q_1, q_2, f_s in info["f(q)_s"], info["f(q')_s"], info["F_s"]:
+        for q_1, q_2, f_s in zip(info["f(q)_s"], info["f(q')_s"], info["F_s"]):
             s_q_1 = torch.cat([info["f(s)"]] + q_1, 0)
             s_q_2 = torch.cat([info["f(s')"]] + q_2, 0)
             r = [self.hps['spec_reward'] * f for f in f_s] + scalar_rewards
             d_s = [1 - f * (1 - self.hps['gamma_Phi']) for f in f_s] + scalar_discounts
-            self.actor_buffer.add(info["t"], s_q_1, info["a"], r, s_q_2, d_s, self.gammas, info["d"], prod_state)
+            self.actor_buffer.add(info["t"], s_q_1, info["a"], r, s_q_2, d_s, self.gammas, info["D"], prod_state)
 
             # Store augmented data for critics when possible
             if self.hps['augment_data']:
                 # Avoid oversampling the true transition
-                if torch.eq(s_q_1, prod_state).all():
+                if torch.equal(s_q_1, prod_state):
                     continue
                 # Add data for alternative transitions
                 else:
-                    for j in range(self.num_critics):
-                        if self.hps['patient_update']:
+                    for j in range(self.num_rewards):
+                        if self.hps['patient_updates']:
                             add_experience = False
-                            if (j < self.num_specs and info["F"][j]):
+                            if (j < num_specs and f_s[j]):
                                 r_j = self.hps['spec_reward']
                                 add_experience = True
-                            elif (j >= self.num_specs and not info["is_e_t"]):
-                                r_j = scalar_rewards[j]
+                            elif (j >= num_specs and not info["is_e_t"]):
+                                r_j = rewards[j]
                                 add_experience = True
-                            elif self.critics[j](s_q_2) == 0.0:
+                            elif torch.allclose(self.critics[j](s_q_2), tt(0.0), rtol=0.0, atol=1e-02):
                                 r_j = 0.0
                                 add_experience = True
                         else:
                             add_experience = True
                         if add_experience:
-                            self.critic_buffers[j].add(info["t"], s_q_1, info["a"], r_j, s_q_2, self.gammas[j], info["d"])
+                            self.critic_buffers[j].add(info["t"], s_q_1, info["a"], r_j, s_q_2, d_s[j], self.gammas[j], info["D"])
                         
         # If enough data has been collected update the critics
-        for j in range(self.num_critics):
-            if len(self.critic_buffers[j]) > self.hps['update_after']['critic']:
+        for j in range(self.num_rewards):
+            if len(self.critic_buffers[j]) > self.hps['update_after']['critics']:
                 data = self.critic_buffers[j].sample(sample_all=True)
-                self.update_critic(j, self.update["critic"][j], data)
+                self.update_critic(j, data, until_converged=self.hps['until_converged']['critics'], num_updates=self.hps['num_updates']['critics'])
                 self.critic_buffers[j].clear()
+                self.updates['critics'][j] += 1
         
         # If enough data has been collected update the actors and the Lagrange multipliers
-        if len(self.actor_buffer) > self.hps['update_after']['actor']:
+        if len(self.actor_buffer) > self.hps['update_after']['actors']:
             data = self.actor_buffer.sample(sample_all=True)
-            self.update_actors(data, self.update["actors"])
+            self.update_actors(data, objectives, until_converged=self.hps['until_converged']['actors'], num_updates=self.hps['num_updates']['actors'])
             self.actor_buffer.clear()
+            self.updates['actors'] += 1
+
+        return [r * d for r, d in zip(rewards, discounts)]
 
     def state_dist(self, ts, gammas):
 

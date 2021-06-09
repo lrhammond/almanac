@@ -8,7 +8,7 @@ import random
 from utils import flatten
 import os
 import re
-from itertools import chain, combinations
+from itertools import chain, combinations, product
 import pickle
 from torch.nn.functional import feature_alpha_dropout, one_hot as one_hot
 import torch.tensor as tt
@@ -33,20 +33,21 @@ class Spec_Controller:
         else:
             self.specs = [Spec(f) for f in formulae]
         self.num_specs = len(formulae)
-        self.acceptances = [False for spec in self.specs]
-        self.states = self.reset()
+        self.states, self.acceptances = self.reset()
         self.num_states = [spec.ldba.get_num_states() for spec in self.specs]
+        self.all_states = product(*[range(s) for s in self.num_states])
         self.epsilon_act_sizes = [spec.ldba.get_num_eps_actions() for spec in self.specs]
     
     def reset(self):
 
-        self.acceptances = [False for spec in self.specs]
+        self.states = [spec.ldba.reset()[0] for spec in self.specs]
+        self.acceptances = [False for _ in self.specs]
 
-        return [spec.ldba.reset()[0] for spec in self.specs]
+        return self.states, self.acceptances
     
     def is_epsilon_transition(self, joint_action, act_sizes):
 
-        e_ts = {}
+        e_ts = []
         for i in range(len(act_sizes)):
             a = joint_action[i] - (act_sizes[i] - 1) 
             if a <= 0:
@@ -57,36 +58,38 @@ class Spec_Controller:
                     j += 1
                     a -= self.epsilon_act_sizes[j]
 
-                e_ts[j] = a + self.epsilon_act_sizes[j] - 1
+                e_ts.append((j, a + self.epsilon_act_sizes[j] - 1))
             
-        return e_ts
+        return tuple(e_ts)
 
     def step(self, e_ts, label_set):
 
+        e_ts_dict = dict(e_ts)
         for j in range(self.num_specs):
-            if j in e_ts.keys():
-                if self.specs[j].ldba.check_epsilon(e_ts[j]):
-                    self.states[j], self.acceptances[j] = self.specs[j].ldba.step(None, epsilon=e_ts[j])
+            if j in e_ts_dict.keys():
+                if self.specs[j].ldba.check_epsilon(e_ts_dict[j]):
+                    self.states[j], self.acceptances[j] = self.specs[j].ldba.step(None, epsilon=e_ts_dict[j])
             else:
                 self.states[j], self.acceptances[j] = self.specs[j].ldba.step(label_set)
 
-        return self.states
+        return self.states, self.acceptances
 
-    def featurise(self, state):
+    def featurise(self, states):
 
-        return [one_hot(tt(state[j]), self.num_states[j]) for j in range(self.num_specs)]
+        return [one_hot(tt(states[j]), self.num_states[j]) for j in range(self.num_specs)]
 
     def get_transitions(self, e_ts, label_set):
 
+        e_ts_dict = dict(e_ts)
         s_1s, s_2s, acceptances = [], [], []
-        for s_1 in []:
+        for s_1 in self.all_states:
             s_1s.append(self.featurise(s_1))
             s_2 = []
             accepted = []
             for j in range(len(self.specs)):
-                if j in e_ts.keys():
-                    if self.specs[j].ldba.check_epsilon(e_ts[j]):
-                        s_2.append(self.specs[j].ldba.eps_actions[e_ts[j]])
+                if j in e_ts_dict.keys():
+                    if self.specs[j].ldba.check_epsilon(e_ts_dict[j]):
+                        s_2.append(self.specs[j].ldba.eps_actions[e_ts_dict[j]])
                     else:
                         s_2.append(s_1[j])
                     accepted.append(False)
@@ -324,6 +327,7 @@ class LDBA:
 
         self.state = self.q0
         self.accepted = False
+
         return self.state, self.accepted
 
     def step(self, label_set, epsilon=None):
