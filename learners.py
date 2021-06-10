@@ -101,14 +101,14 @@ class CriticBuffer:
         else:
             experiences = random.sample(self.memory, k=self.batch_size)
 
-        times = tt([e.time for e in experiences if e is not None]).view(-1,1).float().to(device)
+        times = tt([e.time for e in experiences if e is not None],dtype=torch.long).view(-1,1).to(device)
         states = torch.stack([e.state for e in experiences if e is not None]).float().to(device)
-        joint_actions = [tt([e.joint_action[i] for e in experiences if e is not None]).view(-1,1).float().to(device) for i in range(len(experiences[0].joint_action))]
+        joint_actions = [tt([e.joint_action[i] for e in experiences if e is not None],dtype=torch.long).view(-1,1).to(device) for i in range(len(experiences[0].joint_action))]
         rewards = tt([e.reward for e in experiences if e is not None]).view(-1,1).float().to(device)
         next_states = torch.stack([e.next_state for e in experiences if e is not None]).float().to(device)
         discounts = tt([e.discount for e in experiences if e is not None]).view(-1,1).float().to(device)
         gammas = tt([e.gamma for e in experiences if e is not None]).view(-1,1).float().to(device)
-        dones = tt([int(e.done) for e in experiences if e is not None]).view(-1,1).float().to(device)
+        dones = tt([e.done for e in experiences if e is not None],dtype=torch.int8).view(-1,1).to(device)
         
         return (times, states, joint_actions, rewards, next_states, discounts, gammas, dones)
     
@@ -152,14 +152,14 @@ class ActorBuffer:
         else:
             experiences = random.sample(self.memory, k=self.batch_size)
 
-        times = tt([e.time for e in experiences if e is not None]).view(-1,1).float().to(device)
+        times = tt([e.time for e in experiences if e is not None],dtype=torch.long).view(-1,1).to(device)
         states = torch.stack([e.state for e in experiences if e is not None]).float().to(device)
-        joint_actions = [tt([e.joint_action[i] for e in experiences if e is not None]).view(-1,1).float().to(device) for i in range(len(experiences[0].joint_action))]
+        joint_actions = [tt([e.joint_action[i] for e in experiences if e is not None],dtype=torch.long).view(-1,1).to(device) for i in range(len(experiences[0].joint_action))]
         rewards = [tt([e.reward[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].reward))]
         next_states = torch.stack([e.next_state for e in experiences if e is not None]).float().to(device)
         gammas = [tt([e.gamma[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].gamma))]
         discounts = [tt([e.discount[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].discount))]
-        dones = tt([int(e.done) for e in experiences if e is not None]).view(-1,1).float().to(device)
+        dones = tt([e.done for e in experiences if e is not None],dtype=torch.int8).view(-1,1).to(device)
         true_states = torch.stack([e.true_state for e in experiences if e is not None]).float().to(device)
 
         return (times, states, joint_actions, rewards, next_states, discounts, gammas, dones, true_states)
@@ -346,7 +346,7 @@ class Almanac:
     
     def update_actors(self, data, objectives, until_converged=True, num_updates=None):
 
-        times, states, joint_actions, rewards, next_states, gammas, discounts, dones, true_states = data
+        times, states, joint_actions, rewards, next_states, discounts, gammas, dones, true_states = data
         for i in range(self.num_players):
             self.actors[i].train()
 
@@ -361,8 +361,8 @@ class Almanac:
             obj_advantages = [sum([o[j] * advantages[j] for j in range(self.num_rewards)]) for o in objectives]
 
             # Form old probability factors
-            old_action_dists = self.policy(true_states)
-            old_log_probs = sum([old_action_dists[i].log_prob(joint_actions[i]) for i in range(self.num_players)])
+            old_dist_probs = self.policy(true_states,probs=True)
+            old_action_log_probs = sum([torch.gather(torch.log(old_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
         
         # Update networks
         finished = False
@@ -378,9 +378,9 @@ class Almanac:
             relative_kl_weights = [self.kl_weight * objective_weights[i] / sum(objective_weights) for i in range(objective_range)] + [0.0 for _ in range(objective_range, self.num_objectives)]
 
             # Form loss
-            new_action_dists = self.policy(true_states)
-            new_log_probs = sum([new_action_dists[i].log_prob(joint_actions[i]) for i in range(self.num_players)])
-            kl_penalty = (new_log_probs - old_log_probs).to(device)
+            new_dist_probs = self.policy(true_states,probs=True)
+            new_action_log_probs = sum([torch.gather(torch.log(new_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
+            kl_penalty = (new_action_log_probs - old_action_log_probs).to(device)
             ratio = torch.exp(kl_penalty)
             loss = sum([(objective_weights[k] * obj_dists[k] * (ratio * obj_advantages[k] - self.kl_weight * kl_penalty)).mean() for k in range(len(objective_weights))])
 
@@ -393,9 +393,10 @@ class Almanac:
                 self.actors[i].eval()
 
             # Update KL weight term as in the original PPO paper
-            if kl_penalty.mean() < self.hps['kl_target'] / 1.5: #TODO where's this 1.5 coming from?
+            mean_kl = kl_penalty.mean()
+            if mean_kl < self.hps['kl_target'] / 1.5:
                 self.kl_weight *= 0.5
-            else:
+            elif mean_kl > self.hps['kl_target'] * 1.5:
                 self.kl_weight *= 2
 
             # Update Lagrange multipliers
@@ -421,12 +422,12 @@ class Almanac:
         if self.k != None:
             if not utils.converged(self.recent_losses[self.k]):
                 if self.k != self.num_objectives - 1:
-                    self.u[self.k] = -torch.tensor(self.recent_losses[self.k]).mean()
+                    self.u[self.k] = torch.tensor(self.recent_losses[self.k]).mean()
             else:
                 self.k = 0 if self.k == self.num_objectives - 1 else self.k + 1
         else:
             for i in range(self.num_objectives - 1):
-                self.u[i] = -torch.tensor(self.recent_losses[i]).mean()
+                self.u[i] = torch.tensor(self.recent_losses[i]).mean()
 
         # Update Lagrange parameters
         r = self.k if self.k != None else self.num_objectives - 1

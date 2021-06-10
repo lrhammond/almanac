@@ -30,9 +30,7 @@ d3 = Categorical(tt([ 0.0, 0.0, 1.0, 0.0 ]))
 d4 = Categorical(tt([ 0.2, 0.2, 0.4, 0.2 ]))
 
 # Initial state dist
-def initial(states):
-
-    return d3.sample()
+initial = d3
 
 # Transition function
 def transition(s, a):

@@ -35,7 +35,7 @@ class Spec_Controller:
         self.num_specs = len(formulae)
         self.states, self.acceptances = self.reset()
         self.num_states = [spec.ldba.get_num_states() for spec in self.specs]
-        self.all_states = product(*[range(s) for s in self.num_states])
+        self.all_states = tuple(product(*[range(s) for s in self.num_states]))
         self.epsilon_act_sizes = [spec.ldba.get_num_eps_actions() for spec in self.specs]
     
     def reset(self):
@@ -100,7 +100,7 @@ class Spec_Controller:
             s_2s.append(self.featurise(s_2))
             acceptances.append(accepted)
         
-        return [s_1s, s_2s, acceptances]
+        return s_1s, s_2s, acceptances
 
     def save_model(self, location):
 

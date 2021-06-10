@@ -149,7 +149,7 @@ class MarkovGame:
         self.transition = transition
         self.initial = initial
         self.labeller = labeller
-        self.state = initial(state_space)
+        self.state = self.reset()
 
     def step(self, joint_action):
 
@@ -160,7 +160,8 @@ class MarkovGame:
 
     def reset(self):
 
-        self.state = self.initial(self.state_space)
+        self.state = self.initial.sample()
+
         return self.state
     
     def featurise(self, state):
@@ -276,7 +277,9 @@ class MatrixMarkovGame:
 
     def reset(self):
 
-        return self.initial.sample()
+        self.state = self.initial.sample()
+
+        return self.state
 
     def step(self, joint_action):
         

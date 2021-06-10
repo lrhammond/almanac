@@ -32,8 +32,7 @@ d5 = Categorical(tt([ 0.2, 0.2, 0.0, 0.0, 0.3, 0.1, 0.2, 0.0, 0.2, 0.0 ]))
 d6 = Categorical(tt([ 0.0, 0.0, 0.7, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.0 ]))
 
 # Initial state dist
-def initial(states):
-    return d2.sample()
+initial = d2
 
 # Transition function
 def transition(s, a):

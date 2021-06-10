@@ -19,38 +19,45 @@ from environments.test_envs import mg0
 
 # Debugging
 test_hps = {'actual_dist': True,
-            'augment_data': True,
+            'augment_data': False,
             'buffers': { 'actors': {'size': 1000, 'batch': 32},
                          'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
             'epsilon': 0,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
-            'learning_rates': { 'actors': (('constant', 0.005),('constant', 0.001)),
+            'learning_rates': { 'actors': (('constant', 0.005),),
                                 'critics': ('constant', 0.01),
-                                'lagrange_multiplier': (('constant', 0.05),('constant', 0.01)) },
+                                'lagrange_multiplier': (('constant', 0.05),) },
             'models': { 'actors': {'type':'dnn', 'shape':[12]},
                         'critics': {'type':'dnn', 'shape':[12]} },
             'num_updates' : { 'actors': None,
                               'critics': None },
-            'optimisers': { 'actors': 'sgd',
-                            'critics': 'sgd' },
+            'optimisers': { 'actors': 'adam',
+                            'critics': 'adam' },
             'patient_updates': True,
             'sequential': False,
             'spec_reward': 10,
             'until_converged' : { 'actors': True,
                                   'critics': True },
-            'update_after': { 'actors': 100,
-                              'critics': 100 }}
+            'update_after': { 'actors': 30,
+                              'critics': 30 }}
 
 def debug(root, max_steps, hps=test_hps, repetitions=1):
 
     location = '{}/experiments/debug'.format(root)
 
     env = envs.EnvWrapper('debug_game', 'mg', envs.mg_0)
-    specifications = ('G F phi', 'G F psi')
-    reward_functions = ({'reward':mg0.reward_1, 'discount':0.8}, {'reward':mg0.reward_2, 'discount':0.9})
-    objectives = ((0.5, 0.5, 0.0, 0.0), (0.0, 0.0, 0.8, 0.2))
+
+    # All
+    # specifications = ('(F G phi) | (F G psi)', 'F (psi & X phi)')
+    # reward_functions = ({'reward':mg0.reward_1, 'discount':0.8}, {'reward':mg0.reward_2, 'discount':0.9})
+    # objectives = ((1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0))
+
+    # Minimal spec
+    specifications = ('F (psi & X phi)',)
+    reward_functions = ()
+    objectives = ((1.0,),)
 
     spec_controller = specs.Spec_Controller(specifications, load_from=root)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
