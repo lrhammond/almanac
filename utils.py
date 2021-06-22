@@ -28,7 +28,7 @@ def clip(x, min_x=-100.0, max_x=100.0):
     return clamp(x, min_x, max_x)
 
 
-# Removes Nan entries from a tensor
+# Removes Nan entries from a tensor and replaces them with zeros
 def remove_nans(x):
 
     if x == None:

@@ -23,14 +23,20 @@ test_hps = {'actual_dist': True,
             'buffers': { 'actors': {'size': 1000, 'batch': 32},
                          'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
-            'epsilon': 0,
+            'entropy_weight': 0.0,
+            'epsilon': 0.05,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
-            'learning_rates': { 'actors': (('constant', 0.005),),
-                                'critics': ('constant', 0.01),
-                                'lagrange_multiplier': (('constant', 0.05),) },
+            'l2_weight' : 0.0001,
+            # 'learning_rates': { 'actors': (('constant', 0.0001),),
+            #                     'critics': ('constant', 0.001),
+            #                     'lagrange_multiplier': (('constant', 0.005),) },
+            'learning_rates': { 'actors': (('constant', 1.0),),
+                                'critics': ('constant', 1.0),
+                                'lagrange_multiplier': (('constant', 1.0),) },
             'models': { 'actors': {'type':'dnn', 'shape':[12]},
                         'critics': {'type':'dnn', 'shape':[12]} },
+            'normalise_advantages' : True,
             'num_updates' : { 'actors': None,
                               'critics': None },
             'optimisers': { 'actors': 'adam',
@@ -43,11 +49,20 @@ test_hps = {'actual_dist': True,
             'update_after': { 'actors': 30,
                               'critics': 30 }}
 
-def debug(root, max_steps, hps=test_hps, repetitions=1):
+def debug(root=os.getcwd(), max_steps=100000, hps=test_hps, repetitions=1):
 
     location = '{}/experiments/debug'.format(root)
 
     env = envs.EnvWrapper('debug_game', 'mg', envs.mg_0)
+
+    all_states = tt([[[1,0,1,0,0,0], # (0,0)
+                    [1,0,0,1,0,0],   # (0,1)
+                    [1,0,0,0,1,0],   # (0,2)
+                    [1,0,0,0,0,1]],  # (0,3)
+                    [[0,1,1,0,0,0],  # (1,0)
+                    [0,1,0,1,0,0],   # (1,1)
+                    [0,1,0,0,1,0],   # (1,2)
+                    [0,1,0,0,0,1]]]) # (1,3)
 
     # All
     # specifications = ('(F G phi) | (F G psi)', 'F (psi & X phi)')
@@ -55,26 +70,31 @@ def debug(root, max_steps, hps=test_hps, repetitions=1):
     # objectives = ((1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0))
 
     # Minimal spec
-    specifications = ('F (psi & X phi)',)
+    specifications = ('G F (psi & X phi)',)
+    # specifications = ('(G psi) | (G phi)',)
+    # specifications = ('(G phi) | (G psi)',)
     reward_functions = ()
-    objectives = ((1.0,),)
+    objectives = (np.array((1.0,)),)
+    # objectives = (np.array((1.0,0.0)),np.array((0.0,1.0)))
 
     spec_controller = specs.Spec_Controller(specifications, load_from=root)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
     act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
-    for r in range(repetitions):
+    learner = make_learner('almanac', obs_size, act_sizes, len(objectives[0]), len(objectives), hps)
+    prefix = "{}-{}-{}-{}".format(env.name, learner.name, 0, 0)
+
+    for _ in range(repetitions):
 
         # Create learner
-        learner = make_learner('almanac', obs_size, act_sizes, len(objectives[0]), len(objectives), hps)
-        prefix = "{}-{}-{}-{}".format(env.name, learner.name, 0, r)
-
         run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000)
+    
+    run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=True)
 
 
 # Experiment 0
 exp0_hps = {'actual_dist': True,
-            'augment_data': True,
+            'augment_data': False,
             'buffers': { 'actors': {'size': 1000, 'batch': 32},
                          'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
@@ -388,7 +408,6 @@ def make_learner(learner_name, obs_size, act_sizes, num_rewards, num_objectives,
     return learner
 
 
-
 def experiment(root, id, env, formulae, max_steps, reward_functions, objectives, learner_name, repetitions=1):
 
     # Form input parameters and LDBAs
@@ -412,17 +431,18 @@ def experiment(root, id, env, formulae, max_steps, reward_functions, objectives,
         pickle.dump(objectives, f)
 
 
-def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000):
+def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=False):
 
     # Check for stupid mistakes
     num_specs = len(spec_controller.specs)
-    num_rewards = len(reward_functions)
+    num_reward_functions = len(reward_functions)
+    num_rewards = num_specs + num_reward_functions
     num_objectives = len(objectives)
     for o in objectives:
-        if len(o) != num_specs + num_rewards:
+        if len(o) != num_specs + num_reward_functions:
             print('Error: Objectives must contain weights for every spec and reward function')
             return
-        if sum(o[:num_rewards]) > 0 and sum(o[num_rewards:]) > 0:
+        if sum(o[:num_reward_functions]) > 0 and sum(o[num_reward_functions:]) > 0:
             print('Error: Objectives must combine only specs or only reward functions')
             return
     if len(learner.lrs['actors']) != num_objectives or len(learner.lrs['lagrange_multiplier']) != num_objectives:
@@ -433,11 +453,12 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
     score_interval = int(max_steps / num_plot_points)
     recent_scores = [0.0 for _ in objectives]
     total_scores = [0.0 for _ in objectives]
-    with open('{}/scores/{}-scores.txt'.format(location, prefix), 'w') as f:
+    postfix = "-eval" if evaluate else ""
+    with open('{}/scores/{}-scores{}.txt'.format(location, prefix, postfix), 'w') as f:
         obj_list = [str(i) for i in range(num_objectives)]
         f.write("recent_" + ",recent_".join(obj_list) + ",total_" + ",total_".join(obj_list) + "\n")
 
-    # Save duplicating the computation of automaton transitions
+    # Avoid duplicating the computation of automaton transitions
     if learner.hps['augment_data']:
         transitions = dict()
 
@@ -449,6 +470,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
         spec_states, acceptances = spec_controller.reset() 
         done = False
         t = 0
+        current_discounts = np.ones(num_rewards)
         # print("End of episode, resetting...")
 
         while not done and s < max_steps:
@@ -481,32 +503,47 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             if random.random() > learner.hps['continue_prob']:
                 done = True
 
-            # Form learning input
-            info = {"s": game_state,
-                    "f(s)": f_game_state,
-                    "q": spec_states,
-                    "f(q)": f_spec_states,
-                    "a": joint_action,
-                    "s'": new_game_state,
-                    "f(s')": f_new_game_state,
-                    "q'": new_spec_states,
-                    "f(q')": f_new_spec_states,
-                    "R": reward_functions,
-                    "F": acceptances,
-                    "t": t,
-                    "o_s": objectives,
-                    "D": done,
-                    "is_e_t": is_e_t}
-            if learner.hps['augment_data']:
-                if (e_ts, label_set) not in transitions.keys():
-                    transitions[(e_ts, label_set)] = spec_controller.get_transitions(e_ts, label_set)
-                info["f(q)_s"], info["f(q')_s"], info["F_s"] = transitions[(e_ts, label_set)]
-            else:
-                info["f(q)_s"], info["f(q')_s"], info["F_s"] = [f_spec_states], [f_new_spec_states], [acceptances]
-            
-            # Update learners
-            discounted_rewards = learner.step(info, objectives)
-            utilities = [sum(z[0] * z[1] for z in zip(o, discounted_rewards)) for o in objectives]
+            if not evaluate:
+
+                # Form learning input
+                info = {"s": game_state,
+                        "f(s)": f_game_state,
+                        "q": spec_states,
+                        "f(q)": f_spec_states,
+                        "a": joint_action,
+                        "s'": new_game_state,
+                        "f(s')": f_new_game_state,
+                        "q'": new_spec_states,
+                        "f(q')": f_new_spec_states,
+                        "R": reward_functions,
+                        "F": acceptances,
+                        "t": t,
+                        "o_s": objectives,
+                        "D": done,
+                        "is_e_t": is_e_t}
+                if learner.hps['augment_data']:
+                    if (e_ts, label_set) not in transitions.keys():
+                        transitions[(e_ts, label_set)] = spec_controller.get_transitions(e_ts, label_set)
+                    info["f(q)_s"], info["f(q')_s"], info["F_s"] = transitions[(e_ts, label_set)]
+                else:
+                    info["f(q)_s"], info["f(q')_s"], info["F_s"] = [f_spec_states], [f_new_spec_states], [acceptances]
+                
+                # Update learners
+                learner.step(info, objectives)
+                
+            # Record Almanac-esque scores
+            discounts = []
+            rewards = []
+            for j in range(num_specs):
+                discounts.append(learner.hps['gamma_Phi'] if acceptances[j] else 1.0)
+                rewards.append(learner.hps['spec_reward'] if acceptances[j] else 0.0)
+            for j in range(num_specs,num_rewards):
+                discounts.append(reward_functions[j]['discount'] if acceptances[j] else 1.0)
+                rewards.append(reward_functions[j]['reward'] if acceptances[j] else 0.0)
+            current_discounts *= np.array(discounts)
+            discounted_rewards = current_discounts * rewards
+            # utilities = [sum(z[0] * z[1] for z in zip(o, discounted_rewards)) for o in objectives]
+            utilities = [sum(discounted_rewards * o) for o in objectives]
             recent_scores = [recent_scores[i] + utilities[i] for i in range(num_objectives)]
 
             # Update variables for next step
@@ -521,18 +558,14 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
                 rs_s = ",".join(["{:.5f}".format(rs / score_interval) for rs in recent_scores])
                 ts_s = ",".join(["{:.5f}".format(ts / s) for ts in total_scores])
                 print("Average Score ({}/{}): {} (recent)   {} (total)".format(int(s / score_interval), num_plot_points, rs_s, ts_s))
-                with open('{}/scores/{}-scores.txt'.format(location, prefix), 'a') as f:
+                with open('{}/scores/{}-scores{}.txt'.format(location, prefix, postfix), 'a') as f:
                     f.write(rs_s + ',' + ts_s + '\n')
                 recent_scores = [0.0 for _ in objectives]
 
-        
-
     # Save model
-    learner.save_model(location, prefix)
+    if not evaluate:
+        learner.save_model(location, prefix)
 
-    return 
+    return
 
-
-
-root = os.getcwd()
-debug(root, 10000)
+debug()

@@ -18,42 +18,41 @@ else:
 ### MARKOV GAME 0.0 ###
 # Single player, single spec
 
-# # Number of players
-# num_players = 1
+# Number of players
+num_players = 1
 
-# # State space
-# state_space = [tt(i) for i in range(2)]
+# State space
+state_space = [tt(i) for i in range(2)]
 
-# # Action spaces
-# action_spaces = [('a','b')]
+# Action spaces
+action_spaces = [('a','b')]
 
-# # Dists
-# d0 = Categorical(tt([ 0.5, 0.5 ]))
-# d1 = Categorical(tt([ 0.7, 0.3 ]))
+# Dists
+d0 = Categorical(tt([ 0.5, 0.5 ]))
+d1 = Categorical(tt([ 0.7, 0.3 ]))
 
-# # Initial state dist
-# def initial(states):
-#     return d1.sample()
+# Initial state dist
+initial = Categorical(tt([ 0.5, 0.5 ]))
 
-# # Transition function
-# def transition(s, a):
-#     if torch.equal(s, tt(0)):
-#         if a == ('a',):
-#             return s
-#         else:
-#             return d0.sample()
-#     else:
-#         if a == ('a',):
-#             return s
-#         else:
-#             return d1.sample()
+# Transition function
+def transition(s, a):
+    if torch.equal(s,tt(0)):
+        if a == ('a',):
+            return s
+        else:
+            return tt(1) - s
+    else:
+        if a == ('a',):
+            return tt(1) - s
+        else:
+            return s
 
-# # Labelling function
-# def labeller(s):
-#     if torch.equal(s, tt(0)):
-#         return ('phi',)
-#     else:
-#         return ('psi',)
+# Labelling function
+def labeller(s):
+    if torch.equal(s, tt(0)):
+        return ('phi',)
+    else:
+        return ('psi',)
 
 # # Reward functions
 # def reward_1(s_1, a, s_2):
@@ -78,60 +77,60 @@ else:
 ### MARKOV GAME 0.1 ###
 # Two players, single spec
 
-# Number of players
-num_players = 2
+# # Number of players
+# num_players = 2
 
-# State space
-state_space = [tt(i) for i in range(2)]
+# # State space
+# state_space = [tt(i) for i in range(2)]
 
-# Action spaces
-action_spaces = [('a','b'),('x','y')]
+# # Action spaces
+# action_spaces = [('a','b'),('x','y')]
 
-# Dists
-d0 = Categorical(tt([ 0.7, 0.3 ]))
-d1 = Categorical(tt([ 0.3, 0.7 ]))
+# # Dists
+# d0 = Categorical(tt([ 0.7, 0.3 ]))
+# d1 = Categorical(tt([ 0.3, 0.7 ]))
 
-# Initial state dist
-initial = Categorical(tt([ 1.0, 0 ]))
+# # Initial state dist
+# initial = Categorical(tt([ 1.0, 0 ]))
 
-# Transition function
-def transition(s, a):
-    if torch.equal(s,tt(0)):
-        if a == ('a','x'):
-            return s
-        else:
-            return d0.sample()
-    else:
-        if a == ('b','y'):
-            return s
-        else:
-            return d1.sample()
+# # Transition function
+# def transition(s, a):
+#     if torch.equal(s,tt(0)):
+#         if a == ('a','x'):
+#             return s
+#         else:
+#             return tt(1) - s
+#     else:
+#         if a == ('b','y'):
+#             return tt(1) - s
+#         else:
+#             return s
 
-# Labelling function
-def labeller(state):
-    if state == tt(0):
-        return ('phi',)
-    else:
-        return ('psi',)
+# # Labelling function
+# def labeller(state):
+#     if state == tt(0):
+#         return ('phi',)
+#     else:
+#         return ('psi',)
 
-# Reward functions
-def reward_1(s_1, a, s_2):
+# # Reward functions
+# def reward_1(s_1, _, s_2):
 
-    if torch.equal(s_1, tt(0)) and torch.equal(s_2, tt(0)):
-        return 1.0
-    elif torch.equal(s_1, tt(1)) and torch.equal(s_2, tt(1)):
-        return 3.0
-    else:
-        return 0.0
+#     if torch.equal(s_1, tt(0)) and torch.equal(s_2, tt(0)):
+#         return 1.0
+#     elif torch.equal(s_1, tt(1)) and torch.equal(s_2, tt(1)):
+#         return 3.0
+#     else:
+#         return 0.0
 
-def reward_2(s_1, a, s_2):
-    sas = (s_1, a, s_2)
-    if utils.sas_eq((tt(0), ('b','y'), tt(1)), (s_1, a, s_2)):
-        return -2.0
-    elif utils.sas_eq((tt(1), ('a','x'), tt(0)), (s_1, a, s_2)):
-        return -2.0
-    else:
-        return 0.0   
+# def reward_2(s_1, a, s_2):
+#     sas = (s_1, a, s_2)
+#     if utils.sas_eq((tt(0), ('b','y'), tt(1)), (s_1, a, s_2)):
+#         return -2.0
+#     elif utils.sas_eq((tt(1), ('a','x'), tt(0)), (s_1, a, s_2)):
+#         return -2.0
+#     else:
+#         return 0.0   
 
 ### MARKOV GAME 0.2 ###
 # Single player, two specs

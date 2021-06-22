@@ -209,14 +209,14 @@ def set_up_critics(parametrization, obs_size, num_rewards, hidden):
 
 
 # Set up optimisers for given networks
-def set_up_optimisers(networks, optimiser, l2=0.0):
+def set_up_optimisers(networks, optimiser, l2=0.1):
 
     if optimiser == 'adam':
-        optimisers = [optim.Adam(n.parameters(), lr=1.0, weight_decay=l2) for n in networks]
+        optimisers = [optim.Adam(n.parameters(), weight_decay=l2) for n in networks]
     elif optimiser == 'sgd':
         optimisers = [optim.SGD(n.parameters(), lr=1.0, weight_decay=l2) for n in networks]
     elif optimiser == 'rmsprop':
-        optimisers = [optim.RMSprop(n.parameters(), lr=1.0, weight_decay=l2) for n in networks] 
+        optimisers = [optim.RMSprop(n.parameters(), weight_decay=l2) for n in networks] 
     else:
         print("Error: Optimiser must be \'adam\' or \'sgd\' or \'rmsprop\')")
 
@@ -289,7 +289,7 @@ class Almanac:
         self.gammas = self.num_rewards * [1.0]
         self.u = [0.0 for _ in range(num_objectives - 1)]
         self.k = 0 if self.hps['sequential'] else None
-        self.recent_losses = [deque(maxlen=25) for i in range(num_objectives)]
+        self.recent_utilities = [deque(maxlen=25) for i in range(num_objectives)]
         self.Z = [dict() for _ in range(num_rewards)]
         self.kl_weight = 1.0
        
@@ -298,8 +298,8 @@ class Almanac:
         self.critics = set_up_critics(self.hps['models']['critics']['type'], self.obs_size, self.num_rewards, hidden=self.hps['models']['critics']['shape'])
         
         # Optimisers
-        self.actor_optimisers = set_up_optimisers(self.actors, self.hps['optimisers']['actors'])
-        self.critic_optimisers = set_up_optimisers(self.critics, self.hps['optimisers']['critics'])
+        self.actor_optimisers = set_up_optimisers(self.actors, self.hps['optimisers']['actors'], l2=self.hps['l2_weight'])
+        self.critic_optimisers = set_up_optimisers(self.critics, self.hps['optimisers']['critics'], l2=self.hps['l2_weight'])
 
         # Buffers
         self.critic_buffers = [CriticBuffer(buffer_size=self.hps['buffers']['critics']['size'], batch_size=self.hps['buffers']['critics']['batch']) for c in self.critics]
@@ -357,8 +357,12 @@ class Almanac:
         with torch.no_grad():
 
             # Form advantages
-            advantages = [rewards[j].to(device) + (discounts[j] * self.critics[j](next_states.to(device)) * (1-dones)).to(device) - self.critics[j](states.to(device)) for j in range(self.num_rewards)]
-            obj_advantages = [sum([o[j] * advantages[j] for j in range(self.num_rewards)]) for o in objectives]
+            advs = [rewards[j].to(device) + (discounts[j] * self.critics[j](next_states.to(device)) * (1-dones)).to(device) - self.critics[j](states.to(device)) for j in range(self.num_rewards)]
+            obj_advs = [sum([o[j] * advs[j] for j in range(self.num_rewards)]) for o in objectives]
+            if self.hps['normalise_advantages']:
+                obj_advantages = [(o - o.mean()) / (o.std() + 1e-8) for o in obj_advs]
+            else:
+                obj_advantages = obj_advs
 
             # Form old probability factors
             old_dist_probs = self.policy(true_states,probs=True)
@@ -380,9 +384,14 @@ class Almanac:
             # Form loss
             new_dist_probs = self.policy(true_states,probs=True)
             new_action_log_probs = sum([torch.gather(torch.log(new_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
-            kl_penalty = (new_action_log_probs - old_action_log_probs).to(device)
-            ratio = torch.exp(kl_penalty)
-            loss = sum([(objective_weights[k] * obj_dists[k] * (ratio * obj_advantages[k] - self.kl_weight * kl_penalty)).mean() for k in range(len(objective_weights))])
+            log_ratio = (new_action_log_probs.masked_fill(new_action_log_probs == -np.inf, 0.0) - old_action_log_probs).to(device)
+            ratio = torch.exp(log_ratio)
+            kl_penalty = ratio * log_ratio
+            if self.hps['entropy_weight'] > 0.0:
+                entropy_penalty = sum([(p * torch.log(p)).sum(dim=1).mean() for p in new_dist_probs])
+            else:
+                entropy_penalty = 0.0
+            loss = - (sum([(objective_weights[k] * obj_dists[k] * (ratio * obj_advantages[k] - self.kl_weight * kl_penalty)).mean() for k in range(len(objective_weights))]) + self.hps['entropy_weight'] * entropy_penalty)
 
             # Backpropagate
             for i in range(self.num_players):
@@ -391,6 +400,10 @@ class Almanac:
             for i in range(self.num_players):
                 self.actor_optimisers[i].step()
                 self.actors[i].eval()
+
+            # Catch when NaNs occur in the policy network(s)
+            joint_action = [actions.sample() for actions in self.policy(states[0])]
+
 
             # Update KL weight term as in the original PPO paper
             mean_kl = kl_penalty.mean()
@@ -402,7 +415,7 @@ class Almanac:
             # Update Lagrange multipliers
             with torch.no_grad():
                 for k in range(self.num_objectives):
-                    self.recent_losses[k].append((ratio * obj_advantages[k] - relative_kl_weights[k] * kl_penalty).mean())
+                    self.recent_utilities[k].append((obj_dists[k] * (ratio * obj_advantages[k] - relative_kl_weights[k] * kl_penalty)).mean())
             self.update_lagrange_multipliers(e)
 
             # Check whether to finish updating
@@ -411,7 +424,7 @@ class Almanac:
             if until_converged:
                 if self.k == None:
                     finished = utils.losses_converged(temp_recent_losses)
-                elif self.k == self.num_objectives - 1 and utils.losses_converged(self.recent_losses[self.k]):
+                elif self.k == self.num_objectives - 1 and utils.losses_converged(self.recent_utilities[self.k]):
                     finished = True
             elif e > num_updates:
                 finished = True
@@ -420,19 +433,19 @@ class Almanac:
         
         # Save relevant loss information for updating Lagrange parameters
         if self.k != None:
-            if not utils.converged(self.recent_losses[self.k]):
+            if not utils.converged(self.recent_utilities[self.k]):
                 if self.k != self.num_objectives - 1:
-                    self.u[self.k] = torch.tensor(self.recent_losses[self.k]).mean()
+                    self.u[self.k] = torch.tensor(self.recent_utilities[self.k]).mean()
             else:
                 self.k = 0 if self.k == self.num_objectives - 1 else self.k + 1
         else:
             for i in range(self.num_objectives - 1):
-                self.u[i] = torch.tensor(self.recent_losses[i]).mean()
+                self.u[i] = torch.tensor(self.recent_utilities[i]).mean()
 
         # Update Lagrange parameters
         r = self.k if self.k != None else self.num_objectives - 1
         for i in range(r):
-            self.lagrange_multipliers[i] += self.lrs['lagrange_multiplier'][i](e) * (self.u[i] - self.recent_losses[i][-1])
+            self.lagrange_multipliers[i] += self.lrs['lagrange_multiplier'][i](e) * (self.u[i] - self.recent_utilities[i][-1])
             self.lagrange_multipliers[i] = min(max(self.lagrange_multipliers[i], 0.0), max_lm)
 
     # Compute weights for lexicographic objectives
@@ -570,7 +583,7 @@ class Almanac:
             self.actor_buffer.clear()
             self.updates['actors'] += 1
 
-        return [r * d for r, d in zip(rewards, discounts)]
+        # return [r * d for r, d in zip(rewards, discounts)]
 
     def state_dist(self, ts, gammas):
 
