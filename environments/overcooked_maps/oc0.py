@@ -1,5 +1,5 @@
 map = [ 'XXPXX',
-        'O  2O',
+        'O  2T',
         'X1  X',
         'XDXSX' ]
 

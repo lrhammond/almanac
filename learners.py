@@ -60,8 +60,8 @@ class DNN(nn.Module):
         if self.output == 'linear':
             return x
         elif self.output == 'softmax':
-            d = 0 if len(x.size()) == 1 else 1
-            return [nn.functional.softmax(y) for y in torch.split(x, self.out_sizes, dim=d)]
+            return nn.functional.softmax(x,dim=-1)
+            # return [nn.functional.softmax(y,dim=-1) for y in torch.split(x, self.out_sizes, dim=d)]
         elif self.output == 'actors':
             pass
         elif self.output == 'gaussian':
@@ -357,13 +357,15 @@ class Almanac:
         with torch.no_grad():
 
             # Form advantages
-            advs = [rewards[j].to(device) + (discounts[j] * self.critics[j](next_states.to(device)) * (1-dones)).to(device) - self.critics[j](states.to(device)) for j in range(self.num_rewards)]
-            obj_advs = [sum([o[j] * advs[j] for j in range(self.num_rewards)]) for o in objectives]
-            if self.hps['normalise_advantages']:
-                obj_advantages = [(o - o.mean()) / (o.std() + 1e-8) for o in obj_advs]
-            else:
-                obj_advantages = obj_advs
+            advantages = [rewards[j].to(device) + (discounts[j] * self.critics[j](next_states.to(device)) * (1-dones)).to(device) - self.critics[j](states.to(device)) for j in range(self.num_rewards)]
 
+            if self.hps['normalise_advantages']:
+                advs = [(a - a.mean()) / (a.std() + 1e-8) for a in advantages]
+            else:
+                advs = advantages
+
+            obj_advs = [sum([o[j] * dists[j] * advs[j] for j in range(self.num_rewards)]) for o in objectives]
+            
             # Form old probability factors
             old_dist_probs = self.policy(true_states,probs=True)
             old_action_log_probs = sum([torch.gather(torch.log(old_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
@@ -384,14 +386,25 @@ class Almanac:
             # Form loss
             new_dist_probs = self.policy(true_states,probs=True)
             new_action_log_probs = sum([torch.gather(torch.log(new_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
-            log_ratio = (new_action_log_probs.masked_fill(new_action_log_probs == -np.inf, 0.0) - old_action_log_probs).to(device)
+
+            # log_ratio = (new_action_log_probs.masked_fill(new_action_log_probs == -np.inf, 0.0) - old_action_log_probs).to(device)
+
+            log_ratio = new_action_log_probs - old_action_log_probs
+
             ratio = torch.exp(log_ratio)
+
             kl_penalty = ratio * log_ratio
-            if self.hps['entropy_weight'] > 0.0:
-                entropy_penalty = sum([(p * torch.log(p)).sum(dim=1).mean() for p in new_dist_probs])
+
+            if self.hps['entropy_weight'] != 0.0:
+                entropy_penalty = sum([torch.unsqueeze((p * torch.log(p)).sum(dim=1), 1) for p in new_dist_probs])
             else:
                 entropy_penalty = 0.0
-            loss = - (sum([(objective_weights[k] * obj_dists[k] * (ratio * obj_advantages[k] - self.kl_weight * kl_penalty)).mean() for k in range(len(objective_weights))]) + self.hps['entropy_weight'] * entropy_penalty)
+
+            loss = - (sum([(objective_weights[k] *\
+                           (ratio * obj_advs[k]\
+                            - self.kl_weight * obj_dists[k] * kl_penalty\
+                            + self.hps['entropy_weight'] * obj_dists[k] * entropy_penalty)).mean()\
+                        for k in range(len(objective_weights))]) )
 
             # Backpropagate
             for i in range(self.num_players):
@@ -401,9 +414,8 @@ class Almanac:
                 self.actor_optimisers[i].step()
                 self.actors[i].eval()
 
-            # Catch when NaNs occur in the policy network(s)
+            # Used to catch when NaNs occur in the policy network(s)
             joint_action = [actions.sample() for actions in self.policy(states[0])]
-
 
             # Update KL weight term as in the original PPO paper
             mean_kl = kl_penalty.mean()
@@ -415,7 +427,7 @@ class Almanac:
             # Update Lagrange multipliers
             with torch.no_grad():
                 for k in range(self.num_objectives):
-                    self.recent_utilities[k].append((obj_dists[k] * (ratio * obj_advantages[k] - relative_kl_weights[k] * kl_penalty)).mean())
+                    self.recent_utilities[k].append((obj_dists[k] * (ratio * obj_advs[k] - relative_kl_weights[k] * kl_penalty)).mean())
             self.update_lagrange_multipliers(e)
 
             # Check whether to finish updating
@@ -467,9 +479,9 @@ class Almanac:
 
         action_dists = [actor(state) for actor in self.actors]
         if probs:
-            return [a[0] for a in action_dists]
+            return action_dists
         else:
-            return [Categorical(a[0]) for a in action_dists]
+            return [Categorical(a) for a in action_dists]
 
     # Return dict of policy dists
     def get_policy_dists(self, possible_states, possible_state_tensors):

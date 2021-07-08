@@ -23,8 +23,8 @@ test_hps = {'actual_dist': True,
             'buffers': { 'actors': {'size': 1000, 'batch': 32},
                          'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
-            'entropy_weight': 0.0,
-            'epsilon': 0.05,
+            'entropy_weight': 100.0,
+            'epsilon': 0.00,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
             'l2_weight' : 0.0001,
@@ -34,8 +34,8 @@ test_hps = {'actual_dist': True,
             'learning_rates': { 'actors': (('constant', 1.0),),
                                 'critics': ('constant', 1.0),
                                 'lagrange_multiplier': (('constant', 1.0),) },
-            'models': { 'actors': {'type':'dnn', 'shape':[12]},
-                        'critics': {'type':'dnn', 'shape':[12]} },
+            'models': { 'actors': {'type':'dnn', 'shape':[64,64]},
+                        'critics': {'type':'dnn', 'shape':[64,64]} },
             'normalise_advantages' : True,
             'num_updates' : { 'actors': None,
                               'critics': None },
@@ -45,9 +45,46 @@ test_hps = {'actual_dist': True,
             'sequential': False,
             'spec_reward': 10,
             'until_converged' : { 'actors': True,
-                                  'critics': True },
-            'update_after': { 'actors': 30,
-                              'critics': 30 }}
+                                  'critics': False },
+            'update_after': { 'actors': 100,
+                              'critics': 10 }}
+
+
+def oc_test(root=os.getcwd(), max_steps=1000000, hps=test_hps, repetitions=1):
+
+    location = '{}/experiments/oc_test'.format(root)
+
+    env = envs.EnvWrapper('oc_test_game', 'overcooked', envs.OvercookedGame(envs.oc0.map, envs.oc0.recipes))
+
+    # All
+    # specifications = ('(F G phi) | (F G psi)', 'F (psi & X phi)')
+    # reward_functions = ({'reward':mg0.reward_1, 'discount':0.8}, {'reward':mg0.reward_2, 'discount':0.9})
+    # objectives = ((1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0))
+
+    # Minimal spec
+    specifications = ('F (tomatopickup0 | tomatopickup1)',)
+    # specifications = ('(G psi) | (G phi)',)
+    # specifications = ('(G phi) | (G psi)',)
+    reward_functions = ()
+    objectives = (np.array((1.0,)),)
+    # objectives = (np.array((1.0,0.0)),np.array((0.0,1.0)))
+
+    spec_controller = specs.Spec_Controller(specifications, load_from=root)
+    obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+    act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+    learner = make_learner('almanac', obs_size, act_sizes, len(objectives[0]), len(objectives), hps)
+    prefix = "{}-{}-{}-{}".format(env.name, learner.name, 0, 0)
+
+    for _ in range(repetitions):
+
+        # Create learner
+        run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, verbose=True)
+    
+    # run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=True)
+
+
+
 
 def debug(root=os.getcwd(), max_steps=100000, hps=test_hps, repetitions=1):
 
@@ -70,11 +107,12 @@ def debug(root=os.getcwd(), max_steps=100000, hps=test_hps, repetitions=1):
     # objectives = ((1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0))
 
     # Minimal spec
-    specifications = ('G F (psi & X phi)',)
+    specifications = ('G (phi -> X psi)','G F phi')
     # specifications = ('(G psi) | (G phi)',)
     # specifications = ('(G phi) | (G psi)',)
     reward_functions = ()
-    objectives = (np.array((1.0,)),)
+    objectives = (np.array((1.0,1.0)),)
+    objectives = utils.normalise_objs(objectives)
     # objectives = (np.array((1.0,0.0)),np.array((0.0,1.0)))
 
     spec_controller = specs.Spec_Controller(specifications, load_from=root)
@@ -431,7 +469,7 @@ def experiment(root, id, env, formulae, max_steps, reward_functions, objectives,
         pickle.dump(objectives, f)
 
 
-def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=False):
+def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=False, verbose=False):
 
     # Check for stupid mistakes
     num_specs = len(spec_controller.specs)
@@ -492,9 +530,39 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
                 is_e_t = False
                 new_game_state, done = env.step(joint_action)
             
+
+            if verbose:
+                print(env.model.overcooked)
+
+
             # Update LDBAs
             label_set = env.label(new_game_state)
             new_spec_states, acceptances = spec_controller.step(e_ts, label_set)
+
+            for k in env.model.labels.keys():
+                for a in [0,1]:
+                    if env.model.labels[k][a]:
+                        print("Agent {} did {}".format(a, k))
+                        print("hurrah")
+
+            # if env.model.labels['tomato_pickup'][0] or env.model.labels['tomato_pickup'][1]:
+            #     print("HYPE")
+
+            held = False
+            if new_game_state.players[0].held_object != None and game_state.players[0].held_object == None:
+                print("Agent 0 is holding {}".format(new_game_state.players[0].held_object))
+                held = True
+            if new_game_state.players[1].held_object != None and game_state.players[1].held_object == None:
+                print("Agent 1 is holding {}".format(new_game_state.players[1].held_object))
+                held = True
+
+            if held:
+                print("woah")
+
+            if label_set != []:
+                print(label_set)              
+                print("wahey!")
+
 
             # Form new state vectors
             f_new_game_state = env.featurise(new_game_state)
@@ -568,4 +636,5 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
     return
 
-debug()
+# debug()
+oc_test()

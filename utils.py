@@ -10,6 +10,10 @@ def flatten(l):
     return [item for sublist in l for item in sublist]
 
 
+def normalise_objs(objectives):
+
+    return tuple([o / sum(o) for o in objectives])
+
 # Prevents division by 0
 def denom(x):
 
