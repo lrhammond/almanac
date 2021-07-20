@@ -1,0 +1,113 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:32:02 GMT 2021
+Hostname: arcus-htc-node090
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/5-2-1-5-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/5-2-1-5.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/5-2-1-5-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/5-2-1-5.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!psi)|(F phi))) ]
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!psi)|(F phi))) ]
+
+Building model...
+
+Warning: Update 1 of command 18 of module "STATE_0" doesn't do anything ("(s0'=1)", line 44, column 476)
+
+Warning: Update 1 of command 19 of module "STATE_0" doesn't do anything ("(s0'=1)", line 45, column 476)
+
+Warning: Update 1 of command 21 of module "STATE_0" doesn't do anything ("(s0'=1)", line 47, column 476)
+
+Warning: Update 1 of command 25 of module "STATE_0" doesn't do anything ("(s0'=1)", line 51, column 476)
+
+Warning: Update 1 of command 32 of module "STATE_0" doesn't do anything ("(s0'=1)", line 58, column 476)
+
+Warning: Update 1 of command 36 of module "STATE_3" doesn't do anything ("(s3'=1)", line 230, column 480)
+
+Warning: Update 1 of command 37 of module "STATE_3" doesn't do anything ("(s3'=1)", line 231, column 480)
+
+Warning: Update 1 of command 39 of module "STATE_3" doesn't do anything ("(s3'=1)", line 233, column 480)
+
+Warning: Update 1 of command 40 of module "STATE_3" doesn't do anything ("(s3'=1)", line 234, column 480)
+
+Warning: Update 1 of command 43 of module "STATE_3" doesn't do anything ("(s3'=1)", line 237, column 480)
+
+Warning: Update 1 of command 45 of module "STATE_3" doesn't do anything ("(s3'=1)", line 239, column 480)
+
+Warning: Update 1 of command 46 of module "STATE_3" doesn't do anything ("(s3'=1)", line 240, column 480)
+
+Computing reachable states...
+
+Reachability (BFS): 7 iterations in 0.00 seconds (average 0.000286, setup 0.00)
+
+Time for model construction: 0.759 seconds.
+
+Type:        DTMC
+States:      134 (1 initial)
+Transitions: 554
+
+Transition matrix: 5670 nodes (278 terminal), 554 minterms, vars: 20r/20c
+
+Building deterministic automaton (for X (G ("L0"|(F "L1"))))...
+DRA has 5 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.237 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 7 iterations in 0.00 seconds (average 0.000143, setup 0.00)
+
+States:      134 (1 initial)
+Transitions: 554
+
+Transition matrix: 6436 nodes (278 terminal), 554 minterms, vars: 23r/23c
+
+Finding accepting BSCCs...
+
+SCCs: 14, BSCCs: 11, non-BSCC states: 112
+BSCC sizes: More than 10 BSCCs, use verbose mode to view sizes for all.
+
+Computing reachability probabilities...
+
+Prob0: 7 iterations in 0.02 seconds (average 0.003143, setup 0.00)
+
+Prob1: 11 iterations in 0.00 seconds (average 0.000091, setup 0.00)
+
+yes = 26, no = 6, maybe = 102
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=23, nodes=6983] [327.3 KB]
+Adding explicit sparse matrices... [levels=23, num=1, compact] [4.3 KB]
+Creating vector for diagonals... [dist=1, compact] [0.3 KB]
+Creating vector for RHS... [dist=2, compact] [0.3 KB]
+Allocating iteration vectors... [2 x 1.0 KB]
+TOTAL: [334.3 KB]
+
+Starting iterations...
+
+Jacobi: 765 iterations in 0.02 seconds (average 0.000004, setup 0.02)
+
+Value in the initial state: 0.9761480031893176
+
+Time for model checking: 0.365 seconds.
+
+Result: 0.9761480031893176 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 12 warnings during computation.
+

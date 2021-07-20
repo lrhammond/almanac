@@ -1,0 +1,129 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 03:47:31 GMT 2021
+Hostname: arcus-htc-node014
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/5-2-2-7.prism /home/hert5888/almanac/experiments/1/prism_specs/5-2-2-7.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/5-2-2-7.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/5-2-2-7.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F xi) ], Pmax=? [ X ((!xi) U psi) ])
+(2) P=? [ X (F xi) ]
+(3) P=? [ X ((!xi) U psi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 SPEC_0 SPEC_1 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 q0 q1 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X (F xi) ], Pmax=? [ X ((!xi) U psi) ])
+
+Building model...
+
+Warning: Update 2 of command 2 of module "STATE_0" doesn't do anything ("(s0'=0)", line 28, column 1100)
+
+Warning: Update 2 of command 5 of module "STATE_0" doesn't do anything ("(s0'=0)", line 31, column 1100)
+
+Warning: Update 1 of command 12 of module "STATE_0" doesn't do anything ("(s0'=1)", line 38, column 453)
+
+Warning: Update 1 of command 6 of module "STATE_1" doesn't do anything ("(s1'=1)", line 58, column 437)
+
+Warning: Update 2 of command 9 of module "STATE_1" doesn't do anything ("(s1'=0)", line 61, column 1200)
+
+Warning: Update 2 of command 10 of module "STATE_1" doesn't do anything ("(s1'=0)", line 62, column 1200)
+
+Warning: Update 2 of command 12 of module "STATE_1" doesn't do anything ("(s1'=0)", line 64, column 892)
+
+Warning: Update 1 of command 12 of module "STATE_2" doesn't do anything ("(s2'=1)", line 90, column 453)
+
+Warning: Update 1 of command 19 of module "STATE_2" doesn't do anything ("(s2'=1)", line 97, column 500)
+
+Warning: Update 1 of command 6 of module "STATE_3" doesn't do anything ("(s3'=1)", line 110, column 437)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000700, setup 0.00)
+
+Time for model construction: 0.446 seconds.
+
+Type:        MDP
+States:      1338 (1 initial)
+Transitions: 7179
+Choices:     4303
+
+Transition matrix: 13401 nodes (374 terminal), 7179 minterms, vars: 20r/20c/6nd
+
+Building deterministic Rabin automaton (for X (F "L0"))...
+DRA has 3 states, 1 Rabin pairs.Time for Rabin translation: 0.14 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000600, setup 0.00)
+States:      1338 (1 initial)
+Transitions: 7179
+Choices:     4303
+
+Transition matrix: 15034 nodes (374 terminal), 7179 minterms, vars: 22r/22c/6nd
+
+Building deterministic Rabin automaton (for X ("L0" U "L1"))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.007 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.01 seconds (average 0.000600, setup 0.00)
+States:      1338 (1 initial)
+Transitions: 7179
+Choices:     4303
+
+Transition matrix: 20254 nodes (374 terminal), 7179 minterms, vars: 24r/24c/6nd
+Total time for product construction: 0.286 seconds.
+
+States:      1338 (1 initial)
+Transitions: 7179
+Choices:     4303
+
+Transition matrix: 20254 nodes (374 terminal), 7179 minterms, vars: 24r/24c/6nd
+
+Finding accepting end components for X (F xi)...
+Time for end component identification: 0.001 seconds.
+
+Finding accepting end components for X ((!xi) U psi)...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 10 iterations in 0.01 seconds (average 0.000600, setup 0.00)
+
+yes = 772, no = 14, maybe = 552
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 71 iterations in 0.01 seconds (average 0.000155, setup 0.00)
+Optimal value for weights [1.000000,0.000000] from initial state: 0.986441
+Computed point: (0.9862824521206717, 0.5484248064219123)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 219 iterations in 0.03 seconds (average 0.000151, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.643685
+Computed point: (0.5192584301891124, 0.6436847359014075)
+Optimising weighted sum of objectives: weights (0.1694160561411009, 0.8305839438588991)
+Iterative method: 81 iterations in 0.01 seconds (average 0.000148, setup 0.00)
+Optimal value for weights [0.169416,0.830584] from initial state: 0.701756
+Optimising weighted sum of objectives: weights (3.315467983281417E-4, 0.9996684532016719)
+Iterative method: 81 iterations in 0.01 seconds (average 0.000148, setup 0.00)
+Optimal value for weights [0.000332,0.999668] from initial state: 0.643788
+Optimising weighted sum of objectives: weights (0.9991379570489546, 8.620429510453989E-4)
+Iterative method: 100000 iterations in 15.51 seconds (average 0.000155, setup 0.00)
+
+Error: Iterative method did not converge within 100000 iterations.
+Consider using a different numerical method or increasing the maximum number of iterations.
+
+---------------------------------------------------------------------
+
+Note: There were 10 warnings during computation.
+

@@ -1,0 +1,90 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:14:20 GMT 2021
+Hostname: arcus-htc-node068
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/4-1-1-9.prism /home/hert5888/almanac/experiments/1/prism_specs/4-1-1-9.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/4-1-1-9.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/4-1-1-9.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 5 of module "STATE_2" doesn't do anything ("(s2'=1)", line 62, column 320)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Time for model construction: 0.129 seconds.
+
+Type:        MDP
+States:      305 (1 initial)
+Transitions: 777
+Choices:     713
+
+Transition matrix: 1204 nodes (36 terminal), 777 minterms, vars: 15r/15c/5nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.191 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+Time for product construction: 0.009 seconds.
+
+States:      311 (1 initial)
+Transitions: 801
+Choices:     737
+
+Transition matrix: 1748 nodes (36 terminal), 801 minterms, vars: 17r/17c/5nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 0.00 seconds (average 0.000400, setup 0.00)
+
+Prob1E: 12 iterations in 0.00 seconds (average 0.000167, setup 0.00)
+
+yes = 247, no = 63, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=1, levels=17, nodes=291] [13.6 KB]
+Adding sparse bits... [levels=17-17, num=1, compact=1/1] [0.5 KB]
+Creating vector for yes... [dist=2, compact] [0.6 KB]
+Allocating iteration vectors... [3 x 2.4 KB]
+TOTAL: [22.0 KB]
+
+Starting iterations...
+
+Iterative method: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.9081390501102197
+
+Time for model checking: 0.319 seconds.
+
+Result: 0.9081390501102197 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There was 1 warning during computation.
+

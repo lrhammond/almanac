@@ -1,15 +1,24 @@
+### Environments ###
+
 import random
 import torch.tensor as tt
 from torch.distributions import Categorical
 from torch.nn.functional import one_hot as one_hot
 import pickle
-from environments.markov_games import mg0, mg1, mg2, mg3
+# from environments.test_envs import mg0, mg1, mg2, mg3
+# from environments.overcooked_maps import oc0
 import torch
 import utils
 import numpy as np
-
 import specs
 
+# random.seed(26)
+
+# from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
+# from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
+# from overcooked_ai_py.mdp.actions import Action, Direction
+
+# Use GPU if available
 if torch.cuda.is_available():
     print("Using GPU!")
     device = torch.device("cuda")
@@ -19,12 +28,10 @@ else:
     device = torch.device("cpu")
 
 
-### ENV WRAPPER ###
-
-
+# Environment wrapper
 class EnvWrapper:
 
-    def __init__(self, name, kind, model, labeller):
+    def __init__(self, name, kind, model):
 
         if not(kind != 'mg' or kind!= 'mmg' or kind != 'overcooked'):
             print("Error: Environment kind must be \'mg\' or \'mmg\' or \'overcooked\'")
@@ -33,28 +40,37 @@ class EnvWrapper:
             self.name = name
             self.kind = kind
             self.model = model
-            self.labeller = labeller
             self.state = model.state
 
     def reset(self):
 
-        if self.kind == 'mg':
-            self.state = self.model.reset()
-        elif self.kind == 'mmg':
-            self.state = self.model.reset()
-            
+        # if self.kind == 'mg':
+        #     self.state = self.model.reset()
+        # elif self.kind == 'mmg':
+        #     self.state = self.model.reset()
+        # elif self.kind == 'overcooked':
+        #     self.state = self.model.reset()
+        self.state = self.model.reset()
+
         return self.state
         
     def step(self, joint_action):
 
         if self.kind == 'mg':
             model_joint_action = tuple([action_space[a.int()] for action_space, a in zip(self.model.action_spaces, joint_action)])
-            self.state = self.model.step(model_joint_action)
-            done = False
+            # self.state = self.model.step(model_joint_action)
+            # done = False
         elif self.kind == 'mmg':
             model_joint_action = tuple([int(a) for a in joint_action])
-            self.state = self.model.step(model_joint_action)
-            done = False
+            # self.state = self.model.step(model_joint_action)
+            # done = False
+        elif self.kind == 'overcooked':
+            model_joint_action = [self.model.action_space[joint_action[0]], self.model.action_space[joint_action[1]]]
+            # self.state = self.model.step(model_joint_action)
+            # done = False
+
+        self.state = self.model.step(model_joint_action)
+        done = False
 
         return self.state, done
 
@@ -63,13 +79,28 @@ class EnvWrapper:
         if self.kind == 'mg':
             features = self.model.featurise(state)
         elif self.kind == 'mmg':
-            features = self.state
+            features = state
+        elif self.kind == 'overcooked':
+            features = self.model.featurise(state)
 
         return features
 
     def label(self, state):
 
-        return self.labeller(state)
+        if self.kind == 'mg':
+            labels = self.model.label(state)
+        elif self.kind == 'mmg':
+            labels = self.model.label(state)
+        elif self.kind == 'overcooked':
+            label_dict = self.model.label(state)
+            labels = []
+            for k in label_dict.keys():
+                if label_dict[k][0]:
+                    labels.append('0_' + k)
+                if label_dict[k][1]:
+                    labels.append('1_' + k)
+
+        return labels
 
     def get_obs_size(self):
 
@@ -77,7 +108,10 @@ class EnvWrapper:
             obs_size = self.model.num_states
         elif self.kind == 'mmg':
             obs_size = self.model.state_size
-        
+        elif self.kind == 'overcooked':
+            # obs_size = len(featurise(self.state))
+            obs_size = 62
+
         return obs_size
 
     def get_act_sizes(self):
@@ -86,7 +120,9 @@ class EnvWrapper:
             act_sizes = [len(a) for a in self.model.action_spaces]
         elif self.kind == 'mmg':
             act_sizes = self.model.action_sizes
-        
+        elif self.kind == 'overcooked':
+            act_sizes = [6,6]
+
         return act_sizes
 
     def get_name(self):
@@ -103,12 +139,10 @@ class EnvWrapper:
             pickle.dump(self, f)
 
 
-### MARKOV GAMES ###
-
-
+# Markov game class
 class MarkovGame:
     
-    def __init__(self, num_players, state_space, action_spaces, transition, initial):
+    def __init__(self, num_players, state_space, action_spaces, transition, initial, labeller):
 
         self.num_players = num_players
         self.state_space = state_space
@@ -116,6 +150,7 @@ class MarkovGame:
         self.action_spaces = action_spaces
         self.transition = transition
         self.initial = initial
+        self.labeller = labeller
         self.state = initial(state_space)
 
     def step(self, joint_action):
@@ -133,6 +168,10 @@ class MarkovGame:
     def featurise(self, state):
 
         return one_hot(self.state, self.num_states)
+    
+    def label(self, state):
+
+        return self.labeller(state)
 
     def print(self):
 
@@ -146,44 +185,36 @@ class MarkovGame:
             print("Action: ", joint_action)
             self.step(joint_action)
 
-# MG 0
-mg_0 = MarkovGame(num_players=mg0.num_players,
-                 state_space=mg0.state_space,
-                 action_spaces=mg0.action_spaces,
-                 transition=mg0.transition,
-                 initial=mg0.initial)
-def l_0(state):
-    return mg0.labeller(state)
+# mg_0 = MarkovGame(num_players=mg0.num_players,
+#                  state_space=mg0.state_space,
+#                  action_spaces=mg0.action_spaces,
+#                  transition=mg0.transition,
+#                  initial=mg0.initial,
+#                  labeller=mg0.labeller)
 
-# MG 1
-mg_1 = MarkovGame(num_players=mg1.num_players,
-                 state_space=mg1.state_space,
-                 action_spaces=mg1.action_spaces,
-                 transition=mg1.transition,
-                 initial=mg1.initial)
-def l_1(state):
-    return mg1.labeller(state)
+# mg_1 = MarkovGame(num_players=mg1.num_players,
+#                  state_space=mg1.state_space,
+#                  action_spaces=mg1.action_spaces,
+#                  transition=mg1.transition,
+#                  initial=mg1.initial,
+#                  labeller=mg1.labeller)
 
-# MG 2
-mg_2 = MarkovGame(num_players=mg2.num_players,
-                 state_space=mg2.state_space,
-                 action_spaces=mg2.action_spaces,
-                 transition=mg2.transition,
-                 initial=mg2.initial)
-def l_2(state):
-    return mg2.labeller(state)
+# mg_2 = MarkovGame(num_players=mg2.num_players,
+#                  state_space=mg2.state_space,
+#                  action_spaces=mg2.action_spaces,
+#                  transition=mg2.transition,
+#                  initial=mg2.initial,
+#                  labeller=mg2.labeller)
 
-# MG 3
-mg_3 = MarkovGame(num_players=mg3.num_players,
-                 state_space=mg3.state_space,
-                 action_spaces=mg3.action_spaces,
-                 transition=mg3.transition,
-                 initial=mg3.initial)
-def l_3(state):
-    return mg3.labeller(state)
+# mg_3 = MarkovGame(num_players=mg3.num_players,
+#                  state_space=mg3.state_space,
+#                  action_spaces=mg3.action_spaces,
+#                  transition=mg3.transition,
+#                  initial=mg3.initial,
+#                  labeller=mg3.labeller)
 
 
-
+# Matrix Markov game (mmg) class
 class MatrixMarkovGame:
 
     def __init__(self, state_size, action_sizes, labels, sparsity=0.7, structured_labels=True, nonlinearities=0.3):
@@ -204,13 +235,6 @@ class MatrixMarkovGame:
         self.initial = torch.distributions.bernoulli.Bernoulli(torch.rand(state_size))
         self.state = self.reset()
 
-    # def create_transition_dict(self, i):
-
-    #     if i == self.num_players - 1:
-    #         return dict(zip(range(self.action_sizes[i]), [torch.rand(self.state_size, self.state_size) * torch.where(torch.rand(self.state_size, self.state_size) > self.sparsity, tt(1), tt(0)) for a in range(self.action_sizes[i])]))
-    #     else:
-    #         return dict(zip(range(self.action_sizes[i]), [self.create_transition_dict(i+1) for a in range(self.action_sizes[i])]))
-
     def create_transitions(self):
 
         possible_actions = [[]]
@@ -230,19 +254,17 @@ class MatrixMarkovGame:
             m = np.random.randint(0, high=2, size=self.state_size)
             if m.any():
                 masks.add(tuple(m))
-
         return [tt(m).float() for m in masks]
 
     def create_state_labels(self):
 
         if self.structured_labels:
             return [[torch.randint(2, (self.state_size,)).float() for r in range(random.randint(1, self.state_size - 1))] for l in self.labels]
-
             # return [random.sample(range(self.state_size), random.randint(1, self.state_size)) for l in self.labels]
         else:
             return [set([torch.randint(2, (self.state_size,)).float() for r in range(random.randint(1, 2**self.state_size))]) for l in self.labels]
 
-    def labeller(self, state):
+    def label(self, state):
 
         if self.structured_labels:
             labels = []
@@ -270,7 +292,7 @@ class MatrixMarkovGame:
 
     def print(self):
         print("State: ", self.state)
-        print("Labels: ", self.labeller(self.state))
+        print("Labels: ", self.label(self.state))
     
     def test(self, steps=100):
 
@@ -284,9 +306,8 @@ class MatrixMarkovGame:
         
         p = '' if policy == None else '-policy'
         d = '' if det == False else '-det'
-
         if filename == None:
-            filename = 'environments/markov_games/mmg/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
+            filename = 'experiments/1/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes), len(ldbas), num, p, d)
 
         with open(filename, 'w') as f:
             
@@ -319,7 +340,6 @@ class MatrixMarkovGame:
             f.write('    i : bool init false;\n')
             f.write('    [initialisation] !i -> 1.0:(i\'=true);\n')
             f.write('\nendmodule\n\n')
-
             f.write('\nmodule SYNC\n\n')
             f.write('    t : bool init true;\n')
             f.write('    [initialisation] !i -> 1.0:(t\' = false);\n')
@@ -343,7 +363,6 @@ class MatrixMarkovGame:
 
                 f.write('\nmodule STATE_{}\n\n'.format(state))
                 f.write('    s{} : [0..2] init 2;\n'.format(state))
-                
                 init_dist = self.initial.probs
                 p = init_dist[state]
                 f.write('    [initialisation] !i -> {}:(s{}\'=0) + {}:(s{}\'=1);\n'.format((1.0-p),state,p,state))
@@ -369,9 +388,10 @@ class MatrixMarkovGame:
                                 guard_action += ' & '
                             else:
                                 guard_action += ')'
-                        guard = guard_mask + ' & ' + guard_action
 
+                        guard = guard_mask + ' & ' + guard_action
                         transition_probs = self.transitions[i][a]
+
                         probs = []
                         for l in range(self.state_size):
                             l_probs = transition_probs[:,l]
@@ -385,7 +405,6 @@ class MatrixMarkovGame:
                             probs.append(p)
 
                         max_prob = 'max(0.0, ' + ','.join(probs) + ')'   
-
                         q = state
                         new_line = '    ' + guard + ' -> (' + probs[q] + '/' + max_prob + '):(s{}\'=1)'.format(q) + ' + (1.0 - (' + probs[q] + '/' + max_prob + ')):(s{}\'=0);\n'.format(q)
                         f.write(new_line)
@@ -404,10 +423,12 @@ class MatrixMarkovGame:
 
                     f.write('\nmodule ACTION_{}\n\n'.format(i))
                     f.write('    a{} : [-1..{}] init -1;\n'.format(i,(highest_action_num)))
+
                     for j in range(self.action_sizes[i]):
                         f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i,j))
                     for e in eps_actions:
                         f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i,e))
+
                     f.write('\nendmodule\n\n')
 
             else:
@@ -424,7 +445,7 @@ class MatrixMarkovGame:
                             guard += 's{}={}'.format(j, k[j])
                             if j != self.state_size - 1:
                                 guard += " & "
-                        
+                  
                         remaining = k[self.state_size:]
 
                         for l in range(len(ldbas)):
@@ -454,7 +475,6 @@ class MatrixMarkovGame:
 
                     f.write('\nendmodule\n\n')
 
-
             if self.structured_labels:
                 for l, s_ls in zip(self.labels, self.state_labels):
 
@@ -477,14 +497,48 @@ class MatrixMarkovGame:
                 print("Error: Converting unstructured labels to PRISM not yet supported")
 
 
-# ltl = 'F G psi'
-# ldba_0 = specs.Spec(ltl, 0.7)
-# ltl = 'F phi'
-# ldba_1 = specs.Spec(ltl, 0.7)
+class OvercookedGame:
 
+    def __init__(self, overcooked_map, recipes):
 
-# mg = MatrixMarkovGame(4, [2,3], ['phi', 'psi'])
-# # mg.test()
-# mg.create_prism_model(0, [ldba_0, ldba_1])
+        self.overcooked_map = overcooked_map
+        self.recipes = recipes
+        self.params = {"start_bonus_orders": [], "rew_shaping_params": None, }
+        recipe_dicts = [{"ingredients": r["ingredients"]} for r in recipes]
+        recipe_times = [r["time"] for r in recipes]
+        self.params.update({"start_all_orders" : recipe_dicts, "recipe_times": recipe_times})
+        self.overcooked = OvercookedEnv.from_mdp(OvercookedGridworld.from_grid(self.overcooked_map, params_to_overwrite=self.params))
+        self.state = self.overcooked.state
+        self.labels = {}
+        self.action_space = [Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Action.INTERACT, Action.STAY]
 
-print("testing")
+    def reset(self):
+
+        self.labels = {}
+        self.overcooked = OvercookedEnv.from_mdp(OvercookedGridworld.from_grid(self.overcooked_map, params_to_overwrite=self.params))
+        self.state = self.overcooked.state
+
+        return self.state
+
+    def step(self, joint_action):
+
+        (self.state, _, _, env_info) = self.overcooked.step(joint_action)
+        self.labels = env_info["event_infos"]
+
+        return self.state
+    
+    def featurise(self, state):
+
+        return self.overcooked.featurize_state_mdp(state)
+
+    def label(self, state):
+
+        if state != self.state:
+            print("Error: Can only obtain labels for current state")
+            return
+        else:
+            return self.labels
+
+    def print(self):
+
+        print(repr(self.overcooked)[:-2])

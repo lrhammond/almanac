@@ -1,0 +1,27 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:11:27 GMT 2021
+Hostname: arcus-htc-node026
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/10-2-2-9-policy.prism /home/hert5888/almanac/experiments/1/prism_specs/10-2-2-9.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/10-2-2-9-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/10-2-2-9.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X (F xi) ], Pmax=? [ X ((!xi) U psi) ])
+(2) P=? [ X (F xi) ]
+(3) P=? [ X ((!xi) U psi) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 STATE_8 STATE_9 SPEC_0 SPEC_1 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 q0 q1 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F xi) ]
+
+Building model...

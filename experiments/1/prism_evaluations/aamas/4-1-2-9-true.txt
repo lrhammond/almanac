@@ -1,0 +1,106 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:43:20 GMT 2021
+Hostname: arcus-htc-node078
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/4-1-2-9.prism /home/hert5888/almanac/experiments/1/prism_specs/4-1-2-9.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/4-1-2-9.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/4-1-2-9.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X ((!xi) U psi) ], Pmax=? [ X (G F psi) ])
+(2) P=? [ X ((!xi) U psi) ]
+(3) P=? [ X (G F psi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 SPEC_0 SPEC_1 ACTION_0 
+Variables:   i t s0 s1 s2 s3 q0 q1 a0 
+
+---------------------------------------------------------------------
+
+Model checking: multi(Pmax=? [ X ((!xi) U psi) ], Pmax=? [ X (G F psi) ])
+
+Building model...
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000125, setup 0.00)
+
+Time for model construction: 0.154 seconds.
+
+Type:        MDP
+States:      282 (1 initial)
+Transitions: 913
+Choices:     568
+
+Transition matrix: 1867 nodes (86 terminal), 913 minterms, vars: 15r/15c/5nd
+
+Building deterministic Rabin automaton (for X ("L0" U "L1"))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.254 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000375, setup 0.00)
+States:      282 (1 initial)
+Transitions: 913
+Choices:     568
+
+Transition matrix: 2845 nodes (86 terminal), 913 minterms, vars: 17r/17c/5nd
+
+Building deterministic Rabin automaton (for X (G F "L0"))...
+DRA has 4 states, 1 Rabin pairs.Time for Rabin translation: 0.005 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 8 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+States:      356 (1 initial)
+Transitions: 1135
+Choices:     790
+
+Transition matrix: 3851 nodes (86 terminal), 1135 minterms, vars: 19r/19c/5nd
+Total time for product construction: 0.301 seconds.
+
+States:      356 (1 initial)
+Transitions: 1135
+Choices:     790
+
+Transition matrix: 3851 nodes (86 terminal), 1135 minterms, vars: 19r/19c/5nd
+
+Finding accepting end components for X ((!xi) U psi)...
+Time for end component identification: 0.0 seconds.
+
+Finding accepting end components for X (G F psi)...
+Time for end component identification: 0.0 seconds.
+
+Prob0A: 10 iterations in 0.00 seconds (average 0.000200, setup 0.00)
+
+yes = 254, no = 7, maybe = 95
+
+Computing remaining probabilities...
+Switching engine since only sparse engine currently supports this computation...
+Engine: Sparse
+Optimising weighted sum for probability objective 1/2: weights (1.0, 0.0)
+Iterative method: 39 iterations in 0.00 seconds (average 0.000026, setup 0.00)
+Optimal value for weights [1.000000,0.000000] from initial state: 0.799501
+Computed point: (0.7993647662725895, 0.7993647662725895)
+Optimising weighted sum for probability objective 2/2: weights (0.0, 1.0)
+Iterative method: 43 iterations in 0.00 seconds (average 0.000047, setup 0.00)
+Optimal value for weights [0.000000,1.000000] from initial state: 0.997981
+Computed point: (0.7995958189806022, 0.9978599755434099)
+Optimising weighted sum of objectives: weights (0.9988373317863879, 0.0011626682136119653)
+Iterative method: 43 iterations in 0.00 seconds (average 0.000047, setup 0.00)
+Optimal value for weights [0.998837,0.001163] from initial state: 0.799892
+The value iteration(s) took 0.039 seconds altogether.
+Number of weight vectors used: 1
+Multi-objective value iterations took 0.039 s.
+
+Value in the initial state: [(0.7995958189806022, 0.9978599755434099)]
+
+Time for model checking: 0.425 seconds.
+
+Result: [(0.7995958189806022, 0.9978599755434099)] (value in the initial state)
+

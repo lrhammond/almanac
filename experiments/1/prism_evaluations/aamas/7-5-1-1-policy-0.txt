@@ -1,0 +1,177 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 02:31:16 GMT 2021
+Hostname: arcus-htc-node027
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-5-1-1-policy.prism /home/hert5888/almanac/experiments/1/prism_specs/7-5-1-1.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-5-1-1-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-5-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!psi)|(F phi))) ]
+(2) P=? [ X (G ((!psi)|(F phi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 ACTION_4 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 a2 a3 a4 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!psi)|(F phi))) ]
+
+Building model...
+
+Warning: Update 1 of command 99 of module "STATE_1" doesn't do anything ("(s1'=1)", line 421, column 936)
+
+Warning: Update 1 of command 104 of module "STATE_1" doesn't do anything ("(s1'=1)", line 426, column 936)
+
+Warning: Update 1 of command 110 of module "STATE_1" doesn't do anything ("(s1'=1)", line 432, column 936)
+
+Warning: Update 1 of command 112 of module "STATE_1" doesn't do anything ("(s1'=1)", line 434, column 936)
+
+Warning: Update 1 of command 132 of module "STATE_1" doesn't do anything ("(s1'=1)", line 454, column 936)
+
+Warning: Update 1 of command 134 of module "STATE_1" doesn't do anything ("(s1'=1)", line 456, column 936)
+
+Warning: Update 1 of command 147 of module "STATE_1" doesn't do anything ("(s1'=1)", line 469, column 936)
+
+Warning: Update 1 of command 149 of module "STATE_1" doesn't do anything ("(s1'=1)", line 471, column 936)
+
+Warning: Update 1 of command 158 of module "STATE_1" doesn't do anything ("(s1'=1)", line 480, column 936)
+
+Warning: Update 1 of command 159 of module "STATE_1" doesn't do anything ("(s1'=1)", line 481, column 936)
+
+Warning: Update 1 of command 163 of module "STATE_1" doesn't do anything ("(s1'=1)", line 485, column 936)
+
+Warning: Update 1 of command 166 of module "STATE_1" doesn't do anything ("(s1'=1)", line 488, column 936)
+
+Warning: Update 1 of command 168 of module "STATE_1" doesn't do anything ("(s1'=1)", line 490, column 936)
+
+Warning: Update 1 of command 172 of module "STATE_1" doesn't do anything ("(s1'=1)", line 494, column 936)
+
+Warning: Update 1 of command 174 of module "STATE_1" doesn't do anything ("(s1'=1)", line 496, column 936)
+
+Warning: Update 1 of command 180 of module "STATE_1" doesn't do anything ("(s1'=1)", line 502, column 936)
+
+Warning: Update 1 of command 191 of module "STATE_1" doesn't do anything ("(s1'=1)", line 513, column 936)
+
+Computing reachable states...
+
+Reachability (BFS): 8 iterations in 0.26 seconds (average 0.032750, setup 0.00)
+
+Time for model construction: 419.199 seconds.
+
+Type:        DTMC
+States:      47418 (1 initial)
+Transitions: 2906834
+
+Transition matrix: 2949376 nodes (46314 terminal), 2906834 minterms, vars: 33r/33c
+
+Building deterministic automaton (for X (G ("L0"|(F "L1"))))...
+DRA has 5 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.27 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 8 iterations in 0.12 seconds (average 0.014875, setup 0.00)
+
+States:      47418 (1 initial)
+Transitions: 2906834
+
+Transition matrix: 2984789 nodes (46314 terminal), 2906834 minterms, vars: 36r/36c
+
+Finding accepting BSCCs...
+
+SCCs: 3, BSCCs: 2, non-BSCC states: 47034
+BSCC sizes: 1:192 2:192
+
+Computing reachability probabilities...
+
+Prob0: 10 iterations in 0.17 seconds (average 0.017300, setup 0.00)
+
+Prob1: 9 iterations in 0.13 seconds (average 0.014444, setup 0.00)
+
+yes = 207, no = 206, maybe = 47005
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=36, nodes=3521977] [161.2 MB]
+Adding explicit sparse matrices... [levels=1, num=92114, compact] [810.1 KB]
+Creating vector for diagonals... [dist=1, compact] [92.6 KB]
+Creating vector for RHS... [dist=2, compact] [92.6 KB]
+Allocating iteration vectors... [2 x 370.5 KB]
+TOTAL: [162.9 MB]
+
+Starting iterations...
+Iteration 30: max relative diff=0.165726, 5.05 sec so far
+Iteration 60: max relative diff=0.052088, 10.12 sec so far
+Iteration 90: max relative diff=0.029230, 15.17 sec so far
+Iteration 120: max relative diff=0.020193, 20.25 sec so far
+Iteration 150: max relative diff=0.015393, 25.31 sec so far
+Iteration 180: max relative diff=0.012417, 30.34 sec so far
+Iteration 210: max relative diff=0.010393, 35.38 sec so far
+Iteration 240: max relative diff=0.008926, 40.44 sec so far
+Iteration 270: max relative diff=0.007814, 45.47 sec so far
+Iteration 300: max relative diff=0.006943, 50.52 sec so far
+Iteration 330: max relative diff=0.006241, 55.58 sec so far
+Iteration 360: max relative diff=0.005664, 60.66 sec so far
+Iteration 390: max relative diff=0.005182, 65.72 sec so far
+Iteration 420: max relative diff=0.004772, 70.81 sec so far
+Iteration 450: max relative diff=0.004419, 75.91 sec so far
+Iteration 480: max relative diff=0.004113, 81.03 sec so far
+Iteration 510: max relative diff=0.003845, 86.06 sec so far
+Iteration 540: max relative diff=0.003608, 91.10 sec so far
+Iteration 570: max relative diff=0.003396, 96.12 sec so far
+Iteration 600: max relative diff=0.003207, 101.17 sec so far
+Iteration 630: max relative diff=0.003037, 106.22 sec so far
+Iteration 660: max relative diff=0.002882, 111.28 sec so far
+Iteration 690: max relative diff=0.002742, 116.34 sec so far
+Iteration 720: max relative diff=0.002613, 121.38 sec so far
+Iteration 750: max relative diff=0.002495, 126.44 sec so far
+Iteration 780: max relative diff=0.002387, 131.48 sec so far
+Iteration 810: max relative diff=0.002287, 136.59 sec so far
+Iteration 840: max relative diff=0.002194, 141.66 sec so far
+Iteration 870: max relative diff=0.002108, 146.73 sec so far
+Iteration 900: max relative diff=0.002027, 151.78 sec so far
+Iteration 930: max relative diff=0.001952, 156.81 sec so far
+Iteration 960: max relative diff=0.001882, 161.88 sec so far
+Iteration 990: max relative diff=0.001816, 166.91 sec so far
+Iteration 1020: max relative diff=0.001755, 172.01 sec so far
+Iteration 1050: max relative diff=0.001696, 177.10 sec so far
+Iteration 1080: max relative diff=0.001642, 182.17 sec so far
+Iteration 1110: max relative diff=0.001590, 187.22 sec so far
+Iteration 1140: max relative diff=0.001541, 192.30 sec so far
+Iteration 1170: max relative diff=0.001494, 197.37 sec so far
+Iteration 1200: max relative diff=0.001450, 202.42 sec so far
+Iteration 1230: max relative diff=0.001408, 207.49 sec so far
+Iteration 1260: max relative diff=0.001369, 212.57 sec so far
+Iteration 1290: max relative diff=0.001331, 217.72 sec so far
+Iteration 1320: max relative diff=0.001295, 222.81 sec so far
+Iteration 1350: max relative diff=0.001260, 227.95 sec so far
+Iteration 1379: max relative diff=0.001227, 233.06 sec so far
+Iteration 1408: max relative diff=0.001198, 238.18 sec so far
+Iteration 1437: max relative diff=0.001167, 243.23 sec so far
+Iteration 1467: max relative diff=0.001138, 248.33 sec so far
+Iteration 1497: max relative diff=0.001111, 253.41 sec so far
+Iteration 1527: max relative diff=0.001084, 258.49 sec so far
+Iteration 1557: max relative diff=0.001058, 263.64 sec so far
+Iteration 1587: max relative diff=0.001034, 268.71 sec so far
+Iteration 1617: max relative diff=0.001010, 273.76 sec so far
+
+Jacobi: 1631 iterations in 23254.80 seconds (average 0.169294, setup 22978.68)
+
+Value in the initial state: 0.34006475787247065
+
+Time for model checking: 23477.767 seconds.
+
+Result: 0.34006475787247065 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 17 warnings during computation.
+

@@ -1,0 +1,132 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:53:32 GMT 2021
+Hostname: arcus-htc-node044
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/6-1-2-9-policy.prism /home/hert5888/almanac/experiments/1/prism_specs/6-1-2-9.props -prop 3
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/6-1-2-9-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/6-1-2-9.props"...
+
+3 properties:
+(1) multi(Pmax=? [ X ((!xi) U psi) ], Pmax=? [ X (G ((!phi)|(X (chi)))) ])
+(2) P=? [ X ((!xi) U psi) ]
+(3) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 SPEC_1 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 q1 a0 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Warning: Update 2 of command 4 of module "STATE_0" doesn't do anything ("(s0'=0)", line 30, column 1457)
+
+Warning: Guard for command 5 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_3" is never satisfied.
+
+Warning: Update 1 of command 8 of module "STATE_3" doesn't do anything ("(s3'=1)", line 85, column 724)
+
+Warning: Update 1 of command 10 of module "STATE_3" doesn't do anything ("(s3'=1)", line 87, column 724)
+
+Warning: Guard for command 5 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 6 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 7 of module "STATE_5" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 9 iterations in 0.01 seconds (average 0.000556, setup 0.00)
+
+Time for model construction: 0.623 seconds.
+
+Type:        DTMC
+States:      1742 (1 initial)
+Transitions: 9685
+
+Transition matrix: 11671 nodes (445 terminal), 9685 minterms, vars: 20r/20c
+
+Building deterministic automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.223 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 9 iterations in 0.00 seconds (average 0.000444, setup 0.00)
+
+States:      1742 (1 initial)
+Transitions: 9685
+
+Transition matrix: 13993 nodes (445 terminal), 9685 minterms, vars: 22r/22c
+
+Finding accepting BSCCs...
+
+SCCs: 99, BSCCs: 3, non-BSCC states: 1496
+BSCC sizes: 1:6 2:120 3:120
+
+Computing reachability probabilities...
+
+Prob0: 4 iterations in 0.00 seconds (average 0.000250, setup 0.00)
+
+Prob1: 2 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+
+yes = 12, no = 1729, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=22, nodes=1193] [55.9 KB]
+Adding explicit sparse matrices... [levels=22, num=1, compact] [2.5 KB]
+Creating vector for diagonals... [dist=1, compact] [3.4 KB]
+Creating vector for RHS... [dist=2, compact] [3.4 KB]
+Allocating iteration vectors... [2 x 13.6 KB]
+TOTAL: [92.4 KB]
+
+Starting iterations...
+
+Jacobi: 2 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.0013029052198083577
+
+Time for model checking: 0.405 seconds.
+
+Result: 0.0013029052198083577 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 21 warnings during computation.
+

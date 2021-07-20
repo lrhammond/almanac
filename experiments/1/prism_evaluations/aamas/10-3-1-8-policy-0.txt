@@ -1,0 +1,42 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 05:50:44 GMT 2021
+Hostname: arcus-htc-node093
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/10-3-1-8-policy.prism /home/hert5888/almanac/experiments/1/prism_specs/10-3-1-8.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/10-3-1-8-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/10-3-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 STATE_8 STATE_9 SPEC_0 ACTION_0 ACTION_1 ACTION_2 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 q0 a0 a1 a2 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 75 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1236, column 1655)
+
+Warning: Update 1 of command 76 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1237, column 1655)
+
+Warning: Update 1 of command 77 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1238, column 1655)
+
+Warning: Update 1 of command 81 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1242, column 1655)
+
+Warning: Update 1 of command 84 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1245, column 1655)
+
+Warning: Update 1 of command 93 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1254, column 1655)
+
+Warning: Update 1 of command 102 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1263, column 1655)
+
+Warning: Update 1 of command 105 of module "STATE_6" doesn't do anything ("(s6'=1)", line 1266, column 1655)

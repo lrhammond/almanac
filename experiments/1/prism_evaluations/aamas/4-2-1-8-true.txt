@@ -1,0 +1,138 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 01:48:01 GMT 2021
+Hostname: arcus-htc-node044
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/4-2-1-8.prism /home/hert5888/almanac/experiments/1/prism_specs/4-2-1-8.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/4-2-1-8.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/4-2-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X ((!xi) U psi) ]
+(2) P=? [ X ((!xi) U psi) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X ((!xi) U psi) ]
+
+Building model...
+
+Warning: Update 2 of command 2 of module "STATE_0" doesn't do anything ("(s0'=0)", line 28, column 847)
+
+Warning: Update 2 of command 5 of module "STATE_0" doesn't do anything ("(s0'=0)", line 31, column 667)
+
+Warning: Update 2 of command 6 of module "STATE_0" doesn't do anything ("(s0'=0)", line 32, column 667)
+
+Warning: Update 2 of command 7 of module "STATE_0" doesn't do anything ("(s0'=0)", line 33, column 667)
+
+Warning: Update 2 of command 8 of module "STATE_0" doesn't do anything ("(s0'=0)", line 34, column 847)
+
+Warning: Update 2 of command 10 of module "STATE_0" doesn't do anything ("(s0'=0)", line 36, column 667)
+
+Warning: Update 2 of command 11 of module "STATE_0" doesn't do anything ("(s0'=0)", line 37, column 667)
+
+Warning: Update 2 of command 12 of module "STATE_0" doesn't do anything ("(s0'=0)", line 38, column 667)
+
+Warning: Update 2 of command 13 of module "STATE_0" doesn't do anything ("(s0'=0)", line 39, column 667)
+
+Warning: Update 1 of command 5 of module "STATE_1" doesn't do anything ("(s1'=1)", line 63, column 307)
+
+Warning: Update 1 of command 6 of module "STATE_1" doesn't do anything ("(s1'=1)", line 64, column 307)
+
+Warning: Update 1 of command 7 of module "STATE_1" doesn't do anything ("(s1'=1)", line 65, column 307)
+
+Warning: Update 1 of command 10 of module "STATE_1" doesn't do anything ("(s1'=1)", line 68, column 307)
+
+Warning: Update 1 of command 11 of module "STATE_1" doesn't do anything ("(s1'=1)", line 69, column 307)
+
+Warning: Update 1 of command 12 of module "STATE_1" doesn't do anything ("(s1'=1)", line 70, column 307)
+
+Warning: Update 1 of command 13 of module "STATE_1" doesn't do anything ("(s1'=1)", line 71, column 307)
+
+Warning: Update 1 of command 5 of module "STATE_2" doesn't do anything ("(s2'=1)", line 95, column 307)
+
+Warning: Update 1 of command 6 of module "STATE_2" doesn't do anything ("(s2'=1)", line 96, column 307)
+
+Warning: Update 1 of command 7 of module "STATE_2" doesn't do anything ("(s2'=1)", line 97, column 307)
+
+Warning: Update 1 of command 10 of module "STATE_2" doesn't do anything ("(s2'=1)", line 100, column 307)
+
+Warning: Update 1 of command 11 of module "STATE_2" doesn't do anything ("(s2'=1)", line 101, column 307)
+
+Warning: Update 1 of command 12 of module "STATE_2" doesn't do anything ("(s2'=1)", line 102, column 307)
+
+Warning: Update 1 of command 13 of module "STATE_2" doesn't do anything ("(s2'=1)", line 103, column 307)
+
+Warning: Update 1 of command 23 of module "STATE_3" doesn't do anything ("(s3'=1)", line 145, column 372)
+
+Warning: Update 1 of command 24 of module "STATE_3" doesn't do anything ("(s3'=1)", line 146, column 372)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000200, setup 0.00)
+
+Time for model construction: 0.302 seconds.
+
+Type:        MDP
+States:      1021 (1 initial)
+Transitions: 7810
+Choices:     6169
+
+Transition matrix: 6221 nodes (140 terminal), 7810 minterms, vars: 18r/18c/7nd
+
+Building deterministic automaton (for X ("L0" U "L1"))...
+DFA has 4 states, 1 goal states.
+Time for deterministic automaton translation: 0.175 seconds.
+
+Constructing MDP-DFA product...
+
+Reachability (BFS): 10 iterations in 0.00 seconds (average 0.000100, setup 0.00)
+Time for product construction: 0.012 seconds.
+
+States:      1021 (1 initial)
+Transitions: 7810
+Choices:     6169
+
+Transition matrix: 7938 nodes (140 terminal), 7810 minterms, vars: 20r/20c/7nd
+
+Skipping accepting MEC computation since acceptance is defined via goal states...
+
+Computing reachability probabilities...
+
+Prob0A: 6 iterations in 0.00 seconds (average 0.000500, setup 0.00)
+
+Prob1E: 22 iterations in 0.01 seconds (average 0.000318, setup 0.00)
+
+yes = 504, no = 413, maybe = 104
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrices... [nm=14, levels=20, nodes=2515] [117.9 KB]
+Adding sparse bits... [levels=20-20, num=14, compact=14/14] [17.6 KB]
+Creating vector for yes... [dist=2, compact] [2.0 KB]
+Allocating iteration vectors... [3 x 8.0 KB]
+TOTAL: [161.4 KB]
+
+Starting iterations...
+
+Iterative method: 8 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+Value in the initial state: 0.9180502169826923
+
+Time for model checking: 0.236 seconds.
+
+Result: 0.9180502169826923 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 25 warnings during computation.
+

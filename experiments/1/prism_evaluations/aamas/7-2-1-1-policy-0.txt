@@ -1,0 +1,117 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 01:37:57 GMT 2021
+Hostname: arcus-htc-node027
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/7-2-1-1-policy.prism /home/hert5888/almanac/experiments/1/prism_specs/7-2-1-1.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/7-2-1-1-policy.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/7-2-1-1.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 SPEC_0 ACTION_0 ACTION_1 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 q0 a0 a1 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 2 of command 15 of module "STATE_3" doesn't do anything ("(s3'=0)", line 177, column 1913)
+
+Warning: Update 2 of command 17 of module "STATE_3" doesn't do anything ("(s3'=0)", line 179, column 1913)
+
+Warning: Update 2 of command 21 of module "STATE_3" doesn't do anything ("(s3'=0)", line 183, column 1913)
+
+Warning: Update 1 of command 27 of module "STATE_3" doesn't do anything ("(s3'=1)", line 189, column 805)
+
+Warning: Update 1 of command 32 of module "STATE_3" doesn't do anything ("(s3'=1)", line 194, column 805)
+
+Warning: Update 1 of command 34 of module "STATE_3" doesn't do anything ("(s3'=1)", line 196, column 805)
+
+Warning: Update 1 of command 36 of module "STATE_3" doesn't do anything ("(s3'=1)", line 198, column 805)
+
+Warning: Update 1 of command 7 of module "STATE_5" doesn't do anything ("(s5'=1)", line 259, column 807)
+
+Warning: Update 1 of command 9 of module "STATE_5" doesn't do anything ("(s5'=1)", line 261, column 807)
+
+Warning: Update 1 of command 14 of module "STATE_5" doesn't do anything ("(s5'=1)", line 266, column 845)
+
+Warning: Update 1 of command 16 of module "STATE_5" doesn't do anything ("(s5'=1)", line 268, column 845)
+
+Warning: Update 1 of command 18 of module "STATE_5" doesn't do anything ("(s5'=1)", line 270, column 845)
+
+Warning: Update 1 of command 20 of module "STATE_5" doesn't do anything ("(s5'=1)", line 272, column 845)
+
+Warning: Update 1 of command 23 of module "STATE_5" doesn't do anything ("(s5'=1)", line 275, column 845)
+
+Warning: Update 1 of command 25 of module "STATE_5" doesn't do anything ("(s5'=1)", line 277, column 845)
+
+Warning: Update 2 of command 14 of module "STATE_6" doesn't do anything ("(s6'=0)", line 311, column 1757)
+
+Warning: Update 2 of command 16 of module "STATE_6" doesn't do anything ("(s6'=0)", line 313, column 1757)
+
+Warning: Update 2 of command 18 of module "STATE_6" doesn't do anything ("(s6'=0)", line 315, column 1757)
+
+Warning: Update 2 of command 20 of module "STATE_6" doesn't do anything ("(s6'=0)", line 317, column 1757)
+
+Warning: Update 2 of command 23 of module "STATE_6" doesn't do anything ("(s6'=0)", line 320, column 1757)
+
+Warning: Update 2 of command 25 of module "STATE_6" doesn't do anything ("(s6'=0)", line 322, column 1757)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.02 seconds (average 0.002100, setup 0.00)
+
+Time for model construction: 16.731 seconds.
+
+Type:        DTMC
+States:      14012 (1 initial)
+Transitions: 198796
+
+Transition matrix: 236287 nodes (12508 terminal), 198796 minterms, vars: 24r/24c
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.216 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 10 iterations in 0.03 seconds (average 0.002500, setup 0.00)
+
+States:      15658 (1 initial)
+Transitions: 231716
+
+Transition matrix: 254192 nodes (12508 terminal), 231716 minterms, vars: 26r/26c
+
+Finding accepting BSCCs...
+
+SCCs: 8, BSCCs: 2, non-BSCC states: 15578
+BSCC sizes: 1:40 2:40
+
+Computing reachability probabilities...
+
+Prob0: 12 iterations in 0.02 seconds (average 0.001417, setup 0.00)
+
+Prob1: 1 iterations in 0.00 seconds (average 0.000000, setup 0.00)
+
+yes = 15658, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 1.432 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 21 warnings during computation.
+

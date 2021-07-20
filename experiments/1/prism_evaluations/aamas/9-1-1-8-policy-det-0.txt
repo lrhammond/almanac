@@ -1,0 +1,125 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 05:43:47 GMT 2021
+Hostname: arcus-htc-node010
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/9-1-1-8-policy-det.prism /home/hert5888/almanac/experiments/1/prism_specs/9-1-1-8.props -prop 2
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/9-1-1-8-policy-det.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/9-1-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (G ((!phi)|(X (chi)))) ]
+(2) P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Type:        DTMC
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 STATE_6 STATE_7 STATE_8 SPEC_0 ACTION_0 
+Variables:   i t s0 s1 s2 s3 s4 s5 s6 s7 s8 q0 a0 
+
+---------------------------------------------------------------------
+
+Model checking: P=? [ X (G ((!phi)|(X (chi)))) ]
+
+Building model...
+
+Warning: Guard for command 4 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_0" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_1" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_2" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_3" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_4" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_5" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_6" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_7" is never satisfied.
+
+Warning: Guard for command 4 of module "STATE_8" is never satisfied.
+
+Warning: Guard for command 5 of module "STATE_8" is never satisfied.
+
+Computing reachable states...
+
+Reachability (BFS): 7 iterations in 0.04 seconds (average 0.006429, setup 0.00)
+
+Time for model construction: 302.058 seconds.
+
+Type:        DTMC
+States:      3519 (1 initial)
+Transitions: 264190
+
+Transition matrix: 1137340 nodes (88416 terminal), 264190 minterms, vars: 24r/24c
+
+Building deterministic automaton (for X (G ("L0"|(X "L1"))))...
+DRA has 4 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.314 seconds.
+
+Constructing MC-DRA product...
+
+Reachability (BFS): 9 iterations in 21.33 seconds (average 2.370000, setup 0.00)
+
+States:      5004 (1 initial)
+Transitions: 400579
+
+Transition matrix: 1564712 nodes (88416 terminal), 400579 minterms, vars: 26r/26c
+
+Finding accepting BSCCs...
+
+SCCs: 4, BSCCs: 2, non-BSCC states: 3980
+BSCC sizes: 1:2 2:1022
+
+Computing reachability probabilities...
+
+Prob0: 3 iterations in 0.00 seconds (average 0.000333, setup 0.00)
+
+Prob1: 2 iterations in 0.00 seconds (average 0.002000, setup 0.00)
+
+yes = 3, no = 5000, maybe = 1
+
+Computing remaining probabilities...
+Engine: Hybrid
+
+Building hybrid MTBDD matrix... [levels=26, nodes=7113] [333.4 KB]
+Adding explicit sparse matrices... [levels=26, num=1, compact] [25.5 KB]
+Creating vector for diagonals... [dist=1, compact] [9.8 KB]
+Creating vector for RHS... [dist=2, compact] [9.8 KB]
+Allocating iteration vectors... [2 x 39.1 KB]
+TOTAL: [456.7 KB]
+
+Starting iterations...
+
+Jacobi: 2 iterations in 0.03 seconds (average 0.000500, setup 0.03)
+
+Value in the initial state: 0.0034113803742840433
+
+Time for model checking: 24.685 seconds.
+
+Result: 0.0034113803742840433 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 18 warnings during computation.
+

@@ -1,0 +1,181 @@
+PRISM
+=====
+
+Version: 4.4.beta
+Date: Fri Jan 29 04:42:20 GMT 2021
+Hostname: arcus-htc-node044
+Memory limits: cudd=16g, java(heap)=14.2g
+Command line: prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/6-4-1-8.prism /home/hert5888/almanac/experiments/1/prism_specs/6-4-1-8.props -prop 1
+
+Parsing model file "/home/hert5888/almanac/experiments/1/prism_models/6-4-1-8.prism"...
+
+Parsing properties file "/home/hert5888/almanac/experiments/1/prism_specs/6-4-1-8.props"...
+
+2 properties:
+(1) Pmax=? [ X (F G ((!phi)|(!xi))) ]
+(2) P=? [ X (F G ((!phi)|(!xi))) ]
+
+Type:        MDP
+Modules:     INIT SYNC STATE_0 STATE_1 STATE_2 STATE_3 STATE_4 STATE_5 SPEC_0 ACTION_0 ACTION_1 ACTION_2 ACTION_3 
+Variables:   i t s0 s1 s2 s3 s4 s5 q0 a0 a1 a2 a3 
+
+---------------------------------------------------------------------
+
+Model checking: Pmax=? [ X (F G ((!phi)|(!xi))) ]
+
+Building model...
+
+Warning: Update 1 of command 99 of module "STATE_0" doesn't do anything ("(s0'=1)", line 126, column 778)
+
+Warning: Update 1 of command 105 of module "STATE_0" doesn't do anything ("(s0'=1)", line 132, column 778)
+
+Warning: Update 1 of command 110 of module "STATE_0" doesn't do anything ("(s0'=1)", line 137, column 778)
+
+Warning: Update 1 of command 124 of module "STATE_0" doesn't do anything ("(s0'=1)", line 151, column 778)
+
+Warning: Update 1 of command 130 of module "STATE_0" doesn't do anything ("(s0'=1)", line 157, column 778)
+
+Warning: Update 1 of command 135 of module "STATE_0" doesn't do anything ("(s0'=1)", line 162, column 778)
+
+Warning: Update 1 of command 144 of module "STATE_0" doesn't do anything ("(s0'=1)", line 171, column 778)
+
+Warning: Update 1 of command 145 of module "STATE_0" doesn't do anything ("(s0'=1)", line 172, column 778)
+
+Warning: Update 1 of command 165 of module "STATE_0" doesn't do anything ("(s0'=1)", line 192, column 778)
+
+Warning: Update 1 of command 166 of module "STATE_0" doesn't do anything ("(s0'=1)", line 193, column 778)
+
+Warning: Update 1 of command 167 of module "STATE_0" doesn't do anything ("(s0'=1)", line 194, column 778)
+
+Warning: Update 1 of command 179 of module "STATE_0" doesn't do anything ("(s0'=1)", line 206, column 778)
+
+Warning: Update 1 of command 189 of module "STATE_0" doesn't do anything ("(s0'=1)", line 216, column 778)
+
+Warning: Update 1 of command 192 of module "STATE_0" doesn't do anything ("(s0'=1)", line 219, column 778)
+
+Warning: Update 2 of command 99 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1017, column 1657)
+
+Warning: Update 2 of command 105 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1023, column 1657)
+
+Warning: Update 2 of command 110 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1028, column 1657)
+
+Warning: Update 2 of command 124 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1042, column 1657)
+
+Warning: Update 2 of command 130 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1048, column 1657)
+
+Warning: Update 2 of command 135 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1053, column 1657)
+
+Warning: Update 2 of command 144 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1062, column 1657)
+
+Warning: Update 2 of command 145 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1063, column 1657)
+
+Warning: Update 2 of command 165 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1083, column 1657)
+
+Warning: Update 2 of command 166 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1084, column 1657)
+
+Warning: Update 2 of command 167 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1085, column 1657)
+
+Warning: Update 2 of command 179 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1097, column 1657)
+
+Warning: Update 2 of command 189 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1107, column 1657)
+
+Warning: Update 2 of command 192 of module "STATE_3" doesn't do anything ("(s3'=0)", line 1110, column 1657)
+
+Warning: Update 1 of command 197 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1115, column 672)
+
+Warning: Update 1 of command 204 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1122, column 672)
+
+Warning: Update 1 of command 208 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1126, column 672)
+
+Warning: Update 1 of command 212 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1130, column 672)
+
+Warning: Update 1 of command 218 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1136, column 672)
+
+Warning: Update 1 of command 219 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1137, column 672)
+
+Warning: Update 1 of command 220 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1138, column 672)
+
+Warning: Update 1 of command 224 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1142, column 672)
+
+Warning: Update 1 of command 227 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1145, column 672)
+
+Warning: Update 1 of command 229 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1147, column 672)
+
+Warning: Update 1 of command 232 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1150, column 672)
+
+Warning: Update 1 of command 234 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1152, column 672)
+
+Warning: Update 1 of command 235 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1153, column 672)
+
+Warning: Update 1 of command 242 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1160, column 672)
+
+Warning: Update 1 of command 248 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1166, column 672)
+
+Warning: Update 1 of command 250 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1168, column 672)
+
+Warning: Update 1 of command 252 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1170, column 672)
+
+Warning: Update 1 of command 258 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1176, column 672)
+
+Warning: Update 1 of command 260 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1178, column 672)
+
+Warning: Update 1 of command 262 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1180, column 672)
+
+Warning: Update 1 of command 267 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1185, column 672)
+
+Warning: Update 1 of command 271 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1189, column 672)
+
+Warning: Update 1 of command 277 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1195, column 672)
+
+Warning: Update 1 of command 278 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1196, column 672)
+
+Warning: Update 1 of command 285 of module "STATE_3" doesn't do anything ("(s3'=1)", line 1203, column 672)
+
+Computing reachable states...
+
+Reachability (BFS): 10 iterations in 0.12 seconds (average 0.012300, setup 0.00)
+
+Time for model construction: 20.49 seconds.
+
+Type:        MDP
+States:      101719 (1 initial)
+Transitions: 13525546
+Choices:     13293001
+
+Transition matrix: 583665 nodes (3570 terminal), 13525546 minterms, vars: 28r/28c/13nd
+
+Building deterministic automaton (for X (F G "L0"))...
+DRA has 3 states, 1 Rabin pairs.
+Time for deterministic automaton translation: 0.28 seconds.
+
+Constructing MDP-DRA product...
+
+Reachability (BFS): 10 iterations in 0.04 seconds (average 0.003500, setup 0.00)
+Time for product construction: 2.313 seconds.
+
+States:      108793 (1 initial)
+Transitions: 15647746
+Choices:     15415201
+
+Transition matrix: 913419 nodes (3570 terminal), 15647746 minterms, vars: 30r/30c/13nd
+
+Finding accepting end components...
+
+Computing reachability probabilities...
+
+Prob0A: 5 iterations in 1.26 seconds (average 0.252800, setup 0.00)
+
+Prob1E: 6 iterations in 0.30 seconds (average 0.050000, setup 0.00)
+
+yes = 108793, no = 0, maybe = 0
+
+Value in the initial state: 1.0
+
+Time for model checking: 20.301 seconds.
+
+Result: 1.0 (value in the initial state)
+
+---------------------------------------------------------------------
+
+Note: There were 53 warnings during computation.
+
