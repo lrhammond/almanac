@@ -6,6 +6,7 @@ import envs
 import os
 import pickle
 import copy
+from time import time
 import random
 import numpy as np
 import utils
@@ -206,86 +207,145 @@ exp1_hps = {'actual_dist': True,
             'update_after': { 'actors': 1000,
                               'critics': 1000 }}
 
-def exp1(root, id, max_steps, num_specs, num_actors, state_size, hps=exp1_hps, repetitions=10):
+def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=exp1_hps):
 
     # location = './{}/experiments/{}'.format(root, id["num"])
     location = '{}/experiments/1'.format(root)
+    name = '{}-{}-{}-{}'.format(num_states, num_actors, num_specs, num_run)
 
-    # Range of specifications
-    labels = ['phi','psi','chi','xi']
-    possible_specs = ['G F psi', 'F G ((!phi) | (!xi))', 'G ((!phi) | (X (chi)))', 'F xi', 'G ((!psi) | (F phi))', 'G chi', '(!xi) U psi']
+    # Specifications
+    labels = ['l{}'.format(i) for i in range(num_specs)]
+    possible_specs = [  lambda x : 'F {}'.format(x),\
+                        lambda x : 'G {}'.format(x),\
+                        lambda x : 'F G {}'.format(x),\
+                        lambda x : 'G F {}'.format(x),\
+                        lambda x : 'X (X {})'.format(x),\
+                        lambda x, y : '{} U {}'.format(x, y),\
+                        lambda x, y : 'F ({} & {})'.format(x, y),\
+                        lambda x, y : 'G ({} | (X {}))'.format(x, y),\
+                        lambda x, y : 'F G ({} | {})'.format(x, y),\
+                        lambda x, y : 'G F ({} & (X {}))'.format(x, y)  ]
     possible_weights = [2, 5, 8]
+    if num_states == 1:
+        possible_specs = possible_specs[:5]
+    
+    # Map parameters
+    state_size = num_states
+    action_sizes = num_actors * [2]
+    num_rules = max(1, int(0.5 * state_size))
+    num_antecedents = max(1, int(0.5 * state_size))
 
-    # Run experiment
-    for r in range(repetitions):
+    completed = False
+    while not completed:
+
+        # Form objectives
+        specifications = random.sample(possible_specs, num_specs)
+        weights = random.sample(possible_weights, num_specs)
+        sum_weights = sum(weights)
+        objectives = [tuple(w / sum_weights for w in weights)]
+
+        # Form env
+        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents)
+        env = envs.EnvWrapper('smg-{}-{}'.format(id['run'], num_run), 'smg', smg)
+
+        # Form input parameters and LDBAs
+        spec_controller = specs.Spec_Controller(specifications, load_from=root)
+        obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+        act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+        # Evaluate using PRISM
+        spec_controller.save_props(location, name, objectives[0])
+        env.model.create_prism_model(num, spec_controller.specs, location)
+
+        # Sometimes the MMG and spec combination generated is trivial, if so we retry
         
-        completed = False
-        while not completed:
 
-            # Form objectives
-            specifications = random.sample(possible_specs, num_specs)
-            weights = random.sample(possible_weights, num_specs)
-            sum_weights = sum(weights)
-            objectives = [w / sum_weights for w in weights]
+        def run_prism(location, name, cuddmaxmem=16,javamaxmem=16, epsilon=0.001, maxiters=100000, timeout=72000):
 
-            # Form game
-            action_sizes = [random.randint(2,4) for _ in range(num_actors)]
-            mmg = envs.MatrixMarkovGame(state_size, action_sizes, labels, sparsity=0.6, structured_labels=True, nonlinearities=0.4)
-            env = envs.EnvWrapper('mmg-{}-{}'.format(id["run"],r), 'mmg', mmg, mmg.labeller)
-
-            # Form input parameters and LDBAs
-            spec_controller = specs.Spec_Controller(specifications, load_from=root)
-            obs_size = env.get_obs_size() + sum(spec_controller.num_states)
-            act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
-
-            # Create learner
-            learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
-            prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], r)
-
-            # Sometimes the MMG and spec combination generated is trivial, if so we retry
-            run(learner, env, 10000, spec_controller, [], objectives, location, prefix, num_plot_points=1000)
-            with open('{}/scores/{}-scores.txt'.format(location, prefix), 'r') as f:
-                data = list(reader(f))
-                if np.var(np.array(d[0] for d in data[10:60])) > 0.01:
-                    completed = True
-            if completed:
-                run(learner, env, max_steps - 10000, spec_controller, [], objectives, location, prefix)
-            else:
-                continue
-
-            # Save specs and weights
-            specs_name = location + '/specs/{}-{}-{}-{}.props'.format(state_size, num_actors, num_specs, r)
-            with open(specs_name, 'w') as f:
-                if num_specs == 1:
-                    f.write('Pmax=? [ X ( ' + specifications[0] + ' ) ]\n\n')
-                    f.write('P=? [ X ( ' + specifications[0] + ' ) ]\n\n')
-                else:
-                    f.write('multi( Pmax=? [ X ( ' + specifications[0] + ' ) ] , Pmax=? [ X ( ' + specifications[1] + ' ) ] )\n\n')
-                    f.write('P=? [ X ( ' + specifications[0] + ' ) ]\n\n')
-                    f.write('P=? [ X ( ' + specifications[1] + ' ) ]\n\n')
-            weights_name = location + '/specs/{}-{}-{}-{}.weights'.format(state_size, num_actors, num_specs, r)
-            with open(weights_name, 'w') as f:
-                for w in weights:
-                    f.write('{}\n'.format(w))
-
-            # Save policy distributions
-            possible_game_states = list(itertools.product([0, 1], repeat=env.get_obs_size()))
-            possible_spec_states = []
-            for s_s in spec_controller.num_states:
-                spec_states = [[0 for i in range(s_s)] for j in range(s_s)]
-                for k in range(s_s):
-                    spec_states[k][k] = 1
-                possible_spec_states.append([tuple(s_s) for s_s in spec_states])
-            possible_product_states = itertools.product(possible_game_states, *possible_spec_states)
-            possible_states = [tuple(utils.flatten(p_s)) for p_s in possible_product_states]
-            possible_state_tensors = torch.stack([tt(p_s).float() for p_s in possible_states])
-            p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
+            run_name = 'prism -cuddmaxmem {}g -javamaxmem {}g -epsilon {} -maxiters {} -timeout {} '.format(cuddmaxmem, javamaxmem, epsilon, maxiters, timeout)
+            model_name = '{}/prism_models/{}.prism '.format(location, name)
+            props_name = '{}/prism_specs/{}.props -prop 1 '.format(location, name)
+            save_name = '> {}/prism_evaluations/{}-true.txt'.format(location, name)
+            t0 = time()
+            os(run_name + model_name + props_name + save_name)
+            t1 = time()
+            time = t1 - t0
             
-            # Create PRISM models
-            num = '{}-{}'.format(id["run"], r)
-            env.model.create_prism_model(num, spec_controller.specs, location)
-            env.model.create_prism_model(num, spec_controller.specs, location, policy=p_dists)
-            env.model.create_prism_model(num, spec_controller.specs, location, policy=p_dists, det=True)
+
+            return prob, time
+        
+        prob, time = run_prism()
+        
+        if prob == 0.0:
+            continue
+        else:
+            prism_
+
+
+
+
+
+
+
+
+
+
+
+            completed = True
+            
+
+        prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/1-1-1-2.prism /home/hert5888/almanac/experiments/1/prism_specs/1-1-1-2.props -prop 1 > /home/hert5888/almanac/experiments/1/prism_evaluations/1-1-1-2-true.txt
+
+        call_mifuntion_vers_1()
+        t1 = time()
+        call_mifunction_vers_2()
+        t2 = time()
+
+
+
+
+
+        run(learner, env, 10000, spec_controller, [], objectives, location, prefix, num_plot_points=1000)
+        with open('{}/scores/{}-scores.txt'.format(location, prefix), 'r') as f:
+            data = list(reader(f))
+            if np.var(np.array(d[0] for d in data[10:60])) > 0.01:
+                completed = True
+        if completed:
+            run(learner, env, max_steps - 10000, spec_controller, [], objectives, location, prefix)
+        else:
+            continue
+
+
+
+        # Create learner
+        learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], num_run)
+
+        # Sometimes the MMG and spec combination generated is trivial, if so we retry
+        run(learner, env, 10000, spec_controller, [], objectives, location, prefix, num_plot_points=1000)
+        with open('{}/scores/{}-scores.txt'.format(location, prefix), 'r') as f:
+            data = list(reader(f))
+            if np.var(np.array(d[0] for d in data[10:60])) > 0.01:
+                completed = True
+        if completed:
+            run(learner, env, max_steps - 10000, spec_controller, [], objectives, location, prefix)
+        else:
+            continue
+
+        # Save specs and weights
+
+        # Save policy distributions
+        possible_game_states = list(itertools.product([0, 1], repeat=env.get_obs_size()))
+        possible_spec_states = [[tuple((1 if i == j else 0) for i in range(s_s)) for j in range(s_s)] for s_s in spec_controller.num_states]
+        possible_states = [utils.flatten(p_s) for p_s in itertools.product(possible_game_states, *possible_spec_states)]
+        possible_state_tensors = torch.stack([tt(p_s).float() for p_s in possible_states])
+        p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
+        
+        # Create PRISM models
+        num = '{}-{}'.format(id["run"], r)
+        env.model.create_prism_model(num, spec_controller.specs, location)
+        env.model.create_prism_model(num, spec_controller.specs, location, policy=p_dists)
+        env.model.create_prism_model(num, spec_controller.specs, location, policy=p_dists, det=True)
 
     # Save information about objectives
     # spec_controller.save_model(location, env.name, id["run"])

@@ -1,0 +1,69 @@
+mdp
+
+
+
+
+module INIT
+
+    i : bool init false;
+    [initialisation] !i -> 1.0:(i'=true);
+
+endmodule
+
+
+module SYNC
+
+    t : bool init true;
+    [initialisation] !i -> 1.0:(t' = false);
+    [action] !t -> 1.0:(t' = true);
+    [transition] t -> 1.0:(t' = false);
+
+endmodule
+
+
+module STATE_0
+
+    s0 : [0..2] init 2;
+    [initialisation] !i -> 0.736:(s0'=0) + 0.264:(s0'=1);
+    [transition] a0=0 & a1=0 & s1=0 -> 0.744:(s0'=0) + 0.256:(s0'=1);
+    [transition] a0=0 & a1=0 & s1=1 -> 0.539:(s0'=0) + 0.461:(s0'=1);
+    [transition] a0=1 & a1=0 & s1=0 -> 0.101:(s0'=0) + 0.899:(s0'=1);
+    [transition] a0=1 & a1=0 & s1=1 -> 0.636:(s0'=0) + 0.364:(s0'=1);
+
+endmodule
+
+
+module STATE_1
+
+    s1 : [0..2] init 2;
+    [initialisation] !i -> 0.474:(s1'=0) + 0.526:(s1'=1);
+    [transition] a0=0 & a1=1 & s0=0 -> 0.689:(s1'=0) + 0.311:(s1'=1);
+    [transition] a0=0 & a1=1 & s0=1 -> 0.535:(s1'=0) + 0.465:(s1'=1);
+    [transition] a0=1 & a1=1 & s1=0 -> 0.922:(s1'=0) + 0.078:(s1'=1);
+    [transition] a0=1 & a1=1 & s1=1 -> 0.046:(s1'=0) + 0.954:(s1'=1);
+
+endmodule
+
+
+module ACTION_0
+
+    a0 : [-1..1] init -1;
+    [action] true -> 1.0:(a0'=0);
+    [action] true -> 1.0:(a0'=1);
+
+endmodule
+
+
+module ACTION_1
+
+    a1 : [-1..1] init -1;
+    [action] true -> 1.0:(a1'=0);
+    [action] true -> 1.0:(a1'=1);
+
+endmodule
+
+
+formula l0 = (s0=1);
+label "l0" = l0;
+formula l1 = (s1=1);
+label "l1" = l1;

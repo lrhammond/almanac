@@ -7,7 +7,7 @@ import ast
 # Flattens list of lists to a single list
 def flatten(l):
 
-    return [item for sublist in l for item in sublist]
+    return tuple(item for sublist in l for item in sublist)
 
 
 def normalise_objs(objectives):

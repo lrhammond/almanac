@@ -19,6 +19,7 @@ class Spec_Controller:
 
     def __init__(self, formulae, load_from=None):
         
+        self.formulae = formulae
         if load_from != None:
             self.specs = []
             for f in formulae:
@@ -101,6 +102,22 @@ class Spec_Controller:
             acceptances.append(accepted)
         
         return s_1s, s_2s, acceptances
+
+    def save_props(self, location, name, weights):
+
+        specs_name = location + '/specs/' + name + '.props'
+        with open(specs_name, 'w') as f:
+            if self.num_specs == 1:
+                f.write('Pmax=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
+                f.write('P=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
+            else:
+                f.write('multi( Pmax=? [ X ( ' + self.formulae[0] + ' ) ] , Pmax=? [ X ( ' + self.formulae[1] + ' ) ] )\n\n')
+                f.write('P=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
+                f.write('P=? [ X ( ' + self.formulae[1] + ' ) ]\n\n')
+        weights_name = location + '/specs/'+ name + '.weights'
+        with open(weights_name, 'w') as f:
+            for w in weights:
+                f.write('{}\n'.format(w))
 
     def save_model(self, location):
 

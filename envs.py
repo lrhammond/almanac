@@ -13,9 +13,15 @@ import utils
 import numpy as np
 import specs
 
+# Overcooked imports
 from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
 from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
 from overcooked_ai_py.mdp.actions import Action, Direction
+
+# MPE imports
+from pettingzoo.mpe._mpe_utils.simple_env import SimpleEnv, make_env
+from pettingzoo.mpe._mpe_utils.core import World, Agent, Landmark
+from pettingzoo.mpe._mpe_utils.scenario import BaseScenario
 
 # Use GPU if available
 if torch.cuda.is_available():
@@ -65,6 +71,8 @@ class EnvWrapper:
             model_joint_action = [self.model.action_space[joint_action[0]], self.model.action_space[joint_action[1]]]
             # self.state = self.model.step(model_joint_action)
             # done = False
+        elif self.kind == 'mpe':
+            model_joint_action = tuple(joint_action)
 
         self.state = self.model.step(model_joint_action)
         done = False
@@ -79,6 +87,8 @@ class EnvWrapper:
             features = state
         elif self.kind == 'overcooked':
             features = self.model.featurise(state)
+        elif self.kind == 'mpe':
+            features = state
 
         return features
 
@@ -96,6 +106,8 @@ class EnvWrapper:
                     labels.append(k.replace('_', '') + '0')
                 if label_dict[k][1]:
                     labels.append(k.replace('_', '') + '1')
+        elif self.kind == 'mpe':
+            labels = self.model.label(state)
 
         return labels
 
@@ -108,6 +120,8 @@ class EnvWrapper:
         elif self.kind == 'overcooked':
             # obs_size = len(featurise(self.state))
             obs_size = 100
+        elif self.kind == 'mpe':
+            obs_size = len(self.model.get_state())
 
         return obs_size
 
@@ -119,6 +133,8 @@ class EnvWrapper:
             act_sizes = self.model.action_sizes
         elif self.kind == 'overcooked':
             act_sizes = [6,6]
+        elif self.kind == 'mpe':
+            act_sizes = self.model.num_agents * [5]
 
         return act_sizes
 
@@ -216,18 +232,21 @@ class StructuredMarkovGame:
 
     # Based on the procedure described in http://incompleteideas.net/RandomMDPs.html
 
-    def __init__(self, state_size, action_sizes, num_rules, num_antecedents):
+    def __init__(self, state_size, action_sizes, num_rules, num_antecedents, deterministic=False):
 
         assert num_rules < state_size
         assert num_antecedents < state_size
 
+        self.deterministic = deterministic
         self.state_size = state_size
         self.action_sizes = action_sizes
         self.num_players = len(action_sizes)
         self.labels = ['l{}'.format(i) for i in range(state_size)]
         self.rules = self.make_rules(num_rules, num_antecedents)
-        self.transitions = self.make_transitions()
-        self.initial = tuple([random.choice([0,1]) for _ in range(state_size)])
+        if deterministic:
+            self.transitions = self.make_transitions()
+        self.initial = tuple([round(random.uniform(0,1),3) for _ in range(state_size)])
+        # self.initial = tuple([random.choice([0,1]) for _ in range(state_size)])
         self.state = self.reset()
 
     def make_rules(self, num_rules, num_antecedents):
@@ -235,19 +254,23 @@ class StructuredMarkovGame:
         rules = {}
         for a in itertools.product(*[range(a_s) for a_s in self.action_sizes]):
             rules[a] = {}
-            changing_states = random.choices(range(self.state_size), num_rules)
-            antecedents = random.choices(range(self.state_size), num_antecedents)
+            changing_states = random.sample(range(self.state_size), k=num_rules)
+            antecedents = random.sample(range(self.state_size), k=num_antecedents)
             for i in changing_states:
                 rules[a][i] = {'antecedents': antecedents}
                 for x in itertools.product(*[[0,1] for _ in range(num_antecedents)]):
-                    rules[a][i][x] = random.choice([0,1])
+                    if self.deterministic:
+                        rules[a][i][x] = random.choice([0,1])
+                    else:
+                        rules[a][i][x] = round(random.uniform(0, 1),3)
 
         return rules
 
     def make_transitions(self):
 
         transitions = {}
-        for s_1 in itertools.product(*[[0,1] for _ in range(self.state_size)]):
+        for s in itertools.product(*[[0,1] for _ in range(self.state_size)]):
+            s_1 = tuple(s)
             transitions[s_1] = {}
             for a in itertools.product(*[range(a_s) for a_s in self.action_sizes]):
                 s_2 = list(s_1)
@@ -260,7 +283,7 @@ class StructuredMarkovGame:
 
     def reset(self):
 
-        self.state = self.initial
+        self.state = tuple([int(random.uniform(0,1) > self.initial[i]) for i in range(self.state_size)])
 
         return self.state
 
@@ -270,7 +293,14 @@ class StructuredMarkovGame:
                 
     def step(self, joint_action):
         
-        self.state = self.transitions[self.state][joint_action]
+        if self.deterministic:
+            self.state = self.transitions[self.state][joint_action]
+        else:
+            for k_1 in self.rules[joint_action].keys():
+                k_2 = tuple([self.state[a] for a in self.rules[joint_action]['antecedents']])
+                new_state = list(self.state)
+                new_state[k_1] = 1 if random.uniform(1,0) > self.rules[joint_action][k_1][k_2] else 0 
+            self.state = tuple(new_state)
 
         return self.state
 
@@ -280,8 +310,6 @@ class StructuredMarkovGame:
         print("Labels: ", self.label(self.state))
 
     def create_prism_model(self, num, ldbas, location, policy=None, det=False):
-        
-        # TODO
 
         p = '' if policy == None else '-policy'
         d = '' if det == False else '-det'
@@ -325,67 +353,29 @@ class StructuredMarkovGame:
             f.write('    [transition] t -> 1.0:(t\' = false);\n')
             f.write('\nendmodule\n\n')
 
-            masks = []
-            for m in self.masks:
-                nze = m.nonzero()
-                mask = '('
-                for i in range(len(nze)):
-                    mask += 's{} = 1'.format(int(nze[i]))
-                    if i != len(nze) - 1:
-                        mask += ' & '
-                    else:
-                        mask += ')'
-                masks.append(mask)
-
             for state in range(self.state_size):
 
                 f.write('\nmodule STATE_{}\n\n'.format(state))
                 f.write('    s{} : [0..2] init 2;\n'.format(state))
-                init_dist = self.initial.probs
-                p = init_dist[state]
-                f.write('    [initialisation] !i -> {}:(s{}\'=0) + {}:(s{}\'=1);\n'.format((1.0-p),state,p,state))
+                p = self.initial[state]
+                f.write('    [initialisation] !i -> {}:(s{}\'=0) + {}:(s{}\'=1);\n'.format(p,state,(round(1.0-p,3)),state))
 
-                for i in range(len(masks) + 1):
+                for a in itertools.product(*[range(a_s) for a_s in self.action_sizes]):
+    
+                    action_guard = ' & '.join(['a{}={}'.format(i,a[i]) for i in range(self.num_players)])
 
-                    if len(masks) != 0:
-                        guard_mask = '[transition] '
-                        if i != len(masks):
-                            guard_mask += masks[i]
-                            for j in range(i):
-                                guard_mask += ' & !' + masks[j]
-                        else:
-                            guard_mask += '!' + ' & !'.join(masks)
+                    if state not in self.rules[a].keys():
+                        continue
                     else:
-                        guard_mask = '[transition] true'
-                    
-                    for a in self.transitions[i].keys():
-                        guard_action = '('
-                        for k in range(len(a)):
-                            guard_action += 'a{}={}'.format(k, a[k])
-                            if k != len(a) - 1:
-                                guard_action += ' & '
-                            else:
-                                guard_action += ')'
+                        antecedents = self.rules[a][state]['antecedents']
 
-                        guard = guard_mask + ' & ' + guard_action
-                        transition_probs = self.transitions[i][a]
+                    for x in itertools.product(*[[0,1] for _ in range(len(antecedents))]):
 
-                        probs = []
-                        for l in range(self.state_size):
-                            l_probs = transition_probs[:,l]
-                            p = '('
-                            for m in range(len(l_probs)):
-                                p += '{}*s{}'.format(l_probs[m],m)
-                                if m != self.state_size - 1:
-                                    p += ' + '
-                                else:
-                                    p += ')'
-                            probs.append(p)
+                        state_guard = ' & '.join(['s{}={}'.format(i,j) for (i,j) in zip(antecedents,x)])
+                        p = self.rules[a][state][x]
+                        new_state = '{}:(s{}\'=0) + {}:(s{}\'=1)'.format(p,state,round(1.0-p,3),state)
 
-                        max_prob = 'max(0.0, ' + ','.join(probs) + ')'   
-                        q = state
-                        new_line = '    ' + guard + ' -> (' + probs[q] + '/' + max_prob + '):(s{}\'=1)'.format(q) + ' + (1.0 - (' + probs[q] + '/' + max_prob + ')):(s{}\'=0);\n'.format(q)
-                        f.write(new_line)
+                        f.write('    [transition] ' + action_guard + ' & ' + state_guard + ' -> ' + new_state + ';\n')
 
                 if len(epsilon_transitions) != 0:
                     f.write('    [transition] ' + any_eps_trans + ' -> 1.0:(s{0}\'=s{0});\n'.format(state))        
@@ -453,32 +443,9 @@ class StructuredMarkovGame:
 
                     f.write('\nendmodule\n\n')
 
-            if self.structured_labels:
-                for l, s_ls in zip(self.labels, self.state_labels):
-
-                    masks = []
-                    for m in s_ls:
-                        nze = m.nonzero()
-                        mask = '('
-                        for i in range(len(nze)):
-                            mask += 's{} = 1'.format(int(nze[i]))
-                            if i != len(nze) - 1:
-                                mask += ' & '
-                            else:
-                                mask += ')'
-                        masks.append(mask)
-
-                    f.write('\nformula ' + l + ' = (' + ' | '.join(masks) + ');')
-                    f.write('\nlabel "' + l + '" = ' + l + ';')
-
-            else:
-                print("Error: Converting unstructured labels to PRISM not yet supported")         
-
-
-
-
-
-
+            for i in range(self.state_size):
+                f.write('\nformula l{0} = (s{0}=1);'.format(i))    
+                f.write('\nlabel "l{0}" = l{0};'.format(i))
     
 
 # Matrix Markov game (mmg) class
@@ -605,7 +572,7 @@ class MatrixMarkovGame:
                 f.write('const int {} = {};\n'.format(eps_actions[i], max_action_num + i))
             highest_action_num = max_action_num + len(eps_actions) - 1
     
-            f.write('\n\nmodule INIT\n\n')
+            f.write('module INIT\n\n')
             f.write('    i : bool init false;\n')
             f.write('    [initialisation] !i -> 1.0:(i\'=true);\n')
             f.write('\nendmodule\n\n')
@@ -807,6 +774,9 @@ class OvercookedGame:
 
         if state != self.state:
             print("Error: Can only obtain labels for current state")
+            i = 4
+            p = i[2]
+            print(p)
             return
         else:
             return self.labels
@@ -814,3 +784,116 @@ class OvercookedGame:
     def print(self):
 
         print(repr(self.overcooked)[:-2])
+
+
+class MPE:
+
+    class Scenario(BaseScenario):
+
+        def make_world(self, num_agents, num_landmarks, moving_landmarks, collisions):
+
+            world = World()
+            # add agents
+            world.agents = [Agent() for _ in range(num_agents)]
+            for i, agent in enumerate(world.agents):
+                agent.name = 'agent_{}'.format(i)
+                agent.collide = collisions
+                agent.silent = True
+            # add landmarks
+            world.landmarks = [Landmark() for _ in range(num_landmarks)]
+            for i, landmark in enumerate(world.landmarks):
+                landmark.name = 'landmark %d' % i
+                landmark.collide = collisions
+                landmark.movable = moving_landmarks
+
+            return world
+
+        def reset_world(self, world, np_random):
+
+            for _, agent in enumerate(world.agents):
+                agent.color = np.array([0.25, 0.25, 0.25])
+            for _, landmark in enumerate(world.landmarks):
+                landmark.color = np.array([0.75, 0.75, 0.75])
+            # world.landmarks[0].color = np.array([0.75, 0.25, 0.25])
+            for agent in world.agents:
+                agent.state.p_pos = np_random.uniform(-1, +1, world.dim_p)
+                agent.state.p_vel = np.zeros(world.dim_p)
+                agent.state.c = np.zeros(world.dim_c)
+            for i, landmark in enumerate(world.landmarks):
+                landmark.state.p_pos = np_random.uniform(-1, +1, world.dim_p)
+                landmark.state.p_vel = np.zeros(world.dim_p)
+
+        def reward(self, agent, world):
+  
+            return 0
+
+        def observation(self, agent, world):
+
+            entity_pos = []
+            entity_vel = []
+            for landmark in world.landmarks:
+                entity_pos.append(landmark.state.p_pos)
+                if landmark.movable:
+                    entity_vel.append(landmark.state.p_vel)
+            for agent in world.agents:
+                entity_pos.append(agent.state.p_pos)
+                entity_vel.append(agent.state.p_vel)
+
+            return np.concatenate(entity_pos + entity_vel)
+
+    class raw_env(SimpleEnv):
+        
+        def __init__(self, name=None, num_agents=0, num_landmarks=0, moving_landmarks=False, collisions=False, max_cycles=1000000):
+            scenario = MPE.Scenario()
+            world = scenario.make_world(num_agents, num_landmarks, moving_landmarks, collisions)
+            super().__init__(scenario, world, max_cycles)
+            self.metadata['name'] = name
+
+    def __init__(self, name, num_agents, num_landmarks, moving_landmarks=False, collisions=False,):
+
+        self.name = name
+        self.num_agents = num_agents
+        self.num_landmarks = num_landmarks
+        self.env = make_env(MPE.raw_env)(name=name, num_agents=num_agents, num_landmarks=num_landmarks, moving_landmarks=moving_landmarks, collisions=collisions)
+        self.state = self.reset()
+        self.labels = ['{}at{}'.format(a,l) for (a, l) in itertools.product(range(num_agents), range(num_landmarks))] + ["{}meets{}".format(a,a2) for (a, a2) in itertools.product(range(num_agents), range(num_agents)) if a != a2]
+
+    def get_state(self):
+
+        return torch.tensor(self.env.last()[0])
+
+    def reset(self):
+
+        self.env.reset()
+
+        return self.get_state()
+
+    def step(self, joint_action):
+        
+        for a in joint_action:
+            self.env.step(a)
+
+        return self.get_state()
+
+    def label(self, state, tolerance=0.2):
+
+        labels = []
+        for a in range(self.num_agents):
+            for l in range(self.num_landmarks):
+                l_pos = state[2*l:2*(l+1)]
+                a_pos = state[2*(self.num_landmarks+a):2*(self.num_landmarks+a+1)]
+                if abs(l_pos[0] - a_pos[0]) <= tolerance and abs(l_pos[1] - a_pos[1]) <= tolerance:
+                    labels.append("{}at{}".format(a,l))
+                for a2 in range(self.num_agents):
+                    if a2 != a:
+                        a2_pos = state[2*(self.num_landmarks+a2):2*(self.num_landmarks+a2+1)]
+                        if abs(a_pos[0] - a2_pos[0]) <= tolerance and abs(a_pos[1] - a2_pos[1]) <= tolerance:
+                            labels.append("{}meets{}".format(a,a2))
+            
+        return labels
+
+
+smg = StructuredMarkovGame(3,[2,2],1,1)
+smg.create_prism_model(1,[],'experiments/1')
+
+print(2)
