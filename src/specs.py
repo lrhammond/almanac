@@ -17,7 +17,7 @@ import torch.tensor as tt
 
 class Spec_Controller:
 
-    def __init__(self, formulae, load_from=None):
+    def __init__(self, formulae, save_to, load_from=None):
         
         self.formulae = formulae
         if load_from != None:
@@ -29,7 +29,7 @@ class Spec_Controller:
                     self.specs.append(old_spec)
                 else:
                     new_spec = Spec(f)
-                    new_spec.save()
+                    new_spec.save(save_to)
                     self.specs.append(new_spec)
         else:
             self.specs = [Spec(f) for f in formulae]
@@ -105,7 +105,7 @@ class Spec_Controller:
 
     def save_props(self, location, name, weights):
 
-        specs_name = location + '/specs/' + name + '.props'
+        specs_name = location + '/prism_specs/' + name + '.props'
         with open(specs_name, 'w') as f:
             if self.num_specs == 1:
                 f.write('Pmax=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
@@ -114,7 +114,7 @@ class Spec_Controller:
                 f.write('multi( Pmax=? [ X ( ' + self.formulae[0] + ' ) ] , Pmax=? [ X ( ' + self.formulae[1] + ' ) ] )\n\n')
                 f.write('P=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
                 f.write('P=? [ X ( ' + self.formulae[1] + ' ) ]\n\n')
-        weights_name = location + '/specs/'+ name + '.weights'
+        weights_name = location + '/prism_specs/'+ name + '.weights'
         with open(weights_name, 'w') as f:
             for w in weights:
                 f.write('{}\n'.format(w))
@@ -132,11 +132,9 @@ class Spec:
         self.formula = formula
         self.ldba = LDBA(formula)
 
-    def save(self, filename=None):
+    def save(self, location):
 
-        if filename == None:
-            filename = self.formula
-        with open("specs/{}.pickle".format(filename), 'wb') as f:
+        with open("{}/specs/{}.pickle".format(location, self.formula), 'wb') as f:
             pickle.dump(self, f)
         
     def create_prism_model(self, spec_num, num_players, to_file=False, filename=None):

@@ -24,11 +24,7 @@ endmodule
 module STATE_0
 
     s0 : [0..2] init 2;
-    [initialisation] !i -> 0.18:(s0'=0) + 0.82:(s0'=1);
-    [transition] a0=1 & a1=0 & s2=0 -> 0.807:(s0'=0) + 0.193:(s0'=1);
-    [transition] a0=1 & a1=0 & s2=1 -> 0.279:(s0'=0) + 0.721:(s0'=1);
-    [transition] a0=1 & a1=1 & s0=0 -> 0.051:(s0'=0) + 0.949:(s0'=1);
-    [transition] a0=1 & a1=1 & s0=1 -> 0.942:(s0'=0) + 0.058:(s0'=1);
+    [initialisation] !i -> 0.136:(s0'=0) + 0.864:(s0'=1);
 
 endmodule
 
@@ -36,9 +32,7 @@ endmodule
 module STATE_1
 
     s1 : [0..2] init 2;
-    [initialisation] !i -> 0.249:(s1'=0) + 0.751:(s1'=1);
-    [transition] a0=0 & a1=0 & s1=0 -> 0.911:(s1'=0) + 0.089:(s1'=1);
-    [transition] a0=0 & a1=0 & s1=1 -> 0.774:(s1'=0) + 0.226:(s1'=1);
+    [initialisation] !i -> 0.124:(s1'=0) + 0.876:(s1'=1);
 
 endmodule
 
@@ -46,9 +40,11 @@ endmodule
 module STATE_2
 
     s2 : [0..2] init 2;
-    [initialisation] !i -> 0.598:(s2'=0) + 0.402:(s2'=1);
-    [transition] a0=0 & a1=1 & s0=0 -> 0.421:(s2'=0) + 0.579:(s2'=1);
-    [transition] a0=0 & a1=1 & s0=1 -> 0.886:(s2'=0) + 0.114:(s2'=1);
+    [initialisation] !i -> 0.438:(s2'=0) + 0.562:(s2'=1);
+    [transition] a0=0 & a1=0 & s2=0 -> 0.636:(s2'=0) + 0.364:(s2'=1);
+    [transition] a0=0 & a1=0 & s2=1 -> 0.739:(s2'=0) + 0.261:(s2'=1);
+    [transition] a0=1 & a1=0 & s0=0 -> 0.842:(s2'=0) + 0.158:(s2'=1);
+    [transition] a0=1 & a1=0 & s0=1 -> 0.48:(s2'=0) + 0.52:(s2'=1);
 
 endmodule
 

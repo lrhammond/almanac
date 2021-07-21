@@ -2,12 +2,13 @@
 
 import itertools
 import random
+from torch._C import dtype
 import torch.tensor as tt
 from torch.distributions import Categorical
 from torch.nn.functional import one_hot as one_hot
 import pickle
-from environments.test_envs import mg0, mg1, mg2, mg3
-from environments.overcooked_maps import oc0
+# from environments.test_envs import mg0, mg1, mg2, mg3
+# from environments.overcooked_maps import oc0
 import torch
 import utils
 import numpy as np
@@ -61,16 +62,12 @@ class EnvWrapper:
 
         if self.kind == 'mg':
             model_joint_action = tuple([action_space[a.int()] for action_space, a in zip(self.model.action_spaces, joint_action)])
-            # self.state = self.model.step(model_joint_action)
-            # done = False
         elif self.kind == 'mmg':
             model_joint_action = tuple([int(a) for a in joint_action])
-            # self.state = self.model.step(model_joint_action)
-            # done = False
+        elif self.kind == 'smg':
+            model_joint_action = tuple([int(a) for a in joint_action])
         elif self.kind == 'overcooked':
             model_joint_action = [self.model.action_space[joint_action[0]], self.model.action_space[joint_action[1]]]
-            # self.state = self.model.step(model_joint_action)
-            # done = False
         elif self.kind == 'mpe':
             model_joint_action = tuple(joint_action)
 
@@ -85,6 +82,8 @@ class EnvWrapper:
             features = self.model.featurise(state)
         elif self.kind == 'mmg':
             features = state
+        elif self.kind == 'smg':
+            features = self.model.featurise(state)
         elif self.kind == 'overcooked':
             features = self.model.featurise(state)
         elif self.kind == 'mpe':
@@ -97,6 +96,8 @@ class EnvWrapper:
         if self.kind == 'mg':
             labels = self.model.label(state)
         elif self.kind == 'mmg':
+            labels = self.model.label(state)
+        elif self.kind == 'smg':
             labels = self.model.label(state)
         elif self.kind == 'overcooked':
             label_dict = self.model.label(state)
@@ -117,6 +118,8 @@ class EnvWrapper:
             obs_size = self.model.num_states
         elif self.kind == 'mmg':
             obs_size = self.model.state_size
+        elif self.kind == 'smg':
+            obs_size = self.model.state_size
         elif self.kind == 'overcooked':
             # obs_size = len(featurise(self.state))
             obs_size = 100
@@ -130,6 +133,8 @@ class EnvWrapper:
         if self.kind == 'mg':
             act_sizes = [len(a) for a in self.model.action_spaces]
         elif self.kind == 'mmg':
+            act_sizes = self.model.action_sizes
+        elif self.kind == 'smg':
             act_sizes = self.model.action_sizes
         elif self.kind == 'overcooked':
             act_sizes = [6,6]
@@ -199,53 +204,55 @@ class MarkovGame:
             print("Action: ", joint_action)
             self.step(joint_action)
 
-mg_0 = MarkovGame(num_players=mg0.num_players,
-                 state_space=mg0.state_space,
-                 action_spaces=mg0.action_spaces,
-                 transition=mg0.transition,
-                 initial=mg0.initial,
-                 labeller=mg0.labeller)
+# mg_0 = MarkovGame(num_players=mg0.num_players,
+#                  state_space=mg0.state_space,
+#                  action_spaces=mg0.action_spaces,
+#                  transition=mg0.transition,
+#                  initial=mg0.initial,
+#                  labeller=mg0.labeller)
 
-mg_1 = MarkovGame(num_players=mg1.num_players,
-                 state_space=mg1.state_space,
-                 action_spaces=mg1.action_spaces,
-                 transition=mg1.transition,
-                 initial=mg1.initial,
-                 labeller=mg1.labeller)
+# mg_1 = MarkovGame(num_players=mg1.num_players,
+#                  state_space=mg1.state_space,
+#                  action_spaces=mg1.action_spaces,
+#                  transition=mg1.transition,
+#                  initial=mg1.initial,
+#                  labeller=mg1.labeller)
 
-mg_2 = MarkovGame(num_players=mg2.num_players,
-                 state_space=mg2.state_space,
-                 action_spaces=mg2.action_spaces,
-                 transition=mg2.transition,
-                 initial=mg2.initial,
-                 labeller=mg2.labeller)
+# mg_2 = MarkovGame(num_players=mg2.num_players,
+#                  state_space=mg2.state_space,
+#                  action_spaces=mg2.action_spaces,
+#                  transition=mg2.transition,
+#                  initial=mg2.initial,
+#                  labeller=mg2.labeller)
 
-mg_3 = MarkovGame(num_players=mg3.num_players,
-                 state_space=mg3.state_space,
-                 action_spaces=mg3.action_spaces,
-                 transition=mg3.transition,
-                 initial=mg3.initial,
-                 labeller=mg3.labeller)
+# mg_3 = MarkovGame(num_players=mg3.num_players,
+#                  state_space=mg3.state_space,
+#                  action_spaces=mg3.action_spaces,
+#                  transition=mg3.transition,
+#                  initial=mg3.initial,
+#                  labeller=mg3.labeller)
 
 
 class StructuredMarkovGame:
 
     # Based on the procedure described in http://incompleteideas.net/RandomMDPs.html
 
-    def __init__(self, state_size, action_sizes, num_rules, num_antecedents, deterministic=False):
+    def __init__(self, state_size, action_sizes, num_rules, num_antecedents, deterministic=False, single_init=False, sink_prob=0.1):
 
         assert num_rules < state_size
         assert num_antecedents < state_size
 
         self.deterministic = deterministic
+        self.sink_prob = sink_prob
         self.state_size = state_size
         self.action_sizes = action_sizes
         self.num_players = len(action_sizes)
         self.labels = ['l{}'.format(i) for i in range(state_size)]
         self.rules = self.make_rules(num_rules, num_antecedents)
-        if deterministic:
-            self.transitions = self.make_transitions()
-        self.initial = tuple([round(random.uniform(0,1),3) for _ in range(state_size)])
+        # if deterministic:
+        #     self.transitions = self.make_transitions()
+        round_to = 1 if single_init else 3
+        self.initial = tuple([round(random.uniform(0,1),round_to) for _ in range(state_size)])
         # self.initial = tuple([random.choice([0,1]) for _ in range(state_size)])
         self.state = self.reset()
 
@@ -254,6 +261,8 @@ class StructuredMarkovGame:
         rules = {}
         for a in itertools.product(*[range(a_s) for a_s in self.action_sizes]):
             rules[a] = {}
+            if random.uniform(0,1) < self.sink_prob:
+                continue
             changing_states = random.sample(range(self.state_size), k=num_rules)
             antecedents = random.sample(range(self.state_size), k=num_antecedents)
             for i in changing_states:
@@ -290,17 +299,21 @@ class StructuredMarkovGame:
     def label(self, state):
 
         return tuple([self.labels[i] for i in range(self.state_size) if state[i] == 1])
+
+    def featurise(self, state):
+
+        return torch.tensor(state, dtype=float)
                 
     def step(self, joint_action):
         
-        if self.deterministic:
-            self.state = self.transitions[self.state][joint_action]
-        else:
-            for k_1 in self.rules[joint_action].keys():
-                k_2 = tuple([self.state[a] for a in self.rules[joint_action]['antecedents']])
-                new_state = list(self.state)
-                new_state[k_1] = 1 if random.uniform(1,0) > self.rules[joint_action][k_1][k_2] else 0 
-            self.state = tuple(new_state)
+        # if self.deterministic:
+        #     self.state = self.transitions[self.state][joint_action]
+        # else:
+        new_state = list(self.state)
+        for k_1 in self.rules[joint_action].keys():
+            k_2 = tuple([self.state[a] for a in self.rules[joint_action][k_1]['antecedents']])
+            new_state[k_1] = 1 if random.uniform(1,0) > self.rules[joint_action][k_1][k_2] else 0 
+        self.state = tuple(new_state)
 
         return self.state
 

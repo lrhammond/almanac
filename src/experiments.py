@@ -16,7 +16,7 @@ import sys
 import torch
 from torch import tensor as tt
 
-from environments.test_envs import mg0
+# from environments.test_envs import mg0
 
 # Debugging
 test_hps = {'actual_dist': True,
@@ -24,7 +24,7 @@ test_hps = {'actual_dist': True,
             'buffers': { 'actors': {'size': 1000, 'batch': 32},
                          'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
-            'entropy_weight': 100.0,
+            'entropy_weight': 10.0,
             'epsilon': 0.00,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
@@ -70,7 +70,7 @@ def oc_test(root=os.getcwd(), max_steps=1000000, hps=test_hps, repetitions=1):
     objectives = (np.array((1.0,)),)
     # objectives = (np.array((1.0,0.0)),np.array((0.0,1.0)))
 
-    spec_controller = specs.Spec_Controller(specifications, load_from=root)
+    spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
     act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
@@ -116,7 +116,7 @@ def debug(root=os.getcwd(), max_steps=100000, hps=test_hps, repetitions=1):
     objectives = utils.normalise_objs(objectives)
     # objectives = (np.array((1.0,0.0)),np.array((0.0,1.0)))
 
-    spec_controller = specs.Spec_Controller(specifications, load_from=root)
+    spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
     act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
@@ -174,7 +174,7 @@ def exp0(root, id, max_steps, hps=exp0_hps, repetitions=10):
     else:
         pass
 
-    spec_controller = specs.Spec_Controller(specifications, load_from=root)
+    spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
     act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
@@ -208,13 +208,14 @@ exp1_hps = {'actual_dist': True,
                               'critics': 1000 }}
 
 def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=exp1_hps):
+    
+    assert num_specs in [1,2]
 
-    # location = './{}/experiments/{}'.format(root, id["num"])
     location = '{}/experiments/1'.format(root)
     name = '{}-{}-{}-{}'.format(num_states, num_actors, num_specs, num_run)
 
     # Specifications
-    labels = ['l{}'.format(i) for i in range(num_specs)]
+    labels = ['l{}'.format(i) for i in range(num_states)]
     possible_specs = [  lambda x : 'F {}'.format(x),\
                         lambda x : 'G {}'.format(x),\
                         lambda x : 'F G {}'.format(x),\
@@ -239,211 +240,84 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
     while not completed:
 
         # Form objectives
-        specifications = random.sample(possible_specs, num_specs)
+        specifications = [s(*random.sample(labels, k = s.__code__.co_argcount)) for s in random.sample(possible_specs, k=num_specs)]
         weights = random.sample(possible_weights, num_specs)
         sum_weights = sum(weights)
         objectives = [tuple(w / sum_weights for w in weights)]
 
         # Form env
-        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents)
-        env = envs.EnvWrapper('smg-{}-{}'.format(id['run'], num_run), 'smg', smg)
+        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True, single_init=True, sink_prob=0.8)
+        env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
 
         # Form input parameters and LDBAs
-        spec_controller = specs.Spec_Controller(specifications, load_from=root)
+        spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
         obs_size = env.get_obs_size() + sum(spec_controller.num_states)
         act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
         # Evaluate using PRISM
         spec_controller.save_props(location, name, objectives[0])
-        env.model.create_prism_model(num, spec_controller.specs, location)
+        env.model.create_prism_model(num_run, spec_controller.specs, location)
 
         # Sometimes the MMG and spec combination generated is trivial, if so we retry
-        
-
-        def run_prism(location, name, cuddmaxmem=16,javamaxmem=16, epsilon=0.001, maxiters=100000, timeout=72000):
-
-            run_name = 'prism -cuddmaxmem {}g -javamaxmem {}g -epsilon {} -maxiters {} -timeout {} '.format(cuddmaxmem, javamaxmem, epsilon, maxiters, timeout)
-            model_name = '{}/prism_models/{}.prism '.format(location, name)
-            props_name = '{}/prism_specs/{}.props -prop 1 '.format(location, name)
-            save_name = '> {}/prism_evaluations/{}-true.txt'.format(location, name)
-            t0 = time()
-            os(run_name + model_name + props_name + save_name)
-            t1 = time()
-            time = t1 - t0
-            
-
-            return prob, time
-        
-        prob, time = run_prism()
-        
-        if prob == 0.0:
+        prism_prob, prism_time = utils.run_prism(location, name, objectives[0])
+        if prism_prob == 0.0:
             continue
-        else:
-            prism_
-
-
-
-
-
-
-
-
-
-
-
-            completed = True
-            
-
-        prism -cuddmaxmem 16g -javamaxmem 16g -epsilon 0.001 -maxiters 100000 -timeout 72000 /home/hert5888/almanac/experiments/1/prism_models/1-1-1-2.prism /home/hert5888/almanac/experiments/1/prism_specs/1-1-1-2.props -prop 1 > /home/hert5888/almanac/experiments/1/prism_evaluations/1-1-1-2-true.txt
-
-        call_mifuntion_vers_1()
-        t1 = time()
-        call_mifunction_vers_2()
-        t2 = time()
-
-
-
-
-
-        run(learner, env, 10000, spec_controller, [], objectives, location, prefix, num_plot_points=1000)
-        with open('{}/scores/{}-scores.txt'.format(location, prefix), 'r') as f:
-            data = list(reader(f))
-            if np.var(np.array(d[0] for d in data[10:60])) > 0.01:
-                completed = True
-        if completed:
-            run(learner, env, max_steps - 10000, spec_controller, [], objectives, location, prefix)
-        else:
-            continue
-
-
-
+  
         # Create learner
         learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
-        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], num_run)
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id, num_run)
 
-        # Sometimes the MMG and spec combination generated is trivial, if so we retry
-        run(learner, env, 10000, spec_controller, [], objectives, location, prefix, num_plot_points=1000)
-        with open('{}/scores/{}-scores.txt'.format(location, prefix), 'r') as f:
-            data = list(reader(f))
-            if np.var(np.array(d[0] for d in data[10:60])) > 0.01:
-                completed = True
-        if completed:
-            run(learner, env, max_steps - 10000, spec_controller, [], objectives, location, prefix)
-        else:
-            continue
-
-        # Save specs and weights
-
-        # Save policy distributions
+        # Create state representations
         possible_game_states = list(itertools.product([0, 1], repeat=env.get_obs_size()))
         possible_spec_states = [[tuple((1 if i == j else 0) for i in range(s_s)) for j in range(s_s)] for s_s in spec_controller.num_states]
         possible_states = [utils.flatten(p_s) for p_s in itertools.product(possible_game_states, *possible_spec_states)]
         possible_state_tensors = torch.stack([tt(p_s).float() for p_s in possible_states])
-        p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
-        
-        # Create PRISM models
-        num = '{}-{}'.format(id["run"], r)
-        env.model.create_prism_model(num, spec_controller.specs, location)
-        env.model.create_prism_model(num, spec_controller.specs, location, policy=p_dists)
-        env.model.create_prism_model(num, spec_controller.specs, location, policy=p_dists, det=True)
 
-    # Save information about objectives
-    # spec_controller.save_model(location, env.name, id["run"])
-    # # with open("{}/{}-{}-reward_functions.pickle".format(location, env.name, id["run"]), 'wb') as f:
-    # #     pickle.dump(reward_functions, f)
-    # with open("{}/objectives/{}-{}-objectives.pickle".format(location, env.name, id["run"]), 'wb') as f:
-    #     pickle.dump(objectives, f)
+        # Compare against Almanac
+        probs = {'reg':[], 'det':[]}
+        almanac_time = 0.0
+        steps_taken = 0
+        finished = False
+        steps_per_round = 100
+        while not finished:
 
+            # Run Almamac
+            resume = False if steps_taken == 0 else True
+            t0 = time()
+            run(learner, env, steps_per_round, spec_controller, [], objectives, location, prefix, resume=resume, verbose=True, num_plot_points=10)
+            t1 = time()
+            almanac_time += (t1 - t0)
+            steps_taken += steps_per_round
 
-def old_exp1(state_size, num_actors, num_specs, run_num):
+            # Evaluate policies
+            p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
+            env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists)
+            env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, det=True)
+            policy_prob, _ = utils.run_prism(location, name, objectives[0], policy=True)
+            det_policy_prob, _ = utils.run_prism(location, name, objectives[0], policy=True, det=True)
+            probs['reg'].append(policy_prob)
+            probs['det'].append(det_policy_prob)
 
-    completed = False
-    while not completed:
+            # Check to see if we can stop
+            target = 1.0 if prism_prob == None else prism_prob
+            min_updates = int((hps['update_after']['actors'] * 10) / steps_per_round)
+            policy_converged = utils.converged(probs['reg'], target=target, tolerance=0.01, minimum_updates=min_updates)
+            det_policy_converged = utils.converged(probs['det'], target=target, tolerance=0.01, minimum_updates=min_updates)
+            if (steps_taken >= max_steps) or abs(policy_prob - prism_prob) < 0.01 or abs(det_policy_prob - prism_prob) < 0.01 or (policy_converged and det_policy_converged):
+                finished = True
 
-        specifications = random.sample(possible_specs, num_specs)
-        weights = random.sample(possible_weights, num_specs)
-        sum_weights = sum(weights)
-        weights = [w / sum_weights for w in weights]
-        action_sizes = [random.randint(2,4) for r in range(num_actors)]
-        mmg = envs.MatrixMarkovGame(state_size, action_sizes, labels, sparsity=0.6, structured_labels=True, nonlinearities=0.4)
-        
-        mmg_hps['env'] = mmg
-        mmg_hps['env_name'] = None
-        mmg_hps['labeller'] = mmg.labeller
-        mmg_hps['model_id'] = None
-        mmg_hps['specs'] = list(zip(specifications, weights))
+        # Record results
+        results = { 'prism_prob': prism_prob, 
+                    'prism_time': prism_time,
+                    'almanac_time': almanac_time,
+                    'policy_prob': policy_prob,
+                    'det_policy_prob': det_policy_prob,
+                    'policy_converged': policy_converged,
+                    'det_policy_converged': det_policy_converged }
+        with open('{}/results/{}.txt'.format(location, name), 'w') as f:
+            f.write(str(results))
 
-        # filename = 'results/experiment_1/scores/almanac-{}-{}-{}-{}.txt'.format(state_size, num_actors, num_specs, run_num)
-        # modelname = 'results/models/mmg/almanac-{}-{}-{}-{}.pickle'.format(state_size, num_actors, num_specs, run_num)
-        # with open(filename, 'w') as f:
-        #     f.write("State size: {}\n".format(state_size))
-        #     a_s_line = ', '.join([str(a) for a in action_sizes])
-        #     f.write("Action sizes: {}\n".format(a_s_line))
-        #     s_line = ', '.join(['{}: {}'.format(w, s) for s, w in zip(specifications, weights)])
-        #     f.write("Specs: {}\n".format(s_line))
-        #     f.write("Run: {}\n\n".format(run_num))
-
-        specs_name = 'results/experiment_1/specs/matrix_markov_games/{}-{}-{}-{}.props'.format(state_size, num_actors, num_specs, run_num)
-        with open(specs_name, 'w') as f:
-            if num_specs == 1:
-                f.write('Pmax=? [ X ( ' + specifications[0] + ' ) ]\n\n')
-                f.write('P=? [ X ( ' + specifications[0] + ' ) ]\n\n')
-            else:
-                f.write('multi( Pmax=? [ X ( ' + specifications[0] + ' ) ] , Pmax=? [ X ( ' + specifications[1] + ' ) ] )\n\n')
-                f.write('P=? [ X ( ' + specifications[0] + ' ) ]\n\n')
-                f.write('P=? [ X ( ' + specifications[1] + ' ) ]\n\n')
-
-        weights_name = 'results/experiment_1/specs/matrix_markov_games/{}-{}-{}-{}.weights'.format(state_size, num_actors, num_specs, run_num)
-        with open(weights_name, 'w') as f:
-            for w in weights:
-                f.write('{}\n'.format(w))
-
-        completed = run(mmg_hps, run_num, filename)
-
-        possible_game_states = list(itertools.product([0, 1], repeat=env.get_obs_size()))
-        possible_spec_states = []
-        for s_s in self.ldba_state_sizes:
-            spec_states = [[0 for i in range(s_s)] for j in range(s_s)]
-            for k in range(s_s):
-                spec_states[k][k] = 1
-            possible_spec_states.append([tuple(s_s) for s_s in spec_states])
-        possible_product_states = itertools.product(possible_game_states, *possible_spec_states)
-        self.possible_states = [tuple(utils.flatten(p_s)) for p_s in possible_product_states]
-        self.possible_state_tensors = torch.stack([tt(p_s).float() for p_s in self.possible_states])
-        self.policy_dists = None
-
-        if s % score_interval == 0:
-
-            # Sometimes the mmg generated is trivial, if so we return false and regenerate the mmg
-            if self.env_kind == 'mmg':
-                if len(first_50) < 60:
-                    first_50.append(recent_game_score/score_interval)
-                else:
-                    if not on2awinner:
-                        if np.var(first_50[10:]) < 0.01:
-                            return False
-                        else:
-                            on2awinner = True
-            
-            last_score_interval.append(recent_game_score / score_interval)
-
-            with open(filename, 'a') as f:
-                f.write('{}, {}, {}\n'.format(int(s / score_interval), average_game_score, recent_game_score / score_interval))
-            recent_game_score = 0
-
-            if s > (steps / 10) and average_game_score > best + 0.05:
-                if self.env_kind == 'mmg':
-                    self.policy_dists = dict([(p, self.policy(t, probs=True)) for p,t in zip(self.possible_states, self.possible_state_tensors)])
-                best = average_game_score
-
-        if len(last_score_interval) == score_interval:
-            if np.var(last_score_interval) < 0.001:
-                average_game_score = game_score / s
-                if average_game_score > best + 0.05:
-                    if self.env_kind == 'mmg':
-                        self.policy_dists = dict([(p, self.policy(t, probs=True)) for p,t in zip(self.possible_states, self.possible_state_tensors)])
-                    best = average_game_score
-                s = steps + 1
+        completed = True
 
 
 # Experiment 2
@@ -452,48 +326,6 @@ def old_exp1(state_size, num_actors, num_specs, run_num):
 # Experiment 3
 
 
-# Run experiment instance
-def old_run(hp, num, filename=None, modelname=None):
-
-    env = envs.EnvWrapper(hp['env_name'], hp['env_type'], hp['env'], hp['labeller'])
-    spec = []
-    for s in hp['specs']:
-        f = "specs/" + s[0] + '.pickle'
-        if os.path.isfile(f):
-            old_spec = pickle.load(open(f, "rb"))
-            spec.append(old_spec)
-        else:
-            new_spec = specs.Spec(s[0], s[1])
-            new_spec.save()
-            spec.append(new_spec)
-    model_constants = { 'discounts': hp['discounts'],
-                        'l2_reg': hp['l2_regulariser_weight'],
-                        'lrs': hp['learning_rates'] }
-    almanac = learners.Almanac(env, spec, hp['optimisers'], hp['buffers'], hp['models'], hp['local'], model_constants, hp['model_id'])
-    train_constants = { 'continue_prob': hp['continue_prob'],
-                        'epsilon': hp['epsilon'],
-                        'nat_grad_tolerance': hp['nat_grad_convergence_tolerance'],
-                        'neg_ent_reg': hp['actor_neg_entropy_regulariser_weight'],
-                        'non_det_reg': hp['actor_nondeterminism_regulariser_weight'],
-                        'sum_val_reg': hp['critic_sum_value_regulariser_weight'],
-                        'a_neg_var_reg': hp['actor_neg_variance_regulariser_weight'],
-                        'c_neg_var_reg': hp['critic_neg_variance_regulariser_weight'],
-                        'max_nat_grad_norm': hp['max_nat_grad_norm'],
-                        'max_critic_norm': hp['max_critic_norm'],
-                        'reward_weight': hp['reward_weight'] }
-    trained = almanac.train(hp['steps'], env, spec, hp['actual_state_dist'], hp['patient_updates'], train_constants, hp['run_id'], filename)
-    if hp['env_type'] == 'mmg':
-        env.model.create_prism_model(num, spec)
-        env.model.create_prism_model(num, spec, policy=almanac.get_policy_dists())
-        env.model.create_prism_model(num, spec, policy=almanac.get_policy_dists(), det=True)
-    if modelname != None:
-        almanac.lrs = None
-        almanac.patient_buffer = None
-        almanac.hasty_buffer = None
-        with open(modelname, 'wb') as f:
-            pickle.dump(almanac, f)
-    
-    return trained
 
 def make_learner(learner_name, obs_size, act_sizes, num_rewards, num_objectives, hps):
 
@@ -506,30 +338,7 @@ def make_learner(learner_name, obs_size, act_sizes, num_rewards, num_objectives,
     return learner
 
 
-def experiment(root, id, env, formulae, max_steps, reward_functions, objectives, learner_name, repetitions=1):
-
-    # Form input parameters and LDBAs
-    location = '{}/experiments/{}'.format(root, id["num"])
-    spec_controller = specs.Spec_Controller(formulae)
-    obs_size = env.get_obs_size() + sum(spec_controller.num_states)
-    act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
-
-    # Run experiment
-    for r in range(repetitions):
-
-        learner = make_learner(learner_name, obs_size, act_sizes)
-        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], r)
-        run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix)
-
-    # Save information about objectives
-    spec_controller.save_model(location, env.name, id["run"])
-    with open("{}/{}-{}-reward_functions.pickle".format(location, env.name, id["run"]), 'wb') as f:
-        pickle.dump(reward_functions, f)
-    with open("{}/objectives/{}-{}-objectives.pickle".format(location, env.name, id["run"]), 'wb') as f:
-        pickle.dump(objectives, f)
-
-
-def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=False, verbose=False):
+def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=False, resume=False, verbose=True, until_converged=False):
 
     # Check for stupid mistakes
     num_specs = len(spec_controller.specs)
@@ -551,10 +360,16 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
     score_interval = int(max_steps / num_plot_points)
     recent_scores = [0.0 for _ in objectives]
     total_scores = [0.0 for _ in objectives]
-    postfix = "-eval" if evaluate else ""
-    with open('{}/scores/{}-scores{}.txt'.format(location, prefix, postfix), 'w') as f:
+    all_recents = [[] for _ in objectives]
+
+    suffix = "-eval" if evaluate else ""
+    mode = 'a' if resume else 'w'
+    with open('{}/scores/{}{}.txt'.format(location, prefix, suffix), mode) as f:
         obj_list = [str(i) for i in range(num_objectives)]
-        f.write("recent_" + ",recent_".join(obj_list) + ",total_" + ",total_".join(obj_list) + "\n")
+        if not resume:
+            f.write("recent_" + ",recent_".join(obj_list) + ",total_" + ",total_".join(obj_list) + "\n")
+        else:
+            f.write(",".join(2 * [None for _ in range(num_objectives)]))
 
     # Avoid duplicating the computation of automaton transitions
     if learner.hps['augment_data']:
@@ -589,40 +404,37 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             else:
                 is_e_t = False
                 new_game_state, done = env.step(joint_action)
-            
-
-            if verbose:
-                print(env.model.overcooked)
-
+    
+            # if verbose:
+            #     print(env.model.overcooked)
 
             # Update LDBAs
             label_set = env.label(new_game_state)
             new_spec_states, acceptances = spec_controller.step(e_ts, label_set)
 
-            for k in env.model.labels.keys():
-                for a in [0,1]:
-                    if env.model.labels[k][a]:
-                        print("Agent {} did {}".format(a, k))
-                        print("hurrah")
+            # for k in env.model.labels.keys():
+            #     for a in [0,1]:
+            #         if env.model.labels[k][a]:
+            #             print("Agent {} did {}".format(a, k))
+            #             print("hurrah")
 
             # if env.model.labels['tomato_pickup'][0] or env.model.labels['tomato_pickup'][1]:
             #     print("HYPE")
 
-            held = False
-            if new_game_state.players[0].held_object != None and game_state.players[0].held_object == None:
-                print("Agent 0 is holding {}".format(new_game_state.players[0].held_object))
-                held = True
-            if new_game_state.players[1].held_object != None and game_state.players[1].held_object == None:
-                print("Agent 1 is holding {}".format(new_game_state.players[1].held_object))
-                held = True
+            # held = False
+            # if new_game_state.players[0].held_object != None and game_state.players[0].held_object == None:
+            #     print("Agent 0 is holding {}".format(new_game_state.players[0].held_object))
+            #     held = True
+            # if new_game_state.players[1].held_object != None and game_state.players[1].held_object == None:
+            #     print("Agent 1 is holding {}".format(new_game_state.players[1].held_object))
+            #     held = True
 
-            if held:
-                print("woah")
+            # if held:
+            #     print("woah")
 
-            if label_set != []:
-                print(label_set)              
-                print("wahey!")
-
+            # if label_set != []:
+            #     print(label_set)              
+            #     print("wahey!")
 
             # Form new state vectors
             f_new_game_state = env.featurise(new_game_state)
@@ -685,8 +497,9 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
                 total_scores = [total_scores[i] + recent_scores[i] for i in range(num_objectives)]
                 rs_s = ",".join(["{:.5f}".format(rs / score_interval) for rs in recent_scores])
                 ts_s = ",".join(["{:.5f}".format(ts / s) for ts in total_scores])
-                print("Average Score ({}/{}): {} (recent)   {} (total)".format(int(s / score_interval), num_plot_points, rs_s, ts_s))
-                with open('{}/scores/{}-scores{}.txt'.format(location, prefix, postfix), 'a') as f:
+                if verbose:
+                    print("Average Score ({}/{}): {} (recent)   {} (total)".format(int(s / score_interval), num_plot_points, rs_s, ts_s))
+                with open('{}/scores/{}{}.txt'.format(location, prefix, suffix), 'a') as f:
                     f.write(rs_s + ',' + ts_s + '\n')
                 recent_scores = [0.0 for _ in objectives]
 
@@ -697,4 +510,5 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
     return
 
 # debug()
-oc_test()
+# oc_test()
+exp1(num_specs=2, num_actors=2, num_states=3, num_run=1, root=os.getcwd(), id=1, max_steps=100000, hps=test_hps)

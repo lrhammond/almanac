@@ -341,7 +341,7 @@ class Almanac:
             # Check whether to finish updating
             e += 1
             temp_recent_losses.append(loss)
-            if (not until_converged and e > num_updates) or utils.losses_converged(temp_recent_losses):
+            if (not until_converged and e > num_updates) or utils.converged(temp_recent_losses):
                 finished = True
     
     def update_actors(self, data, objectives, until_converged=True, num_updates=None):
@@ -435,8 +435,8 @@ class Almanac:
             temp_recent_losses.append(loss)
             if until_converged:
                 if self.k == None:
-                    finished = utils.losses_converged(temp_recent_losses)
-                elif self.k == self.num_objectives - 1 and utils.losses_converged(self.recent_utilities[self.k]):
+                    finished = utils.converged(temp_recent_losses)
+                elif self.k == self.num_objectives - 1 and utils.converged(self.recent_utilities[self.k]):
                     finished = True
             elif e > num_updates:
                 finished = True
@@ -601,11 +601,11 @@ class Almanac:
 
         return power(self.hps['continue_prob'] * ones_like(ts), -ts) * gammas if self.hps['actual_dist'] else power(self.hps['continue_prob'] * ones_like(ts), -ts)
 
-    def save_model(self, root, prefix):
+    def save_model(self, location, prefix):
         for i in range(self.num_players):
-            torch.save(self.actors[i].state_dict(), '{}/models/{}-actor-{}.pt'.format(root, prefix, i))
+            torch.save(self.actors[i].state_dict(), '{}/models/{}-actor-{}.pt'.format(location, prefix, i))
         for j in range(self.num_rewards):
-            torch.save(self.critics[j].state_dict(), '{}/models/{}-critic-{}.pt'.format(root, prefix, j))
+            torch.save(self.critics[j].state_dict(), '{}/models/{}-critic-{}.pt'.format(location, prefix, j))
 
     def load_model(self, root, prefix):
         for i in range(self.num_players):
