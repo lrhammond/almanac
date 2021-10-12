@@ -13,6 +13,7 @@ import pickle
 from torch.nn.functional import feature_alpha_dropout, one_hot as one_hot
 import torch.tensor as tt
 
+
 # Specification controller class
 
 class Spec_Controller:
@@ -23,13 +24,13 @@ class Spec_Controller:
         if load_from != None:
             self.specs = []
             for f in formulae:
-                filename = load_from + 'specs/{}.pickle'.format(f)
+                filename = load_from + '/specs/{}.pickle'.format(f)
                 if os.path.isfile(f):
                     old_spec = pickle.load(open(filename, "rb"))
                     self.specs.append(old_spec)
                 else:
                     new_spec = Spec(f)
-                    new_spec.save(save_to)
+                    new_spec.save(save_to + '/specs/')
                     self.specs.append(new_spec)
         else:
             self.specs = [Spec(f) for f in formulae]
@@ -134,7 +135,7 @@ class Spec:
 
     def save(self, location):
 
-        with open("{}/specs/{}.pickle".format(location, self.formula), 'wb') as f:
+        with open("{}.pickle".format(location, self.formula), 'wb') as f:
             pickle.dump(self, f)
         
     def create_prism_model(self, spec_num, num_players, to_file=False, filename=None):
@@ -389,3 +390,8 @@ class LDBA:
         while os.path.isfile(filename):
             filename = 'temp_%032x.hoa' % random.getrandbits(128)
         return filename
+
+
+l = LDBA("F G a")
+
+print("hello")

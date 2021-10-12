@@ -1,6 +1,10 @@
 ### Learners ###
 
+# Note, the RMAPPO code is primarily taken from work by Kamal Ndousse
+# His original repository can be found at https://github.com/kandouss/kamarl and is licensed under the MIT License (also included for reference within this repository)
+
 import torch
+from torch.distributions.transforms import PowerTransform
 import torch.tensor as tt
 import random
 from torch import pow as power
@@ -68,6 +72,160 @@ class DNN(nn.Module):
             pass
         else:
             print("Error: DNN output must be \'linear\' or \'softmax\' or \'beta\' or \'gaussian\'")
+
+
+# Basic LSTM module
+class LSTM(nn.Module):
+
+    @torch.jit.script
+    def lstm_forward(X, hx, weight_ih, weight_hh, bias_ih, bias_hh):
+        hx = hx.unsqueeze(-2)
+        
+        for k, x in enumerate(X.unbind(-2)):
+            hx_ = torch.stack(torch._VF.lstm_cell( x, hx[...,k,:].unbind(0),
+                                weight_ih, weight_hh, bias_ih, bias_hh))
+            hx = torch.cat((hx, hx_.unsqueeze(2)), dim=-2)
+
+        return hx[:, :, 1:]
+
+    class SeqLSTM(nn.RNNCellBase):
+        """ The built-in PyTorch RNN modules only return the hidden states for the final step in an input 
+        sequence. This LSTM module returns all the intermediate hidden states, and does so by looping over the
+        intermediate hidden states. The actual looping is accelerated by the jit-compiled method `lstm_forward`
+        """
+
+        def __init__(self, input_size, hidden_size):
+
+            super().__init__(input_size=input_size, hidden_size=hidden_size, bias=True, num_chunks=4)
+            self.input_size = input_size
+            self.hidden_size = hidden_size
+            self.hx_cx = self.ac.empty_hidden()
+
+        def forward(self, X, hx=None):
+
+            out_shape = (*X.shape[:-1], self.hidden_size)
+            while X.dim() < 3:
+                X = X.unsqueeze(0)
+
+            self.check_forward_input(X[:,0,:])
+            
+            if hx is None:
+                hx = torch.zeros(2, X.size(0), self.hidden_size, dtype=X.dtype, device=X.device)
+            else:
+                assert len(hx) == 2
+                if isinstance(hx, tuple):
+                    hx = torch.stack(hx)
+                if hx.dim() == 2: # If the hidden state has no batch dimension, make one up
+                    hx = hx.unsqueeze(1)
+                try:
+                    self.check_forward_hidden(X[:,0,:], hx[0], '[0]')
+                    self.check_forward_hidden(X[:,0,:], hx[1], '[1]')
+                except:
+                    import pdb; pdb.set_trace()
+
+            res = self.lstm_forward(
+                X, hx,
+                self.weight_ih, self.weight_hh,
+                self.bias_ih, self.bias_hh,
+            )
+
+            return res.reshape((2, *out_shape))
+        
+        def empty_hidden(self):
+        
+            return torch.zeros((2, self.hidden_size),
+                                dtype=torch.float32,
+                                device=next(self.parameters()).device)
+
+    def __init__(self, in_size, pol_out_size, val_out_size, pre_hidden, lstm, act_hidden, val_hidden):
+
+        super(LSTM,self).__init__()
+
+        self.in_size = in_size
+        self.pol_out_sizes = pol_out_size
+        self.val_out_size = val_out_size
+        self.pre_dnn = DNN(in_size, lstm[0], 'linear', pre_hidden)
+        self.lstm = self.SeqLSTM(input_size=lstm[0], hidden_size=lstm[1])
+        self.act_dnn = DNN(self.lstm.hidden_size, pol_out_size, 'softmax', act_hidden)
+        self.val_dnn = DNN(self.lstm.hidden_size, val_out_size, 'linear', val_hidden)
+
+    def forward(self, x, hx=None, return_old_hidden=False):
+        
+        if hx == None:
+            hx = self.lstm.hx_cx
+        old_hidden = self.lstm.hx_cx.detach()
+        x = self.pre_dnn(x)
+        x, hx = self.lstm(x, hx)
+        self.lstm.hx_cx = torch.stack((x, hx))
+
+        if return_old_hidden:
+            return self.act_dnn(x), self.val_dnn(x), old_hidden
+        else:
+            return self.act_dnn(x), self.val_dnn(x)
+        
+    def reset(self):
+
+        self.lstm.hx_cx = self.lstm.empty_hidden()
+
+    def get_hidden_state(self):
+
+        return self.lstm.hx_cx.detach()
+
+    
+# Agent buffer
+class AgentBuffer:
+
+    def __init__(self, buffer_size, batch_size):
+
+        self.memory = deque(maxlen=buffer_size)
+        self.batch_size = batch_size
+        self.experiences = namedtuple("Experience", 
+                                        field_names=["time",
+                                                    "state",
+                                                    "hx_cx",
+                                                    "joint_action",
+                                                    "rewards",
+                                                    "next_state",
+                                                    "next_hx_cx",
+                                                    "gamma",
+                                                    "discount",
+                                                    "done",
+                                                    ])     
+
+    def add(self, time, state, hx_cx, joint_action, reward, next_state, next_hx_cx, gamma, discount, done):
+        
+        e = self.experiences(time, state, hx_cx, joint_action, reward, next_state, next_hx_cx, gamma, discount, done)
+        self.memory.append(e)
+        
+    def sample(self, sample_all=False):
+
+        if len(self.memory) == 0:
+            return None
+        elif sample_all or len(self.memory) < self.batch_size:
+            experiences = self.memory
+        else:
+            experiences = random.sample(self.memory, k=self.batch_size)
+
+        times = tt([e.time for e in experiences if e is not None],dtype=torch.long).view(-1,1).to(device)
+        states = torch.stack([e.state for e in experiences if e is not None]).float().to(device)
+        joint_actions = [tt([e.joint_action[i] for e in experiences if e is not None],dtype=torch.long).view(-1,1).to(device) for i in range(len(experiences[0].joint_action))]
+        rewards = [tt([e.reward[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].reward))]
+        next_states = torch.stack([e.next_state for e in experiences if e is not None]).float().to(device)
+        gammas = [tt([e.gamma[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].gamma))]
+        discounts = [tt([e.discount[j] for e in experiences if e is not None]).view(-1,1).float().to(device) for j in range(len(experiences[0].discount))]
+        dones = tt([e.done for e in experiences if e is not None],dtype=torch.int8).view(-1,1).to(device)
+        hx_cxs = [tt([e.hx_cx[i] for e in experiences if e is not None]).view(-1,1).to(device) for i in range(len(experiences[0].joint_action))]
+        next_hx_cxs = [tt([e.next_hx_cx[i] for e in experiences if e is not None]).view(-1,1).to(device) for i in range(len(experiences[0].joint_action))]
+
+        return (times, states, hx_cxs, joint_actions, rewards, next_states, next_hx_cxs, gammas, discounts, dones)
+    
+    def clear(self):
+
+        self.memory.clear()
+    
+    def __len__(self):
+        return len(self.memory)
+    
 
 
 # Critic buffer module
@@ -173,10 +331,11 @@ class ActorBuffer:
 
 
 # Set up actor functions 
-def set_up_actors(parametrization, obs_size, act_sizes, hidden):
+def set_up_actors(parametrization, obs_size, act_sizes, shape):
 
     if parametrization == 'dnn':
         actors = []
+        hidden = shape
         for i in range(len(act_sizes)):
             actor = DNN(obs_size, [act_sizes[i]], 'softmax', hidden)
             actors.append(actor)
@@ -185,8 +344,16 @@ def set_up_actors(parametrization, obs_size, act_sizes, hidden):
         for i in range(len(act_sizes)):
             actor = DNN(obs_size, [act_sizes[i]], 'softmax', [], bias=False)
             actors.append(actor)
+    elif parametrization == 'lstm':
+        actors = []
+        pre = shape[0]
+        memory = shape[1]
+        post = shape[2]
+        for i in range(len(act_sizes)):
+            actor = LSTM(obs_size, [act_sizes[i]], 'softmax', pre, memory, post)
+            actors.append(actor)  
     else:
-        print("Error: Actor must be \'dnn\' or \'linear\')")
+        print("Error: Actor must be \'dnn\' or \'linear\' or \'lstm\')")
     for actor in actors:
         actor.to(device)
 
@@ -194,14 +361,20 @@ def set_up_actors(parametrization, obs_size, act_sizes, hidden):
 
 
 # Set up critic functions 
-def set_up_critics(parametrization, obs_size, num_rewards, hidden):
+def set_up_critics(parametrization, obs_size, num_rewards, shape):
 
     if parametrization == 'dnn':
+        hidden = shape
         critics = [DNN(obs_size, [1], 'linear', hidden) for j in range(num_rewards)]
     elif parametrization == 'linear':
         critics = [DNN(obs_size, [1], 'linear', [], bias=False) for j in range(num_rewards)]
+    elif parametrization == 'lstm':
+        pre = shape[0]
+        memory = shape[1]
+        post = shape[2]
+        critics = [LSTM(obs_size, [1], 'linear', pre, memory, post) for j in range(num_rewards)]
     else:
-        print("Error: Critic must be \'dnn\' or \'linear\')")
+        print("Error: Critic must be \'dnn\' or \'linear\' or \'lstm\')")
     for critic in critics:
         critic.to(device)
 
@@ -294,8 +467,8 @@ class Almanac:
         self.kl_weight = 1.0
        
         # Networks
-        self.actors = set_up_actors(self.hps['models']['actors']['type'], self.obs_size, self.act_sizes, hidden=self.hps['models']['actors']['shape'])
-        self.critics = set_up_critics(self.hps['models']['critics']['type'], self.obs_size, self.num_rewards, hidden=self.hps['models']['critics']['shape'])
+        self.actors = set_up_actors(self.hps['models']['actors']['type'], self.obs_size, self.act_sizes, shape=self.hps['models']['actors']['shape'])
+        self.critics = set_up_critics(self.hps['models']['critics']['type'], self.obs_size, self.num_rewards, shape=self.hps['models']['critics']['shape'])
         
         # Optimisers
         self.actor_optimisers = set_up_optimisers(self.actors, self.hps['optimisers']['actors'], l2=self.hps['l2_weight'])
@@ -303,7 +476,7 @@ class Almanac:
 
         # Buffers
         self.critic_buffers = [CriticBuffer(buffer_size=self.hps['buffers']['critics']['size'], batch_size=self.hps['buffers']['critics']['batch']) for c in self.critics]
-        self.actor_buffer = ActorBuffer(buffer_size=self.hps['buffers']['actors']['size'], batch_size=self.hps['buffers']['actors']['size'])
+        self.actor_buffer = ActorBuffer(buffer_size=self.hps['buffers']['actors']['size'], batch_size=self.hps['buffers']['actors']['batch'])
 
         # Lagrange multipliers
         self.lagrange_multipliers = (self.num_objectives - 1) * [tt(0.0)]
@@ -527,21 +700,21 @@ class Almanac:
             self.Z[j][tuple(prod_state.tolist())] = (info["t"], prod_state, info["a"])
         
             # Perform patient updates if possible
-            if self.hps['patient_updates']:
-                add_stored_experiences = False
-                if (j < num_specs and info["F"][j]):
-                    self.gammas[j] *= self.hps['gamma_Phi']
-                    # r = self.hps['spec_reward']
-                    add_stored_experiences = True
-                elif (j >= num_specs and not info["is_e_t"]):
-                    self.gammas[j] *= discounts[j]
-                    # r = info["R"][j - self.num_specs](info["s"], info["a"], info["s'"])
-                    add_stored_experiences = True
-                elif torch.allclose(self.critics[j](new_prod_state), tt(0.0), rtol=0.0, atol=1e-02):
-                    # r = 0.0
-                    add_stored_experiences = True
-            else:
+            add_stored_experiences = False
+            if (j < num_specs and info["F"][j]):
+                self.gammas[j] *= self.hps['gamma_Phi']
+                # r = self.hps['spec_reward']
                 add_stored_experiences = True
+            elif (j >= num_specs and not info["is_e_t"]):
+                self.gammas[j] *= discounts[j]
+                # r = info["R"][j - self.num_specs](info["s"], info["a"], info["s'"])
+                add_stored_experiences = True
+            elif torch.allclose(self.critics[j](new_prod_state), tt(0.0), rtol=0.0, atol=1e-02):
+                # r = 0.0
+                add_stored_experiences = True
+            elif not self.hps['patient_updates']:
+                add_stored_experiences = True
+         
             if add_stored_experiences:
                 for k in self.Z[j].keys():
                     (t, s, a) = self.Z[j][k]
@@ -612,3 +785,260 @@ class Almanac:
             self.actors[i].load_state_dict(torch.load(('{}/models/{}-actor-{}.pt'.format(root, prefix, i))))
         for j in range(self.num_rewards):
             self.critics[j].load_state_dict(torch.load(('{}/models/{}-critic-{}.pt'.format(root, prefix, j))))
+
+
+# RMAPPO module
+class RMAPPO:
+
+    def __init__(self, obs_size, act_sizes, num_rewards, num_objectives, hps, load_from=None):
+        
+        # TODO
+        if load_from != None:
+            pass
+        else:
+            pass
+
+        self.name = 'rmappo'
+
+        # Parameters
+        self.act_sizes = act_sizes
+        self.hps = hps
+        self.lrs = set_up_lrs(self.hps['learning_rates'])
+        self.num_objectives = num_objectives
+        self.num_players = len(self.act_sizes)
+        self.num_rewards = num_rewards
+        self.obs_size = obs_size
+
+        # Values to maintain
+        self.updates = 0
+        self.gammas = self.num_rewards * [1.0]
+        self.u = [0.0 for _ in range(num_objectives - 1)]
+        self.k = 0 if self.hps['sequential'] else None
+        self.recent_utilities = [deque(maxlen=25) for i in range(num_objectives)]
+        self.kl_weight = 1.0
+       
+        # Networks
+        shapes = self.hps['models']
+        self.agents = [LSTM(self.obs_size, a_s, self.num_rewards, shapes['pre_hidden'], shapes['lstm'], shapes['act_hidden'], shapes['val_hidden']) for a_s in self.act_sizes]
+        for agent in self.agents:
+            agent.to(device)
+
+        # Optimisers
+        self.optimisers = set_up_optimisers(self.agents, self.hps['optimisers'], l2=self.hps['l2_weight'])
+
+        # Buffers
+        self.buffer = AgentBuffer(buffer_size=self.hps['buffers']['size'], batch_size=self.hps['buffers']['batch'])
+
+
+    def update_agents(self, data, objectives, until_converged=True, num_updates=None):
+
+        times, states, hx_cxs, joint_actions, rewards, next_states, next_hx_cxs, gammas, discounts, dones = data
+        for i in range(self.num_players):
+            self.agents[i].train()
+
+        # Form state dists for weighting samples
+        dists = [self.state_dist(times, gamma).to(device) for gamma in gammas]
+        obj_dists = [sum([o[j] * dists[j] for j in range(self.num_rewards)]) for o in objectives]
+        
+        # Form targets and useful quantities for updates
+        with torch.no_grad():
+            
+            all_probs = []
+            all_vals = []
+            all_next_vals = []
+            for agent in self.agents:
+                probs, vals = agent(states, hx=hx_cxs)
+                _, next_vals = agent(next_states, hx=next_hx_cxs)
+                all_probs.append(probs)
+                all_vals.append(vals)
+                all_next_vals.append(next_vals)
+            mean_vals = sum(all_vals)/self.num_players
+            mean_next_vals = sum(all_next_vals)/self.num_players
+
+            critic_targets = [rewards[j].to(device) + (discounts[j] * mean_next_vals[j] * (1-dones)).to(device) for j in range(self.num_rewards)]
+
+            advantages = [critic_targets[j] - mean_vals[j] for j in range(self.num_rewards)]
+            if self.hps['normalise_advantages']:
+                advs = [(a - a.mean()) / (a.std() + 1e-8) for a in advantages]
+            else:
+                advs = advantages
+            obj_advs = [sum([o[j] * dists[j] * advs[j] for j in range(self.num_rewards)]) for o in objectives]
+
+            old_log_probs = sum([torch.gather(torch.log(all_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
+        
+        # Update networks
+        finished = False
+        temp_recent_losses = deque(maxlen=25)
+        if num_updates == None:
+            num_updates = len(times)
+        e = 0
+        while not finished:
+
+            # Form weights
+            objective_range = self.k + 1 if self.k != None else self.num_objectives
+            objective_weights = self.compute_weights(objective_range, e)
+            relative_kl_weights = [self.kl_weight * objective_weights[i] / sum(objective_weights) for i in range(objective_range)] + [0.0 for _ in range(objective_range, self.num_objectives)]
+
+            # Get useful quantities
+            all_probs = []
+            all_vals = []
+            for agent in self.agents:
+                probs, vals = agent(states, hx_cxs)
+                all_probs.append(probs)
+                all_vals.append(vals)
+            mean_vals = sum(all_vals)/self.num_players
+            new_log_probs = sum([torch.gather(torch.log(all_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
+            
+            # Form losses for critic
+            critic_loss = ((dists * (mean_vals - critic_targets)**2).mean()).to(device)
+
+            # Form losses for actor
+            log_ratio = new_log_probs - old_log_probs
+            # log_ratio = (new_action_log_probs.masked_fill(new_action_log_probs == -np.inf, 0.0) - old_action_log_probs).to(device)
+            ratio = torch.exp(log_ratio)
+            kl_penalty = ratio * log_ratio
+            actor_loss = sum([objective_weights[k] * (ratio * obj_advs[k] - self.kl_weight * obj_dists[k] * kl_penalty) for k in range(len(objectives))]).mean()
+
+            # Form additional entropy loss
+            if self.hps['entropy_weight'] != 0.0:
+                entropy_loss = sum([torch.unsqueeze((p * torch.log(p)).sum(dim=1), 1) for p in all_probs]).mean()
+            else:
+                entropy_loss = 0.0
+
+            # Backpropagate
+            loss = critic_loss + actor_loss + entropy_loss
+            for i in range(self.num_players):
+                self.optimisers[i].zero_grad()
+            loss.backward()
+            for i in range(self.num_players):
+                self.optimisers[i].step()
+                self.agents[i].eval()
+
+            # Update KL weight term as in the original PPO paper
+            mean_kl = kl_penalty.mean()
+            if mean_kl < self.hps['kl_target'] / 1.5:
+                self.kl_weight *= 0.5
+            elif mean_kl > self.hps['kl_target'] * 1.5:
+                self.kl_weight *= 2
+
+            # Update Lagrange multipliers
+            with torch.no_grad():
+                for k in range(self.num_objectives):
+                    self.recent_utilities[k].append((obj_dists[k] * (ratio * obj_advs[k] - relative_kl_weights[k] * kl_penalty)).mean())
+            self.update_lagrange_multipliers(e)
+
+            # Check whether to finish updating
+            e += 1
+            temp_recent_losses.append(loss)
+            if until_converged:
+                if self.k == None:
+                    finished = utils.converged(temp_recent_losses)
+                elif self.k == self.num_objectives - 1 and utils.converged(self.recent_utilities[self.k]):
+                    finished = True
+            elif e > num_updates:
+                finished = True
+
+
+    def update_lagrange_multipliers(self, e, max_lm=100.0):
+        
+        # Save relevant loss information for updating Lagrange parameters
+        if self.k != None:
+            if not utils.converged(self.recent_utilities[self.k]):
+                if self.k != self.num_objectives - 1:
+                    self.u[self.k] = torch.tensor(self.recent_utilities[self.k]).mean()
+            else:
+                self.k = 0 if self.k == self.num_objectives - 1 else self.k + 1
+        else:
+            for i in range(self.num_objectives - 1):
+                self.u[i] = torch.tensor(self.recent_utilities[i]).mean()
+
+        # Update Lagrange parameters
+        r = self.k if self.k != None else self.num_objectives - 1
+        for i in range(r):
+            self.lagrange_multipliers[i] += self.lrs['lagrange_multiplier'][i](e) * (self.u[i] - self.recent_utilities[i][-1])
+            self.lagrange_multipliers[i] = min(max(self.lagrange_multipliers[i], 0.0), max_lm)
+
+    # Compute weights for lexicographic objectives
+    def compute_weights(self, objective_range, e):
+
+        objective_weights = []
+        for k in range(objective_range - 1):
+            if self.k != None:
+                w = self.lrs['actors'][objective_range - 1] * self.lagrange_multipliers[k]
+            else:
+                w = self.lrs['actors'][k](e) + self.lagrange_multipliers[k] * sum([self.lrs['actors'][kk](e) for kk in range(k+1, objective_range)])
+            objective_weights.append(w)
+        objective_weights.append(self.lrs['actors'][objective_range - 1](e))
+
+        return objective_weights
+
+    # Perform (epsilon-greedy) joint action
+    def act(self, state):
+
+        if random.random() < self.hps['epsilon']:
+            joint_action = [tt(random.choice(range(act_size))) for act_size in self.act_sizes]
+        else:
+            joint_action = [Categorical(agent(state)[0]).sample() for agent in self.agents]
+
+        return joint_action
+
+    # Reset hidden states
+    def reset(self):
+
+        for agent in self.agents:
+            agent.reset()
+
+    def get_hidden_states(self):
+
+        return [agent.get_hidden_state() for agent in self.agents]
+
+    # Take a learning step
+    def step(self, info, objectives):
+
+        num_specs = len(info["F"][0])
+
+        # Reset Gamma terms if needed
+        if info["t"] == 0:
+            self.gammas = self.num_rewards * [1.0]
+
+        # Form product states
+        state = info["f(s)"]
+        next_state = info["f(s')"]
+
+        # Form scalar rewards and discounts
+        scalar_rewards = [r_f['reward'](info["s"], info["a"], info["s'"]) for r_f in info["R"]]
+        scalar_discounts = [r_f['discount'] for r_f in info["R"]]
+
+        # Form all rewards and discounts
+        rewards = [self.hps['spec_reward'] * f for f in info["F"]] + scalar_rewards
+        discounts = [1 - f * (1 - self.hps['gamma_Phi']) for f in info["F"]] + scalar_discounts
+
+        # Update gammas
+        for j in range(self.num_rewards):
+            if (j < num_specs and info["F"][j]):
+                self.gammas[j] *= self.hps['gamma_Phi']
+                add_stored_experiences = True
+            elif (j >= num_specs and not info["is_e_t"]):
+                self.gammas[j] *= discounts[j]
+
+        # Add datum
+        self.buffer.add(time=info["t"], state=state, hx_cx=info["h"], joint_action=info["a"], reward=rewards, next_state=next_state, next_hx_cx=info["h'"], gamma=self.gammas, discount=discounts, done=info["D"])
+
+        # If enough data has been collected update the agents and the Lagrange multipliers
+        if len(self.buffer) > self.hps['update_after']:
+            data = self.buffer.sample(sample_all=True)
+            self.update_agents(data, objectives, until_converged=self.hps['until_converged'], num_updates=self.hps['num_updates'])
+            self.buffer.clear()
+            self.updates += 1
+
+    def state_dist(self, ts, gammas):
+
+        return power(self.hps['continue_prob'] * ones_like(ts), -ts) * gammas if self.hps['actual_dist'] else power(self.hps['continue_prob'] * ones_like(ts), -ts)
+
+    def save_model(self, location, prefix):
+        for i in range(self.num_players):
+            torch.save(self.agents[i].state_dict(), '{}/models/{}-agent-{}.pt'.format(location, prefix, i))
+
+    def load_model(self, root, prefix):
+        for i in range(self.num_players):
+            self.agents[i].load_state_dict(torch.load(('{}/models/{}-agent-{}.pt'.format(root, prefix, i))))

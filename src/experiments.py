@@ -51,7 +51,7 @@ test_hps = {'actual_dist': True,
                               'critics': 10 }}
 
 
-def oc_test(root=os.getcwd(), max_steps=1000000, hps=test_hps, repetitions=1):
+def oc_test(root=utils.get_root(), max_steps=1000000, hps=test_hps, repetitions=1):
 
     location = '{}/experiments/oc_test'.format(root)
 
@@ -87,7 +87,7 @@ def oc_test(root=os.getcwd(), max_steps=1000000, hps=test_hps, repetitions=1):
 
 
 
-def debug(root=os.getcwd(), max_steps=100000, hps=test_hps, repetitions=1):
+def debug(root=utils.get_root(), max_steps=100000, hps=test_hps, repetitions=1):
 
     location = '{}/experiments/debug'.format(root)
 
@@ -187,7 +187,7 @@ def exp0(root, id, max_steps, hps=exp0_hps, repetitions=10):
         run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000)
 
 # Experiment 1
-exp1_hps = {'actual_dist': True,
+exp1_hps ={'actual_dist': True,
             'augment_data': True,
             'buffers': { 'actors': {'size': 1000, 'batch': 32},
                          'critics': {'size': 1000, 'batch': 32} },
@@ -203,6 +203,7 @@ exp1_hps = {'actual_dist': True,
             'optimisers': { 'actors': 'sgd',
                             'critics': 'sgd' },
             'patient_updates': True,
+            'sequential': False,
             'spec_reward': 10,
             'update_after': { 'actors': 1000,
                               'critics': 1000 }}
@@ -321,6 +322,107 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
 
 # Experiment 2
+exp2_hps_almanac ={'actual_dist': True,
+            'augment_data': False,
+            'buffers': { 'actors': {'size': 1000, 'batch': 32},
+                         'critics': {'size': 1000, 'batch': 32} },
+            'continue_prob': 0.9,
+            'entropy_weight': 10.0,
+            'epsilon': 0.00,
+            'gamma_Phi' : 0.99,
+            'kl_target' : 0.025,
+            'l2_weight' : 0.0001,
+            # 'learning_rates': { 'actors': (('constant', 0.0001),),
+            #                     'critics': ('constant', 0.001),
+            #                     'lagrange_multiplier': (('constant', 0.005),) },
+            'learning_rates': { 'actors': (('constant', 1.0),),
+                                'critics': ('constant', 1.0),
+                                'lagrange_multiplier': (('constant', 1.0),) },
+            'models': { 'actors': {'type':'dnn', 'shape':[64,64]},
+                        'critics': {'type':'dnn', 'shape':[64,64]} },
+            'normalise_advantages' : True,
+            'num_updates' : { 'actors': None,
+                              'critics': None },
+            'optimisers': { 'actors': 'adam',
+                            'critics': 'adam' },
+            'patient_updates': True,
+            'sequential': False,
+            'spec_reward': 10,
+            'until_converged' : { 'actors': True,
+                                  'critics': False },
+            'update_after': { 'actors': 100,
+                              'critics': 10 }}
+
+exp2_hps_rmappo ={'actual_dist': True,
+            'augment_data': False,
+            'buffers': {'size': 1000, 'batch': 32},
+            'continue_prob': 0.9,
+            'entropy_weight': 10.0,
+            'epsilon': 0.00,
+            'gamma_Phi' : 0.99,
+            'kl_target' : 0.025,
+            'l2_weight' : 0.0001,
+            # 'learning_rates': { 'actors': (('constant', 0.0001),),
+            #                     'critics': ('constant', 0.001),
+            #                     'lagrange_multiplier': (('constant', 0.005),) },
+            'learning_rates': { 'actors': (('constant', 1.0),),
+                                'critics': ('constant', 1.0),
+                                'lagrange_multiplier': (('constant', 1.0),) },
+            'models': { 'actors': {'type':'dnn', 'shape':[64,64]},
+                        'critics': {'type':'dnn', 'shape':[64,64]} },
+            'normalise_advantages' : True,
+            'num_updates' : None,
+            'optimisers': 'adam',
+            'patient_updates': False,
+            'sequential': False,
+            'spec_reward': 10,
+            'until_converged' : False,
+            'update_after': 100}
+
+
+exp2_hps = {'almanac': exp2_hps_almanac, 'rmappo': exp2_hps_rmappo}
+
+def exp2(num_specs, num_agents, num_landmarks, num_run, root, id, max_steps, hps=exp2_hps):
+
+    location = '{}/experiments/2'.format(root)
+    name = '{}-{}-{}-{}'.format(num_landmarks, num_agents, num_specs, num_run)
+
+    # Create environment
+    mpe = envs.MPE(name, num_agents, num_landmarks, moving_landmarks=False, collisions=False)
+    env = envs.EnvWrapper('mpe-{}-{}'.format(id, num_run), 'mpe', mpe)
+
+    # Create specifications
+    labels = mpe.labels
+    possible_specs = [  lambda x : 'F {}'.format(x),\
+                        lambda x : 'G {}'.format(x),\
+                        lambda x : 'F G {}'.format(x),\
+                        lambda x : 'G F {}'.format(x),\
+                        lambda x : 'X (X {})'.format(x),\
+                        lambda x, y : '{} U {}'.format(x, y),\
+                        lambda x, y : 'F ({} & {})'.format(x, y),\
+                        lambda x, y : 'G ({} | (X {}))'.format(x, y),\
+                        lambda x, y : 'F G ({} | {})'.format(x, y),\
+                        lambda x, y : 'G F ({} & (X {}))'.format(x, y)  ]
+    possible_weights = [2, 5, 8]
+    if num_landmarks == 1:
+        possible_specs = possible_specs[:5]
+
+    # Form objectives TODO
+    specifications = [s(*random.sample(labels, k = s.__code__.co_argcount)) for s in random.sample(possible_specs, k=num_specs)]
+    weights = random.sample(possible_weights, num_specs)
+    sum_weights = sum(weights)
+    objectives = [tuple(w / sum_weights for w in weights)]
+    
+    # Form input parameters and LDBAs
+    spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
+    obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+    act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+    # Run learning algorithms
+    for name in ['almanac', 'rmappo']:
+        learner = make_learner(name, obs_size, act_sizes, len(specifications), len(objectives), hps[name])
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id, num_run)
+        run(learner, env, max_steps, spec_controller, [], objectives, location, prefix, verbose=True, num_plot_points=1000)
 
 
 # Experiment 3
@@ -360,7 +462,6 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
     score_interval = int(max_steps / num_plot_points)
     recent_scores = [0.0 for _ in objectives]
     total_scores = [0.0 for _ in objectives]
-    all_recents = [[] for _ in objectives]
 
     suffix = "-eval" if evaluate else ""
     mode = 'a' if resume else 'w'
@@ -384,6 +485,8 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
         done = False
         t = 0
         current_discounts = np.ones(num_rewards)
+        if learner.name == 'rmappo':
+            learner.reset()
         # print("End of episode, resetting...")
 
         while not done and s < max_steps:
@@ -394,7 +497,11 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             prod_state = torch.cat([f_game_state] + f_spec_states, 0)
             
             # Perform joint action
+            if learner.name == 'rmappo':
+                hidden = learner.get_hidden_states()
             joint_action = learner.act(prod_state)
+            if learner.name == 'rmappo':
+                new_hidden = learner.get_hidden_states()
 
             # If an epsilon transition is made the game (and possibly spec) state remains the same
             e_ts = spec_controller.is_epsilon_transition(joint_action, env.get_act_sizes())
@@ -467,6 +574,8 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
                     info["f(q)_s"], info["f(q')_s"], info["F_s"] = transitions[(e_ts, label_set)]
                 else:
                     info["f(q)_s"], info["f(q')_s"], info["F_s"] = [f_spec_states], [f_new_spec_states], [acceptances]
+                if learner.name == 'rmappo':
+                    info["h"], info["h'"] = hidden, new_hidden
                 
                 # Update learners
                 learner.step(info, objectives)
@@ -511,4 +620,5 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
 # debug()
 # oc_test()
-exp1(num_specs=2, num_actors=2, num_states=3, num_run=1, root=os.getcwd(), id=1, max_steps=100000, hps=test_hps)
+# exp1(num_specs=2, num_actors=2, num_states=3, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=test_hps)
+exp2(num_specs=2, num_agents=2, num_landmarks=2, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=exp2_hps)

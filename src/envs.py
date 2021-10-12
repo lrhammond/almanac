@@ -862,14 +862,14 @@ class MPE:
             super().__init__(scenario, world, max_cycles)
             self.metadata['name'] = name
 
-    def __init__(self, name, num_agents, num_landmarks, moving_landmarks=False, collisions=False,):
+    def __init__(self, name, num_agents, num_landmarks, moving_landmarks=False, collisions=False):
 
         self.name = name
         self.num_agents = num_agents
         self.num_landmarks = num_landmarks
         self.env = make_env(MPE.raw_env)(name=name, num_agents=num_agents, num_landmarks=num_landmarks, moving_landmarks=moving_landmarks, collisions=collisions)
         self.state = self.reset()
-        self.labels = ['{}at{}'.format(a,l) for (a, l) in itertools.product(range(num_agents), range(num_landmarks))] + ["{}meets{}".format(a,a2) for (a, a2) in itertools.product(range(num_agents), range(num_agents)) if a != a2]
+        self.labels = ['at{}_{}'.format(a,l) for (a, l) in itertools.product(range(num_agents), range(num_landmarks))] + ["meets{}_{}".format(a1,a2) for (a1, a2) in itertools.product(range(num_agents), range(num_agents)) if a1 != a2]
 
     def get_state(self):
 
@@ -904,9 +904,3 @@ class MPE:
                             labels.append("{}meets{}".format(a,a2))
             
         return labels
-
-
-smg = StructuredMarkovGame(3,[2,2],1,1)
-smg.create_prism_model(1,[],'experiments/1')
-
-print(2)
