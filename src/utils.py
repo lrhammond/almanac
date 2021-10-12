@@ -5,22 +5,22 @@ import ast
 import subprocess
 from time import time
 import shlex
+from os.path import dirname, abspath
+
+
+def get_root():
+    return dirname(dirname(abspath(__file__)))
 
 # Flattens list of lists to a single list
 def flatten(l):
 
     return tuple(item for sublist in l for item in sublist)
 
-
 def variance(l):
 
     mean = sum(l)/len(l)
 
     return sum([(mean - i)**2 for i in l])
-
-def normalise_objs(objectives):
-
-    return tuple([o / sum(o) for o in objectives])
 
 # Prevents division by 0
 def denom(x):

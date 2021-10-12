@@ -67,14 +67,14 @@ def oc_test(root=utils.get_root(), max_steps=1000000, hps=test_hps, repetitions=
     # specifications = ('(G psi) | (G phi)',)
     # specifications = ('(G phi) | (G psi)',)
     reward_functions = ()
-    objectives = (np.array((1.0,)),)
+    objectives = (1,)
     # objectives = (np.array((1.0,0.0)),np.array((0.0,1.0)))
 
     spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
     act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
-    learner = make_learner('almanac', obs_size, act_sizes, len(objectives[0]), len(objectives), hps)
+    learner = make_learner('almanac', obs_size, act_sizes, objectives, hps)
     prefix = "{}-{}-{}-{}".format(env.name, learner.name, 0, 0)
 
     for _ in range(repetitions):
@@ -112,15 +112,14 @@ def debug(root=utils.get_root(), max_steps=100000, hps=test_hps, repetitions=1):
     # specifications = ('(G psi) | (G phi)',)
     # specifications = ('(G phi) | (G psi)',)
     reward_functions = ()
-    objectives = (np.array((1.0,1.0)),)
-    objectives = utils.normalise_objs(objectives)
+    objectives = (2,1)
     # objectives = (np.array((1.0,0.0)),np.array((0.0,1.0)))
 
     spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
     act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
-    learner = make_learner('almanac', obs_size, act_sizes, len(objectives[0]), len(objectives), hps)
+    learner = make_learner('almanac', obs_size, act_sizes, objectives, hps)
     prefix = "{}-{}-{}-{}".format(env.name, learner.name, 0, 0)
 
     for _ in range(repetitions):
@@ -181,7 +180,7 @@ def exp0(root, id, max_steps, hps=exp0_hps, repetitions=10):
     for r in range(repetitions):
 
         # Create learner
-        learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
+        learner = make_learner('almanac', obs_size, act_sizes, objectives, hps)
         prefix = "{}-{}-{}-{}".format(env.name, learner.name, id["run"], r)
 
         run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000)
@@ -242,9 +241,8 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
         # Form objectives
         specifications = [s(*random.sample(labels, k = s.__code__.co_argcount)) for s in random.sample(possible_specs, k=num_specs)]
-        weights = random.sample(possible_weights, num_specs)
-        sum_weights = sum(weights)
-        objectives = [tuple(w / sum_weights for w in weights)]
+        objectives = [list(range(len(specifications)))]
+        weights = [1 for _ in specifications]
 
         # Form env
         smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True, single_init=True, sink_prob=0.8)
@@ -256,16 +254,16 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
         # Evaluate using PRISM
-        spec_controller.save_props(location, name, objectives[0])
+        spec_controller.save_props(location, name, weights)
         env.model.create_prism_model(num_run, spec_controller.specs, location)
 
         # Sometimes the MMG and spec combination generated is trivial, if so we retry
-        prism_prob, prism_time = utils.run_prism(location, name, objectives[0])
+        prism_prob, prism_time = utils.run_prism(location, name, weights)
         if prism_prob == 0.0:
             continue
   
         # Create learner
-        learner = make_learner('almanac', obs_size, act_sizes, len(specifications), len(objectives), hps)
+        learner = make_learner('almanac', obs_size, act_sizes, objectives, hps)
         prefix = "{}-{}-{}-{}".format(env.name, learner.name, id, num_run)
 
         # Create state representations
@@ -294,8 +292,8 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
             p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
             env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists)
             env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, det=True)
-            policy_prob, _ = utils.run_prism(location, name, objectives[0], policy=True)
-            det_policy_prob, _ = utils.run_prism(location, name, objectives[0], policy=True, det=True)
+            policy_prob, _ = utils.run_prism(location, name, weights, policy=True)
+            det_policy_prob, _ = utils.run_prism(location, name, weights, policy=True, det=True)
             probs['reg'].append(policy_prob)
             probs['det'].append(det_policy_prob)
 
@@ -409,10 +407,9 @@ def exp2(num_specs, num_agents, num_landmarks, num_run, root, id, max_steps, hps
 
     # Form objectives TODO
     specifications = [s(*random.sample(labels, k = s.__code__.co_argcount)) for s in random.sample(possible_specs, k=num_specs)]
-    weights = random.sample(possible_weights, num_specs)
-    sum_weights = sum(weights)
-    objectives = [tuple(w / sum_weights for w in weights)]
-    
+    objectives = [list(range(len(specifications)))]
+    weights = [1 for _ in specifications]
+
     # Form input parameters and LDBAs
     spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
     obs_size = env.get_obs_size() + sum(spec_controller.num_states)
@@ -420,7 +417,7 @@ def exp2(num_specs, num_agents, num_landmarks, num_run, root, id, max_steps, hps
 
     # Run learning algorithms
     for name in ['almanac', 'rmappo']:
-        learner = make_learner(name, obs_size, act_sizes, len(specifications), len(objectives), hps[name])
+        learner = make_learner(name, obs_size, act_sizes, objectives, hps[name])
         prefix = "{}-{}-{}-{}".format(env.name, learner.name, id, num_run)
         run(learner, env, max_steps, spec_controller, [], objectives, location, prefix, verbose=True, num_plot_points=1000)
 
@@ -429,10 +426,10 @@ def exp2(num_specs, num_agents, num_landmarks, num_run, root, id, max_steps, hps
 
 
 
-def make_learner(learner_name, obs_size, act_sizes, num_rewards, num_objectives, hps):
+def make_learner(learner_name, obs_size, act_sizes, objectives, hps):
 
     if learner_name == 'almanac':
-        learner = learners.Almanac(obs_size, act_sizes, num_rewards, num_objectives, hps)
+        learner = learners.Almanac(obs_size, act_sizes, objectives, hps)
     else:
         print("Error: Agent name must be \'almanac\' or")
         return
@@ -445,15 +442,10 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
     # Check for stupid mistakes
     num_specs = len(spec_controller.specs)
     num_reward_functions = len(reward_functions)
-    num_rewards = num_specs + num_reward_functions
-    num_objectives = len(objectives)
-    for o in objectives:
-        if len(o) != num_specs + num_reward_functions:
-            print('Error: Objectives must contain weights for every spec and reward function')
-            return
-        if sum(o[:num_reward_functions]) > 0 and sum(o[num_reward_functions:]) > 0:
-            print('Error: Objectives must combine only specs or only reward functions')
-            return
+    num_objectives = num_specs + num_reward_functions
+    if len(objectives) != num_objectives:
+        print('Error: All objectives must be included in lexicographic ranking')
+        return
     if len(learner.lrs['actors']) != num_objectives or len(learner.lrs['lagrange_multiplier']) != num_objectives:
         print('Error: Must be the same number of learning rates for actors and Lagrange multipliers as objectives')
         return
@@ -484,7 +476,9 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
         spec_states, acceptances = spec_controller.reset() 
         done = False
         t = 0
-        current_discounts = np.ones(num_rewards)
+        current_discounts = np.ones(num_objectives)
+        if learner.name == 'almanac':
+            learner.Z = [dict() for _ in range(num_objectives)]
         if learner.name == 'rmappo':
             learner.reset()
         # print("End of episode, resetting...")
@@ -537,11 +531,11 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             #     held = True
 
             # if held:
-            #     print("woah")
+            #     print("w")
 
             # if label_set != []:
             #     print(label_set)              
-            #     print("wahey!")
+            #     print("ww!")
 
             # Form new state vectors
             f_new_game_state = env.featurise(new_game_state)
@@ -566,7 +560,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
                         "F": acceptances,
                         "t": t,
                         "o_s": objectives,
-                        "D": done,
+                        "done": done,
                         "is_e_t": is_e_t}
                 if learner.hps['augment_data']:
                     if (e_ts, label_set) not in transitions.keys():
@@ -586,13 +580,13 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             for j in range(num_specs):
                 discounts.append(learner.hps['gamma_Phi'] if acceptances[j] else 1.0)
                 rewards.append(learner.hps['spec_reward'] if acceptances[j] else 0.0)
-            for j in range(num_specs,num_rewards):
+            for j in range(num_specs,num_objectives):
                 discounts.append(reward_functions[j]['discount'] if acceptances[j] else 1.0)
                 rewards.append(reward_functions[j]['reward'] if acceptances[j] else 0.0)
             current_discounts *= np.array(discounts)
             discounted_rewards = current_discounts * rewards
             # utilities = [sum(z[0] * z[1] for z in zip(o, discounted_rewards)) for o in objectives]
-            utilities = [sum(discounted_rewards * o) for o in objectives]
+            utilities = [discounted_rewards[j] for j in objectives]
             recent_scores = [recent_scores[i] + utilities[i] for i in range(num_objectives)]
 
             # Update variables for next step
