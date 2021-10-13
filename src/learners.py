@@ -26,11 +26,11 @@ import utils
 
 # Use GPU if available
 if torch.cuda.is_available():
-    print("Using GPU!")
+    # print("Using GPU!")
     device = torch.device("cuda")
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
 else:
-    print("Using CPU!")
+    # print("Using CPU!")
     device = torch.device("cpu")
 
 
@@ -361,18 +361,18 @@ def set_up_actors(parametrization, obs_size, act_sizes, shape):
 
 
 # Set up critic functions 
-def set_up_critics(parametrization, obs_size, num_rewards, shape):
+def set_up_critics(parametrization, obs_size, num_objectives, shape):
 
     if parametrization == 'dnn':
         hidden = shape
-        critics = [DNN(obs_size, [1], 'linear', hidden) for j in range(num_rewards)]
+        critics = [DNN(obs_size, [1], 'linear', hidden) for j in range(num_objectives)]
     elif parametrization == 'linear':
-        critics = [DNN(obs_size, [1], 'linear', [], bias=False) for j in range(num_rewards)]
+        critics = [DNN(obs_size, [1], 'linear', [], bias=False) for j in range(num_objectives)]
     elif parametrization == 'lstm':
         pre = shape[0]
         memory = shape[1]
         post = shape[2]
-        critics = [LSTM(obs_size, [1], 'linear', pre, memory, post) for j in range(num_rewards)]
+        critics = [LSTM(obs_size, [1], 'linear', pre, memory, post) for j in range(num_objectives)]
     else:
         print("Error: Critic must be \'dnn\' or \'linear\' or \'lstm\')")
     for critic in critics:
@@ -519,14 +519,11 @@ class Almanac:
     
     def update_actors(self, data, objectives, until_converged=True, num_updates=None):
 
-        times, states, joint_actions, rewards, next_states, discounts, gammas, dones, true_states = data
-        for i in range(self.num_players):
-            self.actors[i].train()
-
-        # Form state dists for weighting samples
-        dists = [self.state_dist(times[j], gammas[j]).to(device) for j in objectives]
-
         with torch.no_grad():
+
+            times, states, joint_actions, rewards, next_states, discounts, gammas, dones, true_states = data
+            for i in range(self.num_players):
+                self.actors[i].train()
 
             # Form advantages
             advantages = [rewards[j].to(device) + (discounts[j] * self.critics[j](next_states.to(device)) * (1-dones)).to(device) - self.critics[j](states.to(device)) for j in objectives]
@@ -539,19 +536,26 @@ class Almanac:
             # Form old probability factors
             old_dist_probs = self.policy(true_states,probs=True)
             old_action_log_probs = sum([torch.gather(torch.log(old_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
+
+            # Form state dists for weighting samples
+            dists = [self.state_dist(times, gammas[j]).to(device) for j in objectives]
         
-        # Update networks
-        finished = False
-        temp_recent_losses = deque(maxlen=25)
-        if num_updates == None:
-            num_updates = len(times)
-        e = 0
+            # Update networks
+            finished = False
+            temp_recent_losses = deque(maxlen=25)
+            if num_updates == None:
+                num_updates = len(times)
+            e = 0
+
         while not finished:
+
+            # Backpropagate
+            for i in range(self.num_players):
+                self.actor_optimisers[i].zero_grad()
 
             # Form weights
             objective_range = self.k + 1 if self.k != None else self.num_objectives
             objective_weights = self.compute_weights(objective_range, e)
-            relative_kl_weights = [self.kl_weight * objective_weights[i] / sum(objective_weights) for i in range(objective_range)] + [0.0 for _ in range(objective_range, self.num_objectives)]
 
             # Form loss
             new_dist_probs = self.policy(true_states,probs=True)
@@ -560,9 +564,7 @@ class Almanac:
             # log_ratio = (new_action_log_probs.masked_fill(new_action_log_probs == -np.inf, 0.0) - old_action_log_probs).to(device)
 
             log_ratio = new_action_log_probs - old_action_log_probs
-
             ratio = torch.exp(log_ratio)
-
             kl_penalty = ratio * log_ratio
 
             if self.hps['entropy_weight'] != 0.0:
@@ -574,40 +576,38 @@ class Almanac:
 
             loss = - sum([objective_weights[k] * obj_losses[k] for k in range(self.num_objectives)])
 
-            # Backpropagate
-            for i in range(self.num_players):
-                self.actor_optimisers[i].zero_grad()
-            loss.backward()
+            loss.backward(retain_graph=True)
             for i in range(self.num_players):
                 self.actor_optimisers[i].step()
                 self.actors[i].eval()
 
-            # Used to catch when NaNs occur in the policy network(s)
-            joint_action = [actions.sample() for actions in self.policy(states[0])]
-
-            # Update KL weight term as in the original PPO paper
-            mean_kl = kl_penalty.mean()
-            if mean_kl < self.hps['kl_target'] / 1.5:
-                self.kl_weight *= 0.5
-            elif mean_kl > self.hps['kl_target'] * 1.5:
-                self.kl_weight *= 2
-
-            # Update Lagrange multipliers
             with torch.no_grad():
+
+                # Used to catch when NaNs occur in the policy network(s)
+                joint_action = [actions.sample() for actions in self.policy(states[0])]
+
+                # Update KL weight term as in the original PPO paper
+                mean_kl = kl_penalty.mean()
+                if mean_kl < self.hps['kl_target'] / 1.5:
+                    self.kl_weight *= 0.5
+                elif mean_kl > self.hps['kl_target'] * 1.5:
+                    self.kl_weight *= 2
+
+                # Update Lagrange multipliers
                 for k in range(self.num_objectives):
                     self.recent_utilities[k].append(obj_losses[k])
-            self.update_lagrange_multipliers(e)
+                self.update_lagrange_multipliers(e)
 
-            # Check whether to finish updating
-            e += 1
-            temp_recent_losses.append(loss)
-            if until_converged:
-                if self.k == None:
-                    finished = utils.converged(temp_recent_losses)
-                elif self.k == self.num_objectives - 1 and utils.converged(self.recent_utilities[self.k]):
+                # Check whether to finish updating
+                e += 1
+                temp_recent_losses.append(loss)
+                if until_converged:
+                    if self.k == None:
+                        finished = utils.converged(temp_recent_losses)
+                    elif self.k == self.num_objectives - 1 and utils.converged(self.recent_utilities[self.k]):
+                        finished = True
+                elif e > num_updates:
                     finished = True
-            elif e > num_updates:
-                finished = True
 
     def update_lagrange_multipliers(self, e, max_lm=100.0):
         
@@ -671,7 +671,7 @@ class Almanac:
 
         # Reset Gamma terms if needed
         if info["t"] == 0:
-            self.gammas = self.num_rewards * [1.0]
+            self.gammas = self.num_objectives * [1.0]
 
         # Form product states
         prod_state = torch.cat([info["f(s)"]] + info["f(q)"], 0)
@@ -689,7 +689,7 @@ class Almanac:
         discounts = [1 - f * (1 - self.hps['gamma_Phi']) for f in info["F"]] + scalar_discounts
 
         num_specs = len(info["F"])
-        for j in range(self.num_rewards):
+        for j in range(self.num_objectives):
 
             # Temporarily save product state
             self.Z[j][tuple(prod_state.tolist())] = (info["t"], prod_state, info["a"])
@@ -733,7 +733,7 @@ class Almanac:
                     continue
                 # Add data for alternative transitions
                 else:
-                    for j in range(self.num_rewards):
+                    for j in range(self.num_objectives):
                         if self.hps['patient_updates']:
                             add_experience = False
                             if (j < num_specs and f_s[j]):
@@ -751,7 +751,7 @@ class Almanac:
                             self.critic_buffers[j].add(info["t"], s_q_1, info["a"], r_j, s_q_2, d_s[j], self.gammas[j], info["done"])
                         
         # If enough data has been collected update the critics
-        for j in range(self.num_rewards):
+        for j in range(self.num_objectives):
             if len(self.critic_buffers[j]) > self.hps['update_after']['critics']:
                 data = self.critic_buffers[j].sample(sample_all=True)
                 self.update_critic(j, data, until_converged=self.hps['until_converged']['critics'], num_updates=self.hps['num_updates']['critics'])
@@ -774,13 +774,13 @@ class Almanac:
     def save_model(self, location, prefix):
         for i in range(self.num_players):
             torch.save(self.actors[i].state_dict(), '{}/models/{}-actor-{}.pt'.format(location, prefix, i))
-        for j in range(self.num_rewards):
+        for j in range(self.num_objectives):
             torch.save(self.critics[j].state_dict(), '{}/models/{}-critic-{}.pt'.format(location, prefix, j))
 
     def load_model(self, root, prefix):
         for i in range(self.num_players):
             self.actors[i].load_state_dict(torch.load(('{}/models/{}-actor-{}.pt'.format(root, prefix, i))))
-        for j in range(self.num_rewards):
+        for j in range(self.num_objectives):
             self.critics[j].load_state_dict(torch.load(('{}/models/{}-critic-{}.pt'.format(root, prefix, j))))
 
 
@@ -808,7 +808,7 @@ class RMAPPO:
 
         # Values to maintain
         self.updates = 0
-        self.gammas = self.num_rewards * [1.0]
+        self.gammas = self.num_objectives * [1.0]
         self.u = [0.0 for _ in range(self.num_objectives - 1)]
         self.k = 0 if self.hps['sequential'] else None
         self.recent_utilities = [deque(maxlen=25) for i in range(self.num_objectives)]
@@ -816,7 +816,7 @@ class RMAPPO:
        
         # Networks
         shapes = self.hps['models']
-        self.agents = [LSTM(self.obs_size, a_s, self.num_rewards, shapes['pre_hidden'], shapes['lstm'], shapes['act_hidden'], shapes['val_hidden']) for a_s in self.act_sizes]
+        self.agents = [LSTM(self.obs_size, a_s, self.num_objectives, shapes['pre_hidden'], shapes['lstm'], shapes['act_hidden'], shapes['val_hidden']) for a_s in self.act_sizes]
         for agent in self.agents:
             agent.to(device)
 
@@ -834,7 +834,7 @@ class RMAPPO:
             self.agents[i].train()
 
         # Form state dists for weighting samples
-        dists = [self.state_dist(times[j], gammas[j]).to(device) for j in range(self.num_objectives)]
+        dists = [self.state_dist(times, gammas[j]).to(device) for j in range(self.num_objectives)]
         obj_dists = [dists[j] for j in objectives]
         
         # Form targets and useful quantities for updates
@@ -873,7 +873,6 @@ class RMAPPO:
             # Form weights
             objective_range = self.k + 1 if self.k != None else self.num_objectives
             objective_weights = self.compute_weights(objective_range, e)
-            relative_kl_weights = [self.kl_weight * objective_weights[i] / sum(objective_weights) for i in range(objective_range)] + [0.0 for _ in range(objective_range, self.num_objectives)]
 
             # Get useful quantities
             all_probs = []
@@ -997,7 +996,7 @@ class RMAPPO:
 
         # Reset Gamma terms if needed
         if info["t"] == 0:
-            self.gammas = self.num_rewards * [1.0]
+            self.gammas = self.num_objectives * [1.0]
 
         # Form product states
         state = info["f(s)"]
@@ -1012,7 +1011,7 @@ class RMAPPO:
         discounts = [1 - f * (1 - self.hps['gamma_Phi']) for f in info["F"]] + scalar_discounts
 
         # Update gammas
-        for j in range(self.num_rewards):
+        for j in range(self.num_objectives):
             if (j < num_specs and info["F"][j]):
                 self.gammas[j] *= self.hps['gamma_Phi']
                 add_stored_experiences = True

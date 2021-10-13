@@ -204,12 +204,172 @@ class MarkovGame:
             print("Action: ", joint_action)
             self.step(joint_action)
 
-# mg_0 = MarkovGame(num_players=mg0.num_players,
-#                  state_space=mg0.state_space,
-#                  action_spaces=mg0.action_spaces,
-#                  transition=mg0.transition,
-#                  initial=mg0.initial,
-#                  labeller=mg0.labeller)
+### MARKOV GAME 0 ###
+# Note that this game (and its variants) is for debugging purposes and so is very simple
+
+### MARKOV GAME 0.0 ###
+# Single player, single spec
+
+# Number of players
+num_players = 1
+
+# State space
+state_space = [tt(i) for i in range(2)]
+
+# Action spaces
+action_spaces = [('a','b')]
+
+# Dists
+d0 = Categorical(tt([ 0.5, 0.5 ]))
+d1 = Categorical(tt([ 0.7, 0.3 ]))
+
+# Initial state dist
+initial = Categorical(tt([ 0.5, 0.5 ]))
+
+# Transition function
+def transition(s, a):
+    if torch.equal(s,tt(0)):
+        if a == ('a',):
+            return s
+        else:
+            return tt(1) - s
+    else:
+        if a == ('a',):
+            return tt(1) - s
+        else:
+            return s
+
+# Labelling function
+def labeller(s):
+    if torch.equal(s, tt(0)):
+        return ('phi',)
+    else:
+        return ('psi',)
+
+# # Reward functions
+# def reward_1(s_1, a, s_2):
+
+#     sas = (s_1, a, s_2)
+#     if utils.sas_eq((tt(0), ('a',), tt(0)), (s_1, a, s_2)):
+#         return 2.0
+#     elif utils.sas_eq((tt(0), ('a',), tt(1)), (s_1, a, s_2)):
+#         return 4.0
+#     elif torch.equal(s_1, tt(0)) and a == ('b',):
+#         return -1.0
+#     elif torch.equal(s_1, tt(1)):
+#         return 0.0
+
+# def reward_2(s_1, a, s_2):
+
+#     if a == ('a',):
+#         return 1.0
+#     else:
+#         return 2.0
+
+### MARKOV GAME 0.1 ###
+# Two players, single spec
+
+# # Number of players
+# num_players = 2
+
+# # State space
+# state_space = [tt(i) for i in range(2)]
+
+# # Action spaces
+# action_spaces = [('a','b'),('x','y')]
+
+# # Dists
+# d0 = Categorical(tt([ 0.7, 0.3 ]))
+# d1 = Categorical(tt([ 0.3, 0.7 ]))
+
+# # Initial state dist
+# initial = Categorical(tt([ 1.0, 0 ]))
+
+# # Transition function
+# def transition(s, a):
+#     if torch.equal(s,tt(0)):
+#         if a == ('a','x'):
+#             return s
+#         else:
+#             return tt(1) - s
+#     else:
+#         if a == ('b','y'):
+#             return tt(1) - s
+#         else:
+#             return s
+
+# # Labelling function
+# def labeller(state):
+#     if state == tt(0):
+#         return ('phi',)
+#     else:
+#         return ('psi',)
+
+# # Reward functions
+# def reward_1(s_1, _, s_2):
+
+#     if torch.equal(s_1, tt(0)) and torch.equal(s_2, tt(0)):
+#         return 1.0
+#     elif torch.equal(s_1, tt(1)) and torch.equal(s_2, tt(1)):
+#         return 3.0
+#     else:
+#         return 0.0
+
+# def reward_2(s_1, a, s_2):
+#     sas = (s_1, a, s_2)
+#     if utils.sas_eq((tt(0), ('b','y'), tt(1)), (s_1, a, s_2)):
+#         return -2.0
+#     elif utils.sas_eq((tt(1), ('a','x'), tt(0)), (s_1, a, s_2)):
+#         return -2.0
+#     else:
+#         return 0.0   
+
+### MARKOV GAME 0.2 ###
+# Single player, two specs
+
+# # Number of players
+# num_players = 1
+
+# # State space
+# state_space = [tt(i) for i in range(2)]
+
+# # Action spaces
+# action_spaces = [('a','b')]
+
+# # Dists
+# d0 = Categorical(tt([ 0.5, 0.5 ]))
+# d1 = Categorical(tt([ 0.7, 0.3 ]))
+
+# # Initial state dist
+# def initial(states):
+#     return d1.sample()
+
+# # Transition function
+# def transition(s, a):
+#     if s == tt(0):
+#         if a == ('a',):
+#             return s
+#         else:
+#             return d0.sample()
+#     else:
+#         if a == ('a',):
+#             return s
+#         else:
+#             return d0.sample()
+
+# # Labelling function
+# def labeller(state):
+#     if state == tt(0):
+#         return ('phi',)
+#     else:
+#         return ('psi',)
+
+mg_0 = MarkovGame(num_players=num_players,
+                 state_space=state_space,
+                 action_spaces=action_spaces,
+                 transition=transition,
+                 initial=initial,
+                 labeller=labeller)
 
 # mg_1 = MarkovGame(num_players=mg1.num_players,
 #                  state_space=mg1.state_space,

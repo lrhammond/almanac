@@ -24,7 +24,7 @@ test_hps = {'actual_dist': True,
             'buffers': { 'actors': {'size': 1000, 'batch': 32},
                          'critics': {'size': 1000, 'batch': 32} },
             'continue_prob': 0.9,
-            'entropy_weight': 10.0,
+            'entropy_weight': 0.0,
             'epsilon': 0.00,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
@@ -32,11 +32,11 @@ test_hps = {'actual_dist': True,
             # 'learning_rates': { 'actors': (('constant', 0.0001),),
             #                     'critics': ('constant', 0.001),
             #                     'lagrange_multiplier': (('constant', 0.005),) },
-            'learning_rates': { 'actors': (('constant', 1.0),),
-                                'critics': ('constant', 1.0),
+            'learning_rates': { 'actors': (('constant', 0.0001),),
+                                'critics': ('constant', 0.001),
                                 'lagrange_multiplier': (('constant', 1.0),) },
-            'models': { 'actors': {'type':'dnn', 'shape':[64,64]},
-                        'critics': {'type':'dnn', 'shape':[64,64]} },
+            'models': { 'actors': {'type':'dnn', 'shape':[16,16]},
+                        'critics': {'type':'dnn', 'shape':[16,16]} },
             'normalise_advantages' : True,
             'num_updates' : { 'actors': None,
                               'critics': None },
@@ -45,7 +45,7 @@ test_hps = {'actual_dist': True,
             'patient_updates': True,
             'sequential': False,
             'spec_reward': 10,
-            'until_converged' : { 'actors': True,
+            'until_converged' : { 'actors': False,
                                   'critics': False },
             'update_after': { 'actors': 100,
                               'critics': 10 }}
@@ -89,18 +89,9 @@ def oc_test(root=utils.get_root(), max_steps=1000000, hps=test_hps, repetitions=
 
 def debug(root=utils.get_root(), max_steps=100000, hps=test_hps, repetitions=1):
 
-    location = '{}/experiments/debug'.format(root)
+    location = '{}/experiments/0'.format(root)
 
     env = envs.EnvWrapper('debug_game', 'mg', envs.mg_0)
-
-    all_states = tt([[[1,0,1,0,0,0], # (0,0)
-                    [1,0,0,1,0,0],   # (0,1)
-                    [1,0,0,0,1,0],   # (0,2)
-                    [1,0,0,0,0,1]],  # (0,3)
-                    [[0,1,1,0,0,0],  # (1,0)
-                    [0,1,0,1,0,0],   # (1,1)
-                    [0,1,0,0,1,0],   # (1,2)
-                    [0,1,0,0,0,1]]]) # (1,3)
 
     # All
     # specifications = ('(F G phi) | (F G psi)', 'F (psi & X phi)')
@@ -108,11 +99,11 @@ def debug(root=utils.get_root(), max_steps=100000, hps=test_hps, repetitions=1):
     # objectives = ((1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0))
 
     # Minimal spec
-    specifications = ('G (phi -> X psi)','G F phi')
+    specifications = ('G (phi <-> X psi)',)
     # specifications = ('(G psi) | (G phi)',)
     # specifications = ('(G phi) | (G psi)',)
     reward_functions = ()
-    objectives = (2,1)
+    objectives = (0,)
     # objectives = (np.array((1.0,0.0)),np.array((0.0,1.0)))
 
     spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
@@ -437,7 +428,23 @@ def make_learner(learner_name, obs_size, act_sizes, objectives, hps):
     return learner
 
 
-def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=False, resume=False, verbose=True, until_converged=False):
+def run(learner, env, max_steps, spec_controller, reward_functions, objectives, location, prefix, num_plot_points=1000, evaluate=False, resume=False, verbose=True):
+
+    all_states_6 = tt([[[1,0,1,0,0,0], # (0,0)
+                    [1,0,0,1,0,0],   # (0,1)
+                    [1,0,0,0,1,0],   # (0,2)
+                    [1,0,0,0,0,1]],  # (0,3)
+                    [[0,1,1,0,0,0],  # (1,0)
+                    [0,1,0,1,0,0],   # (1,1)
+                    [0,1,0,0,1,0],   # (1,2)
+                    [0,1,0,0,0,1]]]) # (1,3)
+
+    all_states_5 = tt([[[1,0,1,0,0], # (0,0)
+                    [1,0,0,1,0],   # (0,1)
+                    [1,0,0,0,1]],   # (0,2)
+                    [[0,1,1,0,0],  # (1,0)
+                    [0,1,0,1,0],   # (1,1)
+                    [0,1,0,0,1]]])   # (1,2)
 
     # Check for stupid mistakes
     num_specs = len(spec_controller.specs)
@@ -612,7 +619,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
     return
 
-# debug()
+debug()
 # oc_test()
 # exp1(num_specs=2, num_actors=2, num_states=3, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=test_hps)
-exp2(num_specs=2, num_agents=2, num_landmarks=2, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=exp2_hps)
+# exp2(num_specs=2, num_agents=2, num_landmarks=2, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=exp2_hps)
