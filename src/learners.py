@@ -549,10 +549,6 @@ class Almanac:
 
         while not finished:
 
-            # Backpropagate
-            for i in range(self.num_players):
-                self.actor_optimisers[i].zero_grad()
-
             # Form weights
             objective_range = self.k + 1 if self.k != None else self.num_objectives
             objective_weights = self.compute_weights(objective_range, e)
@@ -576,6 +572,9 @@ class Almanac:
 
             loss = - sum([objective_weights[k] * obj_losses[k] for k in range(self.num_objectives)])
 
+            # Backpropagate
+            for i in range(self.num_players):
+                self.actor_optimisers[i].zero_grad()
             loss.backward(retain_graph=True)
             for i in range(self.num_players):
                 self.actor_optimisers[i].step()
@@ -592,6 +591,8 @@ class Almanac:
                     self.kl_weight *= 0.5
                 elif mean_kl > self.hps['kl_target'] * 1.5:
                     self.kl_weight *= 2
+                    # Use early stopping if KL divergence is too high
+                    finished = True
 
                 # Update Lagrange multipliers
                 for k in range(self.num_objectives):
@@ -600,13 +601,15 @@ class Almanac:
 
                 # Check whether to finish updating
                 e += 1
+                if e > 1000:
+                    finished = True
                 temp_recent_losses.append(loss)
-                if until_converged:
+                if until_converged and not finished:
                     if self.k == None:
                         finished = utils.converged(temp_recent_losses)
                     elif self.k == self.num_objectives - 1 and utils.converged(self.recent_utilities[self.k]):
                         finished = True
-                elif e > num_updates:
+                elif e > num_updates and not finished:
                     finished = True
 
     def update_lagrange_multipliers(self, e, max_lm=100.0):
