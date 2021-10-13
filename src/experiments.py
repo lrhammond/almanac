@@ -524,10 +524,8 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             #     for a in [0,1]:
             #         if env.model.labels[k][a]:
             #             print("Agent {} did {}".format(a, k))
-            #             print("hurrah")
 
             # if env.model.labels['tomato_pickup'][0] or env.model.labels['tomato_pickup'][1]:
-            #     print("HYPE")
 
             # held = False
             # if new_game_state.players[0].held_object != None and game_state.players[0].held_object == None:
