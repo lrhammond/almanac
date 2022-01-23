@@ -233,6 +233,7 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         # Form objectives
         specifications = [s(*random.sample(labels, k = s.__code__.co_argcount)) for s in random.sample(possible_specs, k=num_specs)]
         objectives = [list(range(len(specifications)))]
+        objectives = list(range(len(specifications)))
         weights = [1 for _ in specifications]
 
         # Form env
@@ -240,7 +241,7 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
 
         # Form input parameters and LDBAs
-        spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
+        spec_controller = specs.Spec_Controller(specifications, location, load_from=location + "/specs")
         obs_size = env.get_obs_size() + sum(spec_controller.num_states)
         act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
@@ -617,7 +618,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
     return
 
-debug()
+#debug()
 # oc_test()
-# exp1(num_specs=2, num_actors=2, num_states=3, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=test_hps)
+exp1(num_specs=2, num_actors=2, num_states=3, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=test_hps)
 # exp2(num_specs=2, num_agents=2, num_landmarks=2, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=exp2_hps)

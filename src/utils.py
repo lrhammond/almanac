@@ -73,11 +73,12 @@ def converged(losses, target=0.0, tolerance=0.1, bound=0.01, minimum_updates=10)
 
 
 def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,javamaxmem=16, epsilon=0.001, maxiters=100000, timeout=43200):
-
+    location = location.replace("\\", "/")
     assert not (det and (not policy))
 
     # Form input
-    run_name = 'prism -cuddmaxmem {}g -javamaxmem {}g -epsilon {} -maxiters {} -timeout {}'.format(cuddmaxmem, javamaxmem, epsilon, maxiters, timeout + 3600)
+    #run_name = '"/Program Files/prism-4.7/bin/prism.bat" -cuddmaxmem {}g -javamaxmem {}g -epsilon {} -maxiters {} -timeout {}'.format(cuddmaxmem, javamaxmem, epsilon, maxiters, timeout + 3600)
+    run_name = '"/Program Files/prism-4.7/bin/prism.bat" -epsilon {} -maxiters {} -timeout {}'.format(epsilon, maxiters, timeout + 3600)
     model_suffix = ('' if not policy else '-policy') + ('' if not det else '-det')
     model_name = '{}/prism_models/{}{}.prism'.format(location, name, model_suffix)
     results_suffix = '' if model_suffix == '' else model_suffix
@@ -119,7 +120,10 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
                 # if line[:24] == 'Time for model checking:':
                 #     time = line[24:]
                 if line[:7] == 'Result:':
-                    r = ast.literal_eval(line[8:-29]) if num_specs > 1 and not policy else float(line[8:-29])
+                    print(line)
+                    #r = ast.literal_eval(line[8:-29]) if num_specs > 1 and not policy else float(line[8:-29])
+                    #r = ast.literal_eval(line[9:-2]) if num_specs > 1 and not policy else float(line[8:])
+                    r = ast.literal_eval(line[8:-1]) if num_specs > 1 and not policy else float(line[8:])
         if r == None:
             return None, t
         results.append(r)
@@ -345,6 +349,52 @@ def get_mmg_results(range_repetitions, range_states, range_actions, range_specs)
         for a in range_actions:
             for l in range_specs:
                 print(best[(s,a,l)])
+
+
+def replace_bool_ops_with_words(specs):
+    """
+    Replaces invalid windows filename characters, such as & and |, with their equivalent words (AND, OR).
+    :param spec: An array of specifications
+    :return: None
+    """
+    new_specs = specs.copy()
+    for i, spec in enumerate(specs):
+        updated_spec = spec.replace("|", "OR")
+        updated_spec = updated_spec.replace("&", "AND")
+        updated_spec = updated_spec.replace("!", "NOT")
+        updated_spec = updated_spec.replace("->", "IMP")
+        updated_spec = updated_spec.replace("=>", "IMP")
+        updated_spec = updated_spec.replace("<->", "BIMP")
+        updated_spec = updated_spec.replace("<=>", "BIMP")
+        updated_spec = updated_spec.replace("^", "XOR")
+        new_specs[i] = updated_spec
+    return new_specs
+
+
+def replace_words_with_bool_ops(specs):
+    """
+    Replaces bool operators with invalid windows filename chars
+    :param spec: An array of specifications
+    :return: Updated specs
+    """
+    new_specs = specs.copy()
+    for i, spec in enumerate(specs):
+        updated_spec = spec.replace("OR", "|")
+        updated_spec = updated_spec.replace("AND", "&")
+        updated_spec = updated_spec.replace("NOT", "!")
+        updated_spec = updated_spec.replace("IMP", "->")
+        updated_spec = updated_spec.replace("IMP", "=>")
+        updated_spec = updated_spec.replace("BIMP", "<->")
+        updated_spec = updated_spec.replace("BIMP", "<=>")
+        updated_spec = updated_spec.replace("XOR", "^")
+        new_specs[i] = updated_spec
+
+    return new_specs
+
+
+
+
+
 
 
 # Plots data

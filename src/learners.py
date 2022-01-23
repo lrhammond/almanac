@@ -5,7 +5,7 @@
 
 import torch
 from torch.distributions.transforms import PowerTransform
-import torch.tensor as tt
+from torch import tensor as tt
 import random
 from torch import pow as power
 import time

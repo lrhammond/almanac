@@ -11,7 +11,7 @@ import re
 from itertools import chain, combinations, product
 import pickle
 from torch.nn.functional import feature_alpha_dropout, one_hot as one_hot
-import torch.tensor as tt
+from torch import tensor as tt
 
 
 # Specification controller class
@@ -245,7 +245,8 @@ class LDBA:
         """
 
         # Translate the LTL formula to an OA using Rabinizer 4.
-        out=check_output(['rabinizer4/bin/ltl2ldba', '-e', ltl])
+        print("hi")
+        out = check_output([r'C:\Users\chess\Documents\Alistair\Monash\MARL\alamanac\rabinizer4\bin\ltl2ldba.bat', '-e', ltl])
         
         # Split the output into two parts: the header and the body
         header, body = out.decode('utf-8').split('--BODY--\n')
