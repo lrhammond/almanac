@@ -420,7 +420,151 @@ def exp2(num_specs, num_agents, num_landmarks, num_run, root, id, max_steps, hps
         run(learner, env, max_steps, spec_controller, [], objectives, location, prefix, verbose=True, num_plot_points=1000)
 
 
-# Experiment 3
+# Experiment 3 - adversarial case
+exp3_hps = {'actual_dist': True,
+            'augment_data': True,
+            'buffers': {'actors': {'size': 1000, 'batch': 32},
+                        'critics': {'size': 1000, 'batch': 32}},
+            'continue_prob': 0.9,
+            'epsilon': 0,
+            'gamma_Phi': 0.99,
+            'kl_target': 0.025,
+            'l2_weight': 0.0001,
+            'learning_rates': {'actors': (('constant', 0.001),),
+                               'critics': ('constant', 0.75),
+                               'lagrange_multiplier': (('constant', 0.01),)},
+            'models': {'actors': {'type': 'dnn', 'shape': [24, 32, 24]},
+                       'critics': {'type': 'dnn', 'shape': [24, 24, 24]}},
+            'optimisers': {'actors': 'sgd',
+                           'critics': 'sgd'},
+            'patient_updates': True,
+            'sequential': False,
+            'spec_reward': 1,
+            'update_after': {'actors': 1000,
+                             'critics': 1000}}
+
+
+def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=exp1_hps):
+    assert num_specs in [1, 2]
+
+    location = '{}/experiments/1'.format(root)
+    name = '{}-{}-{}-{}'.format(num_states, num_actors, num_specs, num_run)
+
+    # Specifications
+    labels = ['l{}'.format(i) for i in range(num_states)]
+    possible_specs = [lambda x: 'F {}'.format(x), \
+                      lambda x: 'G {}'.format(x), \
+                      lambda x: 'F G {}'.format(x), \
+                      lambda x: 'G F {}'.format(x), \
+                      lambda x: 'X (X {})'.format(x), \
+                      lambda x, y: '{} U {}'.format(x, y), \
+                      lambda x, y: 'F ({} & {})'.format(x, y), \
+                      lambda x, y: 'G ({} | (X {}))'.format(x, y), \
+                      lambda x, y: 'F G ({} | {})'.format(x, y), \
+                      lambda x, y: 'G F ({} & (X {}))'.format(x, y)]
+    possible_weights = [2, 5, 8]
+    if num_states == 1:
+        possible_specs = possible_specs[:5]
+
+    # Map parameters
+    state_size = num_states
+    action_sizes = num_actors * [2]
+    num_rules = max(1, int(0.5 * state_size))
+    num_antecedents = max(1, int(0.5 * state_size))
+
+    completed = False
+    while not completed:
+
+        # Form objectives
+        specifications = [s(*random.sample(labels, k=s.__code__.co_argcount)) for s in
+                          random.sample(possible_specs, k=num_specs)]
+        print(specifications)
+        # objectives = [list(range(len(specifications)))]
+        # objectives = list(range(len(specifications)))
+        weights = [1 for _ in specifications]
+        # weights = [1, 2]
+        weights = [1]
+        objectives = weights.copy()
+
+        # Form env
+        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True,
+                                        single_init=True, sink_prob=0.5)
+        env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
+
+        # Form input parameters and LDBAs
+        spec_controller = specs.Spec_Controller(specifications, location, load_from=location + "/specs")
+        obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+        act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+        # Evaluate using PRISM
+        spec_controller.save_props(location, name, weights)
+        env.model.create_prism_model(num_run, spec_controller.specs, location)
+
+        # Sometimes the MMG and spec combination generated is trivial, if so we retry
+        prism_prob, prism_time = utils.run_prism(location, name, weights)
+        if prism_prob == 0.0:
+            continue
+
+        # Create learner
+        learner = make_learner('almanac', obs_size, act_sizes, objectives, hps)
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id, num_run)
+
+        # Create state representations
+        possible_game_states = list(itertools.product([0, 1], repeat=env.get_obs_size()))
+        possible_spec_states = [[tuple((1 if i == j else 0) for i in range(s_s)) for j in range(s_s)] for s_s in
+                                spec_controller.num_states]
+        possible_states = [utils.flatten(p_s) for p_s in itertools.product(possible_game_states, *possible_spec_states)]
+        possible_state_tensors = torch.stack([tt(p_s).float() for p_s in possible_states])
+
+        # Compare against Almanac
+        probs = {'reg': [], 'det': []}
+        almanac_time = 0.0
+        steps_taken = 0
+        finished = False
+        steps_per_round = 2
+        while not finished:
+
+            # Run Almamac
+            resume = False if steps_taken == 0 else True
+            t0 = time()
+            run(learner, env, steps_per_round, spec_controller, [], objectives, location, prefix, resume=resume,
+                verbose=True, num_plot_points=2)
+            t1 = time()
+            almanac_time += (t1 - t0)
+            steps_taken += steps_per_round
+
+            # Evaluate policies
+            p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
+            env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists)
+            env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, det=True)
+            policy_prob, _ = utils.run_prism(location, name, weights, policy=True)
+            det_policy_prob, _ = utils.run_prism(location, name, weights, policy=True, det=True)
+            print(f"Policy Prob: {policy_prob} Deterministic Prob: {det_policy_prob}")
+            probs['reg'].append(policy_prob)
+            probs['det'].append(det_policy_prob)
+
+            # Check to see if we can stop
+            target = 1.0 if prism_prob == None else prism_prob
+            min_updates = int((hps['update_after']['actors'] * 10) / steps_per_round)
+            policy_converged = utils.converged(probs['reg'], target=target, tolerance=0.01, minimum_updates=min_updates)
+            det_policy_converged = utils.converged(probs['det'], target=target, tolerance=0.01,
+                                                   minimum_updates=min_updates)
+            if (steps_taken >= max_steps) or abs(policy_prob - prism_prob) < 0.01 or abs(
+                    det_policy_prob - prism_prob) < 0.01 or (policy_converged and det_policy_converged):
+                finished = True
+
+        # Record results
+        results = {'prism_prob': prism_prob,
+                   'prism_time': prism_time,
+                   'almanac_time': almanac_time,
+                   'policy_prob': policy_prob,
+                   'det_policy_prob': det_policy_prob,
+                   'policy_converged': policy_converged,
+                   'det_policy_converged': det_policy_converged}
+        with open('{}/results/{}.txt'.format(location, name), 'w') as f:
+            f.write(str(results))
+
+        completed = True
 
 
 
