@@ -232,6 +232,259 @@ class MarkovGame:
 #                  initial=mg3.initial,
 #                  labeller=mg3.labeller)
 
+class FixedStructuredMarkovGame:
+
+    # Based on the procedure described in http://incompleteideas.net/RandomMDPs.html
+
+    def __init__(self, num_state_vars, num_players, num_rules, num_antecedents, deterministic=False, single_init=False,
+                 sink_prob=0.1):
+
+        assert num_rules < num_state_vars
+        assert num_antecedents < num_state_vars
+        print("Num rules: " + str(num_rules))
+        print("Num antedecents: " + str(num_antecedents))
+        self.deterministic = deterministic
+        self.sink_prob = sink_prob
+
+        self.num_state_vars = num_state_vars
+
+        self.sink_states = []
+        for state_id in range(2 ** self.num_state_vars):
+            if random.uniform(0, 1) < self.sink_prob:
+                self.sink_states.append(state_id)
+
+        self.num_players = num_players
+        self.labels = ['l{}'.format(i) for i in range(num_state_vars)]
+        self.rules = self.make_rules(num_rules, num_antecedents)
+        # if deterministic:
+        #     self.transitions = self.make_transitions()
+        round_to = 1 if single_init else 3
+        self.initial = tuple([round(random.uniform(0, 1), round_to) for _ in range(num_state_vars)])
+        # self.initial = tuple([random.choice([0,1]) for _ in range(state_size)])
+        self.state = self.reset()
+
+    def make_rules(self, num_rules, num_antecedents):
+
+        rules = {}
+        for a in itertools.product(*[[0, 1] for _ in self.num_state_vars]):  # for each joint action
+            rules[a] = {}
+            """if random.uniform(0,1) < self.sink_prob:
+                continue"""
+
+            state_variables = random.sample(range(self.num_state_vars), k=num_rules)
+            antecedents = random.sample(range(self.num_state_vars), k=num_antecedents)
+            """print(self.state_size)
+            print(state_variables)
+            print(antecedents)
+            input()"""
+            for i in state_variables:
+                rules[a][i] = {'antecedents': antecedents}
+                for x in itertools.product(*[[0, 1] for _ in range(self.num_state_vars)]):
+
+
+                """for x in itertools.product(*[[0, 1] for _ in range(num_antecedents)]):  # for each possible preceding set of state vars
+                    # state_id = int("".join(str(bit) for bit in x), 2)
+
+                    if self.deterministic:
+                        rules[a][i][x] = random.choice([0, 1])
+                    else:
+                        rules[a][i][x] = round(random.uniform(0, 1), 3)"""
+
+        return rules
+
+    def make_transitions(self):
+
+        transitions = {}
+        for s in itertools.product(*[[0, 1] for _ in range(self.state_size)]):
+            s_1 = tuple(s)
+            transitions[s_1] = {}
+            for a in itertools.product(*[range(a_s) for a_s in self.action_sizes]):
+                s_2 = list(s_1)
+                for i in self.rules[a].keys():
+                    x = tuple([s_1[y] for y in self.rules[a][i]['antecedents']])
+                    s_2[i] = self.rules[a][i][x]
+                transitions[s_1][a] = tuple(s_2)
+
+        return transitions
+
+    def reset(self):
+
+        self.state = tuple([int(random.uniform(0, 1) > self.initial[i]) for i in range(self.num_state_vars)])
+
+        return self.state
+
+    def label(self, state):
+
+        return tuple([self.labels[i] for i in range(self.state_size) if state[i] == 1])
+
+    def featurise(self, state):
+
+        return torch.tensor(state, dtype=float)
+
+    def step(self, joint_action):
+
+        # if self.deterministic:
+        #     self.state = self.transitions[self.state][joint_action]
+        # else:
+        print("hiiiii")
+        if self.state not in self.sink_states:
+            new_state = list(self.state)
+
+            for k_1 in self.rules[joint_action].keys():
+                k_2 = tuple([self.state[a] for a in self.rules[joint_action][k_1]['antecedents']])
+                new_state[k_1] = 1 if random.uniform(1, 0) > self.rules[joint_action][k_1][k_2] else 0
+            self.state = tuple(new_state)
+        else:
+            print("SINK")
+        return self.state
+
+    def print(self):
+
+        print("State: ", self.state)
+        print("Labels: ", self.label(self.state))
+
+    def create_prism_model(self, num, ldbas, location, policy=None, det=False):
+
+        p = '' if policy == None else '-policy'
+        d = '' if det == False else '-det'
+        filename = location + '/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes),
+                                                                           len(ldbas), num, p, d)
+
+        with open(filename, 'w') as f:
+
+            if policy == None:
+                f.write('mdp\n\n\n')
+            else:
+                f.write('dtmc\n\n\n')
+
+            eps_actions = []
+            epsilon_transitions = []
+            for i in range(len(ldbas)):
+                eps_actions += ['eps_{}_{}'.format(i, j) for j in ldbas[i].ldba.eps_actions]
+                for e in ldbas[i].ldba.eps_actions:
+                    eps_trans = '('
+                    for a in range(self.num_players):
+                        eps_trans += 'a{}=eps_{}_{}'.format(a, i, e)
+                        if a != self.num_players - 1:
+                            eps_trans += ' | '
+                        else:
+                            eps_trans += ')'
+                    epsilon_transitions.append(eps_trans)
+            max_action_num = max(self.action_sizes)
+            any_eps_trans = ' | '.join(epsilon_transitions)
+
+            for i in range(len(eps_actions)):
+                f.write('const int {} = {};\n'.format(eps_actions[i], max_action_num + i))
+            highest_action_num = max_action_num + len(eps_actions) - 1
+
+            f.write('\n\nmodule INIT\n\n')
+            f.write('    i : bool init false;\n')
+            f.write('    [initialisation] !i -> 1.0:(i\'=true);\n')
+            f.write('\nendmodule\n\n')
+            f.write('\nmodule SYNC\n\n')
+            f.write('    t : bool init true;\n')
+            f.write('    [initialisation] !i -> 1.0:(t\' = false);\n')
+            f.write('    [action] !t -> 1.0:(t\' = true);\n')
+            f.write('    [transition] t -> 1.0:(t\' = false);\n')
+            f.write('\nendmodule\n\n')
+
+            for state in range(self.state_size):
+
+                f.write('\nmodule STATE_{}\n\n'.format(state))
+                f.write('    s{} : [0..2] init 2;\n'.format(state))
+                p = self.initial[state]
+                f.write('    [initialisation] !i -> {}:(s{}\'=0) + {}:(s{}\'=1);\n'.format(p, state, (round(1.0 - p, 3)),
+                                                                                       state))
+
+                for a in itertools.product(*[range(a_s) for a_s in self.action_sizes]):
+
+                    action_guard = ' & '.join(['a{}={}'.format(i, a[i]) for i in range(self.num_players)])
+
+                    if state not in self.rules[a].keys():
+                        continue
+                    else:
+                        antecedents = self.rules[a][state]['antecedents']
+
+                    for x in itertools.product(*[[0, 1] for _ in range(len(antecedents))]):
+                        state_guard = ' & '.join(['s{}={}'.format(i, j) for (i, j) in zip(antecedents, x)])
+                        p = self.rules[a][state][x]
+                        new_state = '{}:(s{}\'=0) + {}:(s{}\'=1)'.format(p, state, round(1.0 - p, 3), state)
+                        f.write('    [transition] ' + action_guard + ' & ' + state_guard + ' -> ' + new_state + ';\n')
+
+                        """else:
+                            print(state)
+                            new_state = '{}:(s{}\'={})'.format(1, state, state)"""
+
+                if len(epsilon_transitions) != 0:
+                    f.write('    [transition] ' + any_eps_trans + ' -> 1.0:(s{0}\'=s{0});\n'.format(state))
+
+                f.write('\nendmodule\n\n')
+
+            for i in range(len(ldbas)):
+                f.write(ldbas[i].create_prism_model(i, self.num_players))
+
+            if policy == None:
+
+                for i in range(len(self.action_sizes)):
+
+                    f.write('\nmodule ACTION_{}\n\n'.format(i))
+                    f.write('    a{} : [-1..{}] init -1;\n'.format(i, (highest_action_num)))
+
+                    for j in range(self.action_sizes[i]):
+                        f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, j))
+                    for e in eps_actions:
+                        f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, e))
+
+                    f.write('\nendmodule\n\n')
+
+            else:
+
+                for i in range(len(self.action_sizes)):
+
+                    f.write('\nmodule ACTION_{}\n\n'.format(i))
+                    f.write('    a{} : [-1..{}] init -1;\n'.format(i, (highest_action_num)))
+
+                    for k in policy.keys():
+
+                        guard = ('    [action] ')
+                        for j in range(self.state_size):
+                            guard += 's{}={}'.format(j, k[j])
+                            if j != self.state_size - 1:
+                                guard += " & "
+
+                        remaining = k[self.state_size:]
+
+                        for l in range(len(ldbas)):
+                            n_l_s = ldbas[l].ldba.get_num_states()
+                            ldba_state = remaining[:n_l_s]
+                            guard += " & q{}={}".format(l, ldba_state.index(1))
+                            remaining = remaining[n_l_s:]
+
+                        action_probs = policy[k][i]
+                        eps_action_probs = action_probs[self.action_sizes[i]:]
+
+                        if not det:
+                            action_choice = ''
+                            for a in range(self.action_sizes[i]):
+                                action_choice += '{}:(a{}\'={})'.format(action_probs[a], i, a)
+                                if a != self.action_sizes[i] - 1:
+                                    action_choice += ' + '
+                            for b in range(len(eps_actions)):
+                                action_choice += ' + {}:(a{}\'={})'.format(eps_action_probs[b], i, eps_actions[b])
+
+                        else:
+                            action = int(torch.argmax(action_probs))
+                            poss_actions = list(range(self.action_sizes[i])) + eps_actions
+                            action_choice = '1.0:(a{}\'={})'.format(i, poss_actions[action])
+
+                        f.write(guard + ' -> ' + action_choice + ';\n')
+
+                    f.write('\nendmodule\n\n')
+
+            for i in range(self.state_size):
+                f.write('\nformula l{0} = (s{0}=1);'.format(i))
+                f.write('\nlabel "l{0}" = l{0};'.format(i))
+
 
 class StructuredMarkovGame:
 
@@ -241,10 +494,21 @@ class StructuredMarkovGame:
 
         assert num_rules < state_size
         assert num_antecedents < state_size
-
+        print("Num rules: " + str(num_rules))
+        print("Num antedecents: " + str(num_antecedents))
         self.deterministic = deterministic
         self.sink_prob = sink_prob
+
         self.state_size = state_size
+
+        self.sink_states = []
+        for x in range(self.state_size):
+            if random.uniform(0, 1) < self.sink_prob:
+                self.sink_states.append(x)
+
+
+
+
         self.action_sizes = action_sizes
         self.num_players = len(action_sizes)
         self.labels = ['l{}'.format(i) for i in range(state_size)]
@@ -258,16 +522,22 @@ class StructuredMarkovGame:
 
     def make_rules(self, num_rules, num_antecedents):
 
+
         rules = {}
-        for a in itertools.product(*[range(a_s) for a_s in self.action_sizes]):
+        for a in itertools.product(*[range(a_s) for a_s in self.action_sizes]): # for each joint action
             rules[a] = {}
-            if random.uniform(0,1) < self.sink_prob:
-                continue
-            changing_states = random.sample(range(self.state_size), k=num_rules)
+
+            state_variables = random.sample(range(self.state_size), k=num_rules)
             antecedents = random.sample(range(self.state_size), k=num_antecedents)
-            for i in changing_states:
+            """print(self.state_size)
+            print(state_variables)
+            print(antecedents)
+            input()"""
+            for i in state_variables:
                 rules[a][i] = {'antecedents': antecedents}
-                for x in itertools.product(*[[0,1] for _ in range(num_antecedents)]):
+                for x in itertools.product(*[[0,1] for _ in range(num_antecedents)]): # for each possible preceding set of state vars
+                    #state_id = int("".join(str(bit) for bit in x), 2)
+
                     if self.deterministic:
                         rules[a][i][x] = random.choice([0,1])
                     else:
@@ -309,12 +579,16 @@ class StructuredMarkovGame:
         # if self.deterministic:
         #     self.state = self.transitions[self.state][joint_action]
         # else:
-        new_state = list(self.state)
-        for k_1 in self.rules[joint_action].keys():
-            k_2 = tuple([self.state[a] for a in self.rules[joint_action][k_1]['antecedents']])
-            new_state[k_1] = 1 if random.uniform(1,0) > self.rules[joint_action][k_1][k_2] else 0 
-        self.state = tuple(new_state)
+        print("hiiiii")
+        if self.state not in self.sink_states:
+            new_state = list(self.state)
 
+            for k_1 in self.rules[joint_action].keys():
+                k_2 = tuple([self.state[a] for a in self.rules[joint_action][k_1]['antecedents']])
+                new_state[k_1] = 1 if random.uniform(1,0) > self.rules[joint_action][k_1][k_2] else 0
+            self.state = tuple(new_state)
+        else:
+            print("SINK")
         return self.state
 
     def print(self):
@@ -387,8 +661,13 @@ class StructuredMarkovGame:
                         state_guard = ' & '.join(['s{}={}'.format(i,j) for (i,j) in zip(antecedents,x)])
                         p = self.rules[a][state][x]
                         new_state = '{}:(s{}\'=0) + {}:(s{}\'=1)'.format(p,state,round(1.0-p,3),state)
-
                         f.write('    [transition] ' + action_guard + ' & ' + state_guard + ' -> ' + new_state + ';\n')
+
+                        """else:
+                            print(state)
+                            new_state = '{}:(s{}\'={})'.format(1, state, state)"""
+
+
 
                 if len(epsilon_transitions) != 0:
                     f.write('    [transition] ' + any_eps_trans + ' -> 1.0:(s{0}\'=s{0});\n'.format(state))        

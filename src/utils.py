@@ -81,6 +81,7 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
     run_name = '"/Program Files/prism-4.7/bin/prism.bat" -epsilon {} -maxiters {} -timeout {}'.format(epsilon, maxiters, timeout + 3600)
     model_suffix = ('' if not policy else '-policy') + ('' if not det else '-det')
     model_name = '{}/prism_models/{}{}.prism'.format(location, name, model_suffix)
+    print(model_name)
     results_suffix = '' if model_suffix == '' else model_suffix
     num_specs = len(weights)
 
@@ -127,7 +128,11 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
         if r == None:
             return None, t
         results.append(r)
+
+    print(results)
     if len(results) == 1:
+        print(results, weights)
+        print(num_specs)
         p = results[0] if num_specs == 1 else max([(weights[0] * res[0]) + (weights[1] * res[1]) for res in results[0]])
     else:
         p = (weights[0] * results[0]) + (weights[1] * results[1])

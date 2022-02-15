@@ -185,6 +185,7 @@ exp1_hps ={'actual_dist': True,
             'epsilon': 0,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
+            'l2_weight' : 0.0001,
             'learning_rates': { 'actors': (('constant', 0.001),),
                                 'critics': ('constant', 0.75),
                                 'lagrange_multiplier': (('constant', 0.01),) },
@@ -194,7 +195,7 @@ exp1_hps ={'actual_dist': True,
                             'critics': 'sgd' },
             'patient_updates': True,
             'sequential': False,
-            'spec_reward': 10,
+            'spec_reward': 1,
             'update_after': { 'actors': 1000,
                               'critics': 1000 }}
 
@@ -232,12 +233,16 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
         # Form objectives
         specifications = [s(*random.sample(labels, k = s.__code__.co_argcount)) for s in random.sample(possible_specs, k=num_specs)]
-        objectives = [list(range(len(specifications)))]
-        objectives = list(range(len(specifications)))
+        print(specifications)
+        # objectives = [list(range(len(specifications)))]
+        # objectives = list(range(len(specifications)))
         weights = [1 for _ in specifications]
+        #weights = [1, 2]
+        weights = [1]
+        objectives = weights.copy()
 
         # Form env
-        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True, single_init=True, sink_prob=0.8)
+        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True, single_init=True, sink_prob=0.5)
         env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
 
         # Form input parameters and LDBAs
@@ -269,13 +274,13 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         almanac_time = 0.0
         steps_taken = 0
         finished = False
-        steps_per_round = 100
+        steps_per_round = 2
         while not finished:
 
             # Run Almamac
             resume = False if steps_taken == 0 else True
             t0 = time()
-            run(learner, env, steps_per_round, spec_controller, [], objectives, location, prefix, resume=resume, verbose=True, num_plot_points=10)
+            run(learner, env, steps_per_round, spec_controller, [], objectives, location, prefix, resume=resume, verbose=True, num_plot_points=2)
             t1 = time()
             almanac_time += (t1 - t0)
             steps_taken += steps_per_round
@@ -286,6 +291,7 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
             env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, det=True)
             policy_prob, _ = utils.run_prism(location, name, weights, policy=True)
             det_policy_prob, _ = utils.run_prism(location, name, weights, policy=True, det=True)
+            print(f"Policy Prob: {policy_prob} Deterministic Prob: {det_policy_prob}")
             probs['reg'].append(policy_prob)
             probs['det'].append(det_policy_prob)
 
@@ -325,9 +331,9 @@ exp2_hps_almanac ={'actual_dist': True,
             # 'learning_rates': { 'actors': (('constant', 0.0001),),
             #                     'critics': ('constant', 0.001),
             #                     'lagrange_multiplier': (('constant', 0.005),) },
-            'learning_rates': { 'actors': (('constant', 1.0),),
-                                'critics': ('constant', 1.0),
-                                'lagrange_multiplier': (('constant', 1.0),) },
+            'learning_rates': { 'actors': (('constant', 0.0003), ('constant', 0.0001)),
+                                'critics': ('constant', 0.001),
+                                'lagrange_multiplier': (('constant', 0.005),) },
             'models': { 'actors': {'type':'dnn', 'shape':[64,64]},
                         'critics': {'type':'dnn', 'shape':[64,64]} },
             'normalise_advantages' : True,
@@ -337,7 +343,7 @@ exp2_hps_almanac ={'actual_dist': True,
                             'critics': 'adam' },
             'patient_updates': True,
             'sequential': False,
-            'spec_reward': 10,
+            'spec_reward': 1,
             'until_converged' : { 'actors': True,
                                   'critics': False },
             'update_after': { 'actors': 100,
@@ -592,7 +598,9 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             current_discounts *= np.array(discounts)
             discounted_rewards = current_discounts * rewards
             # utilities = [sum(z[0] * z[1] for z in zip(o, discounted_rewards)) for o in objectives]
-            utilities = [discounted_rewards[j] for j in objectives]
+            #print(objectives)
+            #print(discounted_rewards)
+            utilities = [discounted_rewards[j] for j in range(num_objectives)]
             recent_scores = [recent_scores[i] + utilities[i] for i in range(num_objectives)]
 
             # Update variables for next step
@@ -620,5 +628,5 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
 #debug()
 # oc_test()
-exp1(num_specs=2, num_actors=2, num_states=3, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=test_hps)
+exp1(num_specs=1, num_actors=2, num_states=10, num_run=1, root=utils.get_root(), id=1, max_steps=1, hps=exp1_hps)
 # exp2(num_specs=2, num_agents=2, num_landmarks=2, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=exp2_hps)
