@@ -282,13 +282,15 @@ class FixedStructuredMarkovGame:
                 for x in itertools.product(*[[0, 1] for _ in range(self.num_state_vars)]):
 
 
-                """for x in itertools.product(*[[0, 1] for _ in range(num_antecedents)]):  # for each possible preceding set of state vars
+                """
+                for x in itertools.product(*[[0, 1] for _ in range(num_antecedents)]):  # for each possible preceding set of state vars
                     # state_id = int("".join(str(bit) for bit in x), 2)
 
                     if self.deterministic:
                         rules[a][i][x] = random.choice([0, 1])
                     else:
-                        rules[a][i][x] = round(random.uniform(0, 1), 3)"""
+                        rules[a][i][x] = round(random.uniform(0, 1), 3)
+                """
 
         return rules
 

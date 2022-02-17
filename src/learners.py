@@ -283,7 +283,7 @@ def set_up_lrs(learning_rates):
 # Almanac module
 class Almanac:
 
-    def __init__(self, obs_size, act_sizes, objectives, hps, load_from=None):
+    def __init__(self, obs_size, act_sizes, objectives, hps, load_from=None, adversarial_spec_allocations=[]):
         
         # TODO
         if load_from != None:
@@ -301,6 +301,14 @@ class Almanac:
         self.num_objectives = len(objectives)
         self.num_players = len(self.act_sizes)
         self.obs_size = obs_size
+
+        # Check if case is adversarial
+        self.adversarial = (len(adversarial_spec_allocations)  != 0)
+
+        # Specification allocation defines which actor is allocated to which specification
+        # List specifies which actors are assigned to each spec
+        # [ Specs x Actors ] = [[Actors for spec 1], [Actors for spec 2], ..., [Actors for spec n]] for n specifications
+        self.adversarial_spec_allocations = adversarial_spec_allocations
 
         # Values to maintain
         self.updates = {'critics':[0 for _ in range(self.num_objectives)], 'actors':0}

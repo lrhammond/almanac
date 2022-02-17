@@ -445,6 +445,24 @@ exp3_hps = {'actual_dist': True,
 
 
 def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=exp1_hps):
+    """
+    Adversarial Experiment Case
+
+    Parameters
+    ----------
+    num_specs
+    num_actors
+    num_states
+    num_run
+    root
+    id
+    max_steps
+    hps
+
+    Returns
+    -------
+
+    """
     assert num_specs in [1, 2]
 
     location = '{}/experiments/1'.format(root)
