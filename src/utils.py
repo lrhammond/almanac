@@ -1,4 +1,5 @@
 ### Utilities ###
+import os.path
 
 from torch import clamp, isnan, tensor, equal
 import ast
@@ -78,7 +79,7 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
 
     # Form input
     #run_name = '"/Program Files/prism-4.7/bin/prism.bat" -cuddmaxmem {}g -javamaxmem {}g -epsilon {} -maxiters {} -timeout {}'.format(cuddmaxmem, javamaxmem, epsilon, maxiters, timeout + 3600)
-    run_name = '"/Program Files/prism-4.7/bin/prism.bat" -epsilon {} -maxiters {} -timeout {}'.format(epsilon, maxiters, timeout + 3600)
+    run_name = '"C:/Program Files/prism-4.7/bin/prism.bat" -epsilon {} -maxiters {} -timeout {}'.format(epsilon, maxiters, timeout + 3600)
     model_suffix = ('' if not policy else '-policy') + ('' if not det else '-det')
     model_name = '{}/prism_models/{}{}.prism'.format(location, name, model_suffix)
     print(model_name)
@@ -95,7 +96,10 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
     for prop in props:
         props_name = '{}/prism_specs/{}.props -prop {}'.format(location, name, prop)
         prop_suffix = '' if len(props) == 1 else '-{}'.format(prop - 1)
-        save_name = '{}/prism_evaluations/{}{}{}.txt'.format(location, name, results_suffix, prop_suffix)
+        save_dir = '{}/{}'.format(location, "prism_evaluations")
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        save_name = '{}/{}{}{}.txt'.format(save_dir, name, results_suffix, prop_suffix)
         prism_command = shlex.split(' '.join([run_name, model_name, props_name]))
         try:
             with open(save_name, 'w') as f:

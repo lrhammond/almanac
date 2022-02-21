@@ -18,19 +18,21 @@ from torch import tensor as tt
 
 class Spec_Controller:
 
-    def __init__(self, formulae, save_to, load_from=None):
+    def __init__(self, formulae, save_to, load_from=None, adversarial=False, strict_adversarial=False):
         
         self.formulae = formulae
         if load_from != None:
             self.specs = []
             for f in formulae:
+
                 filename = load_from + '/specs/{}.pickle'.format(f)
                 if os.path.isfile(f):
                     old_spec = pickle.load(open(filename, "rb"))
                     self.specs.append(old_spec)
                 else:
                     new_spec = Spec(f)
-                    new_spec.save(save_to + '/specs/')
+                    save_path = str(os.path.join(save_to + 'specs'))
+                    new_spec.save(save_path)
                     self.specs.append(new_spec)
         else:
             self.specs = [Spec(f) for f in formulae]
@@ -245,8 +247,7 @@ class LDBA:
         """
 
         # Translate the LTL formula to an OA using Rabinizer 4.
-        print("hi")
-        out = check_output([r'C:\Users\chess\Documents\Alistair\Monash\MARL\alamanac\rabinizer4\bin\ltl2ldba.bat', '-e', ltl])
+        out = check_output([r'D:\repos\code\envs\almanac_env\rabinizer4\bin\ltl2ldba.bat', '-e', ltl])
         
         # Split the output into two parts: the header and the body
         header, body = out.decode('utf-8').split('--BODY--\n')
@@ -391,8 +392,3 @@ class LDBA:
         while os.path.isfile(filename):
             filename = 'temp_%032x.hoa' % random.getrandbits(128)
         return filename
-
-
-l = LDBA("F G a")
-
-print("hello")

@@ -15,14 +15,14 @@ import numpy as np
 import specs
 
 # Overcooked imports
-from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
-from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
-from overcooked_ai_py.mdp.actions import Action, Direction
+# from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
+# from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
+# from overcooked_ai_py.mdp.actions import Action, Direction
 
 # MPE imports
-from pettingzoo.mpe._mpe_utils.simple_env import SimpleEnv, make_env
-from pettingzoo.mpe._mpe_utils.core import World, Agent, Landmark
-from pettingzoo.mpe._mpe_utils.scenario import BaseScenario
+# from pettingzoo.mpe._mpe_utils.simple_env import SimpleEnv, make_env
+# from pettingzoo.mpe._mpe_utils.core import World, Agent, Landmark
+# from pettingzoo.mpe._mpe_utils.scenario import BaseScenario
 
 # Use GPU if available
 if torch.cuda.is_available():
@@ -279,7 +279,7 @@ class FixedStructuredMarkovGame:
             input()"""
             for i in state_variables:
                 rules[a][i] = {'antecedents': antecedents}
-                for x in itertools.product(*[[0, 1] for _ in range(self.num_state_vars)]):
+                #for x in itertools.product(*[[0, 1] for _ in range(self.num_state_vars)]):
 
 
                 """
@@ -1026,7 +1026,7 @@ class MatrixMarkovGame:
             else:
                 print("Error: Converting unstructured labels to PRISM not yet supported")
 
-
+"""
 class OvercookedGame:
 
     def __init__(self, overcooked_map, recipes):
@@ -1079,7 +1079,9 @@ class OvercookedGame:
 
         print(repr(self.overcooked)[:-2])
 
+"""
 
+"""
 class MPE:
 
 
@@ -1186,7 +1188,7 @@ class MPE:
                             labels.append("{}meets{}".format(a,a2))
             
         return labels
-
+"""
 
 ### MARKOV GAME 0 ###
 # Note that this game (and its variants) is for debugging purposes and so is very simple
@@ -1348,9 +1350,12 @@ def labeller(s):
 #     else:
 #         return ('psi',)
 
+"""
+Example Markov Game
 mg_0 = MarkovGame(num_players=num_players,
                  state_space=state_space,
                  action_spaces=action_spaces,
                  transition=transition,
                  initial=initial,
                  labeller=labeller)
+"""

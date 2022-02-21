@@ -189,14 +189,6 @@ def set_up_actors(parametrization, obs_size, act_sizes, shape):
         for i in range(len(act_sizes)):
             actor = DNN(obs_size, [act_sizes[i]], 'softmax', [], bias=False)
             actors.append(actor)
-    elif parametrization == 'lstm':
-        actors = []
-        pre = shape[0]
-        memory = shape[1]
-        post = shape[2]
-        for i in range(len(act_sizes)):
-            actor = LSTM(obs_size, [act_sizes[i]], 'softmax', pre, memory, post)
-            actors.append(actor)  
     else:
         print("Error: Actor must be \'dnn\' or \'linear\' or \'lstm\')")
     for actor in actors:
@@ -213,11 +205,6 @@ def set_up_critics(parametrization, obs_size, num_objectives, shape):
         critics = [DNN(obs_size, [1], 'linear', hidden) for j in range(num_objectives)]
     elif parametrization == 'linear':
         critics = [DNN(obs_size, [1], 'linear', [], bias=False) for j in range(num_objectives)]
-    elif parametrization == 'lstm':
-        pre = shape[0]
-        memory = shape[1]
-        post = shape[2]
-        critics = [LSTM(obs_size, [1], 'linear', pre, memory, post) for j in range(num_objectives)]
     else:
         print("Error: Critic must be \'dnn\' or \'linear\' or \'lstm\')")
     for critic in critics:
@@ -385,10 +372,14 @@ class Almanac:
                 advs = [(a - a.mean()) / (a.std() + 1e-8) for a in advantages]
             else:
                 advs = advantages
+
             
             # Form old probability factors
             old_dist_probs = self.policy(true_states,probs=True)
-            old_action_log_probs = sum([torch.gather(torch.log(old_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
+            old_action_log_probs = [torch.gather(torch.log(old_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)]
+            if not self.adversarial:
+                # TODO: Check change 1: old/new action log probabilities are no longer summed as the actors no longer follow the same policy
+                old_action_log_probs = sum(old_action_log_probs)
 
             # Form state dists for weighting samples
             dists = [self.state_dist(times, gammas[j]).to(device) for j in objectives]
@@ -407,31 +398,72 @@ class Almanac:
             objective_weights = self.compute_weights(objective_range, e)
 
             # Form loss
-            new_dist_probs = self.policy(true_states,probs=True)
-            new_action_log_probs = sum([torch.gather(torch.log(new_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)])
+            new_dist_probs = self.policy(true_states, probs=True)
+            new_action_log_probs = [torch.gather(torch.log(new_dist_probs[i]), 1, joint_actions[i]) for i in range(self.num_players)]
+
+            if not self.adversarial:
+                # TODO: Check change 2: old/new action log probabilities are no longer summed as the actors no longer follow the same policy
+                new_action_log_probs = sum(new_action_log_probs)
 
             # log_ratio = (new_action_log_probs.masked_fill(new_action_log_probs == -np.inf, 0.0) - old_action_log_probs).to(device)
 
-            log_ratio = new_action_log_probs - old_action_log_probs
-            ratio = torch.exp(log_ratio)
-            kl_penalty = ratio * log_ratio
+
 
             if self.hps['entropy_weight'] != 0.0:
                 entropy_penalty = sum([torch.unsqueeze((p * torch.log(p)).sum(dim=1), 1) for p in new_dist_probs])
             else:
                 entropy_penalty = 0.0
 
-            obj_losses = [(dists[k] * (ratio * advs[k] - self.kl_weight * kl_penalty + self.hps['entropy_weight'] * entropy_penalty)).mean() for k in range(self.num_objectives)]
+            if self.adversarial:
 
-            loss = - sum([objective_weights[k] * obj_losses[k] for k in range(self.num_objectives)])
+                # Define actor losses
+                # Each actor has different specifications assigned to it
+                # Only compute obj_losses
+                for player in range(self.num_players):
 
-            # Backpropagate
-            for i in range(self.num_players):
-                self.actor_optimisers[i].zero_grad()
-            loss.backward(retain_graph=True)
-            for i in range(self.num_players):
-                self.actor_optimisers[i].step()
-                self.actors[i].eval()
+                    # Compute ratios
+                    # TODO: Check Change 3: using agent specific distributions not all agents distributions
+                    log_ratio = new_action_log_probs[player] - old_action_log_probs[player]
+                    ratio = torch.exp(log_ratio)
+                    kl_penalty = ratio * log_ratio
+
+                    actor_losses = []
+                    for spec_i in range(len(self.adversarial_spec_allocations)):
+                        if player in self.adversarial_spec_allocations[spec_i]:
+                            objective_loss = (dists[spec_i] * (ratio * advs[spec_i] - self.kl_weight
+                                              * kl_penalty + self.hps['entropy_weight'] * entropy_penalty)).mean()
+                            loss = objective_weights[spec_i] * objective_loss
+                            actor_losses.append(loss)
+
+
+                    actor_loss = -sum(actor_losses)
+
+                    # Backpropagate
+                    self.actor_optimisers[player].zero_grad()
+                    actor_loss.backward(retain_graph=True)
+                    self.actor_optimisers[player].step()
+                    self.actors[player].eval()
+
+
+
+            else:
+                # Calculate ratios
+                log_ratio = new_action_log_probs - old_action_log_probs
+                ratio = torch.exp(log_ratio)
+                kl_penalty = ratio * log_ratio
+
+                obj_losses = [(dists[k] * (ratio * advs[k] - self.kl_weight * kl_penalty + self.hps['entropy_weight'] * entropy_penalty)).mean() for k in range(self.num_objectives)]
+
+                loss = - sum([objective_weights[k] * obj_losses[k] for k in range(self.num_objectives)])
+
+                # Backpropagate
+                for i in range(self.num_players):
+                    self.actor_optimisers[i].zero_grad()
+                loss.backward(retain_graph=True)
+
+                for i in range(self.num_players):
+                    self.actor_optimisers[i].step()
+                    self.actors[i].eval()
 
             with torch.no_grad():
 
@@ -499,9 +531,13 @@ class Almanac:
         return objective_weights
 
     # Output policy distribution at a particular state
-    def policy(self, state, probs=False):
+    def policy(self, state, probs=False, actor=None):
 
-        action_dists = [actor(state) for actor in self.actors]
+        if actor is None:
+            action_dists = [actor(state) for actor in self.actors]
+        else:
+            action_dists = [self.actors[actor](state)]
+
         if probs:
             return action_dists
         else:

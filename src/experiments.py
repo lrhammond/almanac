@@ -246,7 +246,10 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
 
         # Form input parameters and LDBAs
-        spec_controller = specs.Spec_Controller(specifications, location, load_from=location + "/specs")
+        load_path = os.path.join(location, "specs")
+        if not os.path.exists(load_path):
+            os.mkdir(load_path)
+        spec_controller = specs.Spec_Controller(specifications, location)
         obs_size = env.get_obs_size() + sum(spec_controller.num_states)
         act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
@@ -444,9 +447,12 @@ exp3_hps = {'actual_dist': True,
                              'critics': 1000}}
 
 
-def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=exp1_hps):
+def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=exp3_hps):
     """
     Adversarial Experiment Case
+    Experiment 3 is setup where the number of specs equals the number of actors to test whether adversarial almanac
+    converge under a purely adversarial case.
+    Each actor is assigned to a single, unique specification
 
     Parameters
     ----------
@@ -463,7 +469,8 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
     -------
 
     """
-    assert num_specs in [1, 2]
+    assert num_specs in [1, 2, 3, 4, 5]
+    assert num_actors == num_specs
 
     location = '{}/experiments/1'.format(root)
     name = '{}-{}-{}-{}'.format(num_states, num_actors, num_specs, num_run)
@@ -497,8 +504,17 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         specifications = [s(*random.sample(labels, k=s.__code__.co_argcount)) for s in
                           random.sample(possible_specs, k=num_specs)]
         print(specifications)
-        # objectives = [list(range(len(specifications)))]
-        # objectives = list(range(len(specifications)))
+
+        # TODO: assign new specifications to actors
+        # Form adversarial specifications
+        actors_list = [i for i in range(num_actors)]
+        adversarial_specs_allocation = []
+        while len(actors_list) > 0:
+            random_actor = random.randint(0, (len(actors_list) - 1))
+            adversarial_specs_allocation.append(actors_list.pop(random_actor))
+
+
+
         weights = [1 for _ in specifications]
         # weights = [1, 2]
         weights = [1]
@@ -524,7 +540,12 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
             continue
 
         # Create learner
-        learner = make_learner('almanac', obs_size, act_sizes, objectives, hps)
+        learner = make_learner('almanac',
+                               obs_size,
+                               act_sizes,
+                               objectives,
+                               hps,
+                               adversarial_spec_allocations=adversarial_specs_allocation)
         prefix = "{}-{}-{}-{}".format(env.name, learner.name, id, num_run)
 
         # Create state representations
@@ -586,10 +607,10 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
 
 
-def make_learner(learner_name, obs_size, act_sizes, objectives, hps):
+def make_learner(learner_name, obs_size, act_sizes, objectives, hps, adversarial_spec_allocations=[]):
 
     if learner_name == 'almanac':
-        learner = learners.Almanac(obs_size, act_sizes, objectives, hps)
+        learner = learners.Almanac(obs_size, act_sizes, objectives, hps, adversarial_spec_allocations)
     else:
         print("Error: Agent name must be \'almanac\' or")
         return
@@ -790,5 +811,5 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
 #debug()
 # oc_test()
-exp1(num_specs=1, num_actors=2, num_states=10, num_run=1, root=utils.get_root(), id=1, max_steps=1, hps=exp1_hps)
+exp3(num_specs=2, num_actors=2, num_states=8, num_run=1, root=utils.get_root(), id=1, max_steps=1, hps=exp3_hps)
 # exp2(num_specs=2, num_agents=2, num_landmarks=2, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=exp2_hps)
