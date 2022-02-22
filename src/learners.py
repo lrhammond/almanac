@@ -4,6 +4,7 @@
 # His original repository can be found at https://github.com/kandouss/kamarl and is licensed under the MIT License (also included for reference within this repository)
 
 import torch
+import os
 from torch.distributions.transforms import PowerTransform
 from torch import tensor as tt
 import random
@@ -664,12 +665,20 @@ class Almanac:
         return power(self.hps['continue_prob'] * ones_like(ts), -ts) * gammas if self.hps['actual_dist'] else power(self.hps['continue_prob'] * ones_like(ts), -ts)
 
     def save_model(self, location, prefix):
+        save_dir = '{}/{}'.format(location, 'models')
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+
         for i in range(self.num_players):
             torch.save(self.actors[i].state_dict(), '{}/models/{}-actor-{}.pt'.format(location, prefix, i))
         for j in range(self.num_objectives):
             torch.save(self.critics[j].state_dict(), '{}/models/{}-critic-{}.pt'.format(location, prefix, j))
 
     def load_model(self, root, prefix):
+        load_dir = '{}/{}'.format(root, 'models')
+        if not os.path.exists(load_dir):
+            os.mkdir(load_dir)
+
         for i in range(self.num_players):
             self.actors[i].load_state_dict(torch.load(('{}/models/{}-actor-{}.pt'.format(root, prefix, i))))
         for j in range(self.num_objectives):

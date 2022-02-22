@@ -433,9 +433,11 @@ exp3_hps = {'actual_dist': True,
             'gamma_Phi': 0.99,
             'kl_target': 0.025,
             'l2_weight': 0.0001,
-            'learning_rates': {'actors': (('constant', 0.001),),
+            'learning_rates': {'actors': (('constant', 0.001),
+                                          ('constant', 0.001)),
                                'critics': ('constant', 0.75),
-                               'lagrange_multiplier': (('constant', 0.01),)},
+                               'lagrange_multiplier': (('constant', 0.01),
+                                                       ('constant', 0.01))},
             'models': {'actors': {'type': 'dnn', 'shape': [24, 32, 24]},
                        'critics': {'type': 'dnn', 'shape': [24, 24, 24]}},
             'optimisers': {'actors': 'sgd',
@@ -517,7 +519,7 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
         weights = [1 for _ in specifications]
         # weights = [1, 2]
-        weights = [1]
+        # weights = [1]
         objectives = weights.copy()
 
         # Form env
@@ -535,7 +537,7 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         env.model.create_prism_model(num_run, spec_controller.specs, location)
 
         # Sometimes the MMG and spec combination generated is trivial, if so we retry
-        prism_prob, prism_time = utils.run_prism(location, name, weights)
+        prism_prob, prism_time = utils.run_prism(location, name, weights, num_specs=num_specs)
         if prism_prob == 0.0:
             continue
 
@@ -576,8 +578,8 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
             p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
             env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists)
             env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, det=True)
-            policy_prob, _ = utils.run_prism(location, name, weights, policy=True)
-            det_policy_prob, _ = utils.run_prism(location, name, weights, policy=True, det=True)
+            policy_prob, _ = utils.run_prism(location, name, weights, policy=True, num_specs=num_specs)
+            det_policy_prob, _ = utils.run_prism(location, name, weights, policy=True, det=True, num_specs=num_specs)
             print(f"Policy Prob: {policy_prob} Deterministic Prob: {det_policy_prob}")
             probs['reg'].append(policy_prob)
             probs['det'].append(det_policy_prob)
@@ -600,7 +602,12 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
                    'det_policy_prob': det_policy_prob,
                    'policy_converged': policy_converged,
                    'det_policy_converged': det_policy_converged}
-        with open('{}/results/{}.txt'.format(location, name), 'w') as f:
+
+        # Create directory
+        results_save_dir = '{}/results'.format(location)
+        if not os.path.exists(results_save_dir):
+            os.mkdir(results_save_dir)
+        with open('{}/{}.txt'.format(results_save_dir, name), 'w') as f:
             f.write(str(results))
 
         completed = True
@@ -643,8 +650,11 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
     if len(objectives) != num_objectives:
         print('Error: All objectives must be included in lexicographic ranking')
         return
-    if len(learner.lrs['actors']) != num_objectives or len(learner.lrs['lagrange_multiplier']) != num_objectives:
-        print('Error: Must be the same number of learning rates for actors and Lagrange multipliers as objectives')
+    if len(learner.lrs['lagrange_multiplier']) != num_objectives:
+        print('Error: Must be the same number of Lagrange multipliers as objectives')
+        return
+    if len(learner.lrs['actors']) != num_objectives:
+        print('Error: Must be the same number of learning rates for actors')
         return
 
     # Prepare for saving scores
@@ -654,7 +664,11 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
     suffix = "-eval" if evaluate else ""
     mode = 'a' if resume else 'w'
-    with open('{}/scores/{}{}.txt'.format(location, prefix, suffix), mode) as f:
+    scores_dir = '{}/{}'.format(location, 'scores')
+    if not os.path.exists(scores_dir):
+        os.mkdir(scores_dir)
+
+    with open('{}/{}{}.txt'.format(scores_dir, prefix, suffix), mode) as f:
         obj_list = [str(i) for i in range(num_objectives)]
         if not resume:
             f.write("recent_" + ",recent_".join(obj_list) + ",total_" + ",total_".join(obj_list) + "\n")

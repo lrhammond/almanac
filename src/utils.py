@@ -73,7 +73,7 @@ def converged(losses, target=0.0, tolerance=0.1, bound=0.01, minimum_updates=10)
     return True
 
 
-def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,javamaxmem=16, epsilon=0.001, maxiters=100000, timeout=43200):
+def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,javamaxmem=16, epsilon=0.001, maxiters=100000, timeout=43200, num_specs=None):
     location = location.replace("\\", "/")
     assert not (det and (not policy))
 
@@ -84,7 +84,7 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
     model_name = '{}/prism_models/{}{}.prism'.format(location, name, model_suffix)
     print(model_name)
     results_suffix = '' if model_suffix == '' else model_suffix
-    num_specs = len(weights)
+    num_specs = weights if num_specs is None else num_specs
 
     # Run PRISM
     if model_suffix == '':
@@ -127,8 +127,8 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
                 if line[:7] == 'Result:':
                     print(line)
                     #r = ast.literal_eval(line[8:-29]) if num_specs > 1 and not policy else float(line[8:-29])
-                    #r = ast.literal_eval(line[9:-2]) if num_specs > 1 and not policy else float(line[8:])
-                    r = ast.literal_eval(line[8:-1]) if num_specs > 1 and not policy else float(line[8:])
+                    r = ast.literal_eval(line[9:-2]) if num_specs > 1 and not policy else float(line[8:])
+                    #r = ast.literal_eval(line[8:-1]) if num_specs > 1 and not policy else float(line[8:])
         if r == None:
             return None, t
         results.append(r)
@@ -137,7 +137,7 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
     if len(results) == 1:
         print(results, weights)
         print(num_specs)
-        p = results[0] if num_specs == 1 else max([(weights[0] * res[0]) + (weights[1] * res[1]) for res in results[0]])
+        p = results[0] if num_specs == 1 else max([(weights[0] * res[0]) + (weights[1] * res[1]) for res in results])
     else:
         p = (weights[0] * results[0]) + (weights[1] * results[1])
 
