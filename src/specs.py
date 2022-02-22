@@ -247,7 +247,7 @@ class LDBA:
         """
 
         # Translate the LTL formula to an OA using Rabinizer 4.
-        out = check_output([r'D:\repos\code\envs\almanac_env\rabinizer4\bin\ltl2ldba.bat', '-e', ltl])
+        out = check_output([r'E:\Code\envs\d2sac_env\rabinizer4\bin\ltl2ldba.bat', '-e', ltl])
         
         # Split the output into two parts: the header and the body
         header, body = out.decode('utf-8').split('--BODY--\n')
