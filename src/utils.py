@@ -123,9 +123,12 @@ def run_prism(location, name, weights, policy=False, det=False, current_player=N
                 # if line[:24] == 'Time for model checking:':
                 #     time = line[24:]
                 if line[:7] == 'Result:':
-                    #r = ast.literal_eval(line[8:-29]) if num_specs > 1 and not policy else float(line[8:-29])
-                    r = ast.literal_eval(line[9:-2]) if num_specs > 1 and not policy else float(line[8:])
-                    #r = ast.literal_eval(line[8:-1]) if num_specs > 1 and not policy else float(line[8:])
+                    if current_player is None:
+                        #r = ast.literal_eval(line[8:-29]) if num_specs > 1 and not policy else float(line[8:-29])
+                        r = ast.literal_eval(line[9:-2]) if num_specs > 1 and not policy else float(line[8:])
+                        #r = ast.literal_eval(line[8:-1]) if num_specs > 1 and not policy else float(line[8:])
+                    else:
+                        r = ast.literal_eval(line[8:-1]) if num_specs > 1 and not policy else float(line[8:])
         if r == None:
             print("Failed: " + save_name)
             return None, t
@@ -134,6 +137,7 @@ def run_prism(location, name, weights, policy=False, det=False, current_player=N
 
     if current_player is None:
         # if cooperative
+        print(results)
         if len(results) == 1:
             p = results[0] if num_specs == 1 else max([(weights[0] * res[0]) + (weights[1] * res[1]) for res in results])
         else:

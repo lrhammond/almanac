@@ -481,15 +481,15 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
     labels = ['l{}'.format(i) for i in range(num_states)]
     possible_specs = [lambda x, y: 'F G ({} | {})'.format(x, y),
                       lambda x, y: 'G F ({} & (X {}))'.format(x, y)]
-    possible_weights = [2, 5, 8]
-    if num_states == 1:
-        possible_specs = possible_specs[:5]
+    #if num_states == 1:
+    #    possible_specs = possible_specs[:5]
 
     # Map parameters
     state_size = num_states
     action_sizes = num_actors * [2]
     num_rules = max(1, int(0.5 * state_size))
     num_antecedents = max(1, int(0.5 * state_size))
+    #num_antecedents = num_states - 1
 
     completed = False
     while not completed:
