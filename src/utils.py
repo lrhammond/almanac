@@ -73,16 +73,14 @@ def converged(losses, target=0.0, tolerance=0.1, bound=0.01, minimum_updates=10)
     return True
 
 
-def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,javamaxmem=16, epsilon=0.001, maxiters=100000, timeout=43200, num_specs=None):
+def run_prism(location, name, weights, policy=False, det=False, current_player=None, cuddmaxmem=16,javamaxmem=16, epsilon=0.001, maxiters=100000, timeout=43200, num_specs=None):
     location = location.replace("\\", "/")
-    assert not (det and (not policy))
 
     # Form input
     #run_name = '"/Program Files/prism-4.7/bin/prism.bat" -cuddmaxmem {}g -javamaxmem {}g -epsilon {} -maxiters {} -timeout {}'.format(cuddmaxmem, javamaxmem, epsilon, maxiters, timeout + 3600)
-    run_name = '"C:/Program Files/prism-4.7/bin/prism.bat" -epsilon {} -maxiters {} -timeout {}'.format(epsilon, maxiters, timeout + 3600)
+    run_name = '"/Program Files/prism-4.7/bin/prism.bat" -epsilon {} -maxiters {} -timeout {}'.format(epsilon, maxiters, timeout + 3600)
     model_suffix = ('' if not policy else '-policy') + ('' if not det else '-det')
     model_name = '{}/prism_models/{}{}.prism'.format(location, name, model_suffix)
-    print(model_name)
     results_suffix = '' if model_suffix == '' else model_suffix
     num_specs = weights if num_specs is None else num_specs
 
@@ -125,23 +123,27 @@ def run_prism(location, name, weights, policy=False, det=False, cuddmaxmem=16,ja
                 # if line[:24] == 'Time for model checking:':
                 #     time = line[24:]
                 if line[:7] == 'Result:':
-                    print(line)
                     #r = ast.literal_eval(line[8:-29]) if num_specs > 1 and not policy else float(line[8:-29])
                     r = ast.literal_eval(line[9:-2]) if num_specs > 1 and not policy else float(line[8:])
                     #r = ast.literal_eval(line[8:-1]) if num_specs > 1 and not policy else float(line[8:])
         if r == None:
+            print("Failed: " + save_name)
             return None, t
         results.append(r)
 
-    print(results)
-    if len(results) == 1:
-        print(results, weights)
-        print(num_specs)
-        p = results[0] if num_specs == 1 else max([(weights[0] * res[0]) + (weights[1] * res[1]) for res in results])
-    else:
-        p = (weights[0] * results[0]) + (weights[1] * results[1])
 
-    return p, t
+    if current_player is None:
+        # if cooperative
+        if len(results) == 1:
+            p = results[0] if num_specs == 1 else max([(weights[0] * res[0]) + (weights[1] * res[1]) for res in results])
+        else:
+            p = (weights[0] * results[0]) + (weights[1] * results[1])
+
+        return p, t
+    else:
+        return weights[current_player] * results[0], t
+
+
 
 
 # Writes .sh files for running mmg experiments on ARC

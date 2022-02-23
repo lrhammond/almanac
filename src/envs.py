@@ -242,7 +242,7 @@ class StructuredMarkovGame:
     # Based on the procedure described in http://incompleteideas.net/RandomMDPs.html
 
     def __init__(self, state_size, action_sizes, num_rules, num_antecedents, deterministic=False, single_init=False,
-                 sink_prob=0.1):
+                 sink_prob=0.3):
 
         assert num_rules < state_size
         assert num_antecedents < state_size
@@ -327,16 +327,16 @@ class StructuredMarkovGame:
         print("State: ", self.state)
         print("Labels: ", self.label(self.state))
 
-    def create_prism_model(self, num, ldbas, location, policy=None, det=False):
+    def create_prism_model(self, num, ldbas, location, policy=None, det=False, current_player=None):
 
-        p = '' if policy == None else '-policy'
-        d = '' if det == False else '-det'
+        p = '' if policy is None or current_player is not None else '-policy'
+        d = '' if det is False else '-det'
         filename = location + '/prism_models/{}-{}-{}-{}{}{}.prism'.format(self.state_size, len(self.action_sizes),
                                                                            len(ldbas), num, p, d)
 
         with open(filename, 'w') as f:
 
-            if policy == None:
+            if policy is None or current_player is not None:
                 f.write('mdp\n\n\n')
             else:
                 f.write('dtmc\n\n\n')
@@ -405,8 +405,7 @@ class StructuredMarkovGame:
             for i in range(len(ldbas)):
                 f.write(ldbas[i].create_prism_model(i, self.num_players))
 
-            if policy == None:
-
+            if policy is None and current_player is None:
                 for i in range(len(self.action_sizes)):
 
                     f.write('\nmodule ACTION_{}\n\n'.format(i))
@@ -416,6 +415,53 @@ class StructuredMarkovGame:
                         f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, j))
                     for e in eps_actions:
                         f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, e))
+
+                    f.write('\nendmodule\n\n')
+            elif current_player is not None:
+                for i in range(len(self.action_sizes)):
+
+                    f.write('\nmodule ACTION_{}\n\n'.format(i))
+                    f.write('    a{} : [-1..{}] init -1;\n'.format(i, (highest_action_num)))
+                    if current_player == i:
+                        for j in range(self.action_sizes[i]):
+                            f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, j))
+                        for e in eps_actions:
+                            f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, e))
+                    else:
+                        for k in policy.keys():
+
+                            guard = ('    [action] ')
+                            for j in range(self.state_size):
+                                guard += 's{}={}'.format(j, k[j])
+                                if j != self.state_size - 1:
+                                    guard += " & "
+
+                            remaining = k[self.state_size:]
+
+                            for l in range(len(ldbas)):
+                                n_l_s = ldbas[l].ldba.get_num_states()
+                                ldba_state = remaining[:n_l_s]
+                                guard += " & q{}={}".format(l, ldba_state.index(1))
+                                remaining = remaining[n_l_s:]
+
+                            action_probs = policy[k][i]
+                            eps_action_probs = action_probs[self.action_sizes[i]:]
+
+                            if not det:
+                                action_choice = ''
+                                for a in range(self.action_sizes[i]):
+                                    action_choice += '{}:(a{}\'={})'.format(action_probs[a], i, a)
+                                    if a != self.action_sizes[i] - 1:
+                                        action_choice += ' + '
+                                for b in range(len(eps_actions)):
+                                    action_choice += ' + {}:(a{}\'={})'.format(eps_action_probs[b], i, eps_actions[b])
+
+                            else:
+                                action = int(torch.argmax(action_probs))
+                                poss_actions = list(range(self.action_sizes[i])) + eps_actions
+                                action_choice = '1.0:(a{}\'={})'.format(i, poss_actions[action])
+
+                            f.write(guard + ' -> ' + action_choice + ';\n')
 
                     f.write('\nendmodule\n\n')
 

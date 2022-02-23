@@ -106,11 +106,14 @@ class Spec_Controller:
         
         return s_1s, s_2s, acceptances
 
-    def save_props(self, location, name, weights):
+    def save_props(self, location, name, weights, current_player=None):
 
         specs_name = location + '/prism_specs/' + name + '.props'
         with open(specs_name, 'w') as f:
-            if self.num_specs == 1:
+            if current_player is not None:
+                f.write('Pmax=? [ X ( ' + self.formulae[current_player] + ' ) ]\n\n')
+                f.write('P=? [ X ( ' + self.formulae[current_player] + ' ) ]\n\n')
+            elif self.num_specs == 1:
                 f.write('Pmax=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
                 f.write('P=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
             else:
@@ -247,7 +250,7 @@ class LDBA:
         """
 
         # Translate the LTL formula to an OA using Rabinizer 4.
-        out = check_output([r'E:\Code\envs\d2sac_env\rabinizer4\bin\ltl2ldba.bat', '-e', ltl])
+        out = check_output([r'C:\Users\chess\Documents\Alistair\Monash\MARL\alamanac\rabinizer4\bin\ltl2ldba.bat', '-e', ltl])
         
         # Split the output into two parts: the header and the body
         header, body = out.decode('utf-8').split('--BODY--\n')

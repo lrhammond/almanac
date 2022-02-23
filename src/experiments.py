@@ -242,7 +242,7 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         objectives = weights.copy()
 
         # Form env
-        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True, single_init=True, sink_prob=0.5)
+        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True, single_init=True, sink_prob=0.3)
         env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
 
         # Form input parameters and LDBAs
@@ -479,15 +479,7 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
     # Specifications
     labels = ['l{}'.format(i) for i in range(num_states)]
-    possible_specs = [lambda x: 'F {}'.format(x), \
-                      lambda x: 'G {}'.format(x), \
-                      lambda x: 'F G {}'.format(x), \
-                      lambda x: 'G F {}'.format(x), \
-                      lambda x: 'X (X {})'.format(x), \
-                      lambda x, y: '{} U {}'.format(x, y), \
-                      lambda x, y: 'F ({} & {})'.format(x, y), \
-                      lambda x, y: 'G ({} | (X {}))'.format(x, y), \
-                      lambda x, y: 'F G ({} | {})'.format(x, y), \
+    possible_specs = [lambda x, y: 'F G ({} | {})'.format(x, y),
                       lambda x, y: 'G F ({} & (X {}))'.format(x, y)]
     possible_weights = [2, 5, 8]
     if num_states == 1:
@@ -524,7 +516,7 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
         # Form env
         smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True,
-                                        single_init=True, sink_prob=0.5)
+                                        single_init=True, sink_prob=0.3)
         env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
 
         # Form input parameters and LDBAs
@@ -562,46 +554,45 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         almanac_time = 0.0
         steps_taken = 0
         finished = False
-        steps_per_round = 2
+        steps_per_round = 100
         while not finished:
 
             # Run Almamac
             resume = False if steps_taken == 0 else True
             t0 = time()
             run(learner, env, steps_per_round, spec_controller, [], objectives, location, prefix, resume=resume,
-                verbose=True, num_plot_points=2)
+                verbose=True, num_plot_points=10)
             t1 = time()
             almanac_time += (t1 - t0)
             steps_taken += steps_per_round
 
-            # Evaluate policies
+            # Expected return for each actor under the current policy
             p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
             env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists)
-            env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, det=True)
             policy_prob, _ = utils.run_prism(location, name, weights, policy=True, num_specs=num_specs)
-            det_policy_prob, _ = utils.run_prism(location, name, weights, policy=True, det=True, num_specs=num_specs)
-            print(f"Policy Prob: {policy_prob} Deterministic Prob: {det_policy_prob}")
-            probs['reg'].append(policy_prob)
-            probs['det'].append(det_policy_prob)
+            print("Actual Results:")
+            print(policy_prob)
+
+            # Optimal return for each actor given the joint policy of all other actors
+            optimal_results = []
+            for i in range(num_actors):
+                spec_controller.save_props(location, name, weights, current_player=i)
+                env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, current_player=i)
+                policy_prob, _ = utils.run_prism(location, name, weights, policy=False, current_player=i, num_specs=num_specs)
+                optimal_results.append(policy_prob)
+
+            print("Optimal Results:")
+            print(optimal_results)
 
             # Check to see if we can stop
-            target = 1.0 if prism_prob == None else prism_prob
-            min_updates = int((hps['update_after']['actors'] * 10) / steps_per_round)
-            policy_converged = utils.converged(probs['reg'], target=target, tolerance=0.01, minimum_updates=min_updates)
-            det_policy_converged = utils.converged(probs['det'], target=target, tolerance=0.01,
-                                                   minimum_updates=min_updates)
-            if (steps_taken >= max_steps) or abs(policy_prob - prism_prob) < 0.01 or abs(
-                    det_policy_prob - prism_prob) < 0.01 or (policy_converged and det_policy_converged):
+            if steps_taken >= max_steps:
                 finished = True
 
         # Record results
-        results = {'prism_prob': prism_prob,
+        results = {'prism_prob': optimal_results,
                    'prism_time': prism_time,
                    'almanac_time': almanac_time,
-                   'policy_prob': policy_prob,
-                   'det_policy_prob': det_policy_prob,
-                   'policy_converged': policy_converged,
-                   'det_policy_converged': det_policy_converged}
+                   'policy_prob': policy_prob}
 
         # Create directory
         results_save_dir = '{}/results'.format(location)
