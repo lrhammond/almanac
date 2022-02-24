@@ -479,8 +479,12 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
     # Specifications
     labels = ['l{}'.format(i) for i in range(num_states)]
-    possible_specs = [lambda x, y: 'F G ({} | {})'.format(x, y),
+    """possible_specs = [lambda x, y: 'F G ({} | {})'.format(x, y),
+                      lambda x, y: 'G F ({} & (X {}))'.format(x, y)]"""
+    possible_specs = [lambda x, y: 'G F ({} & (X {}))'.format(x, y),
                       lambda x, y: 'G F ({} & (X {}))'.format(x, y)]
+
+
     #if num_states == 1:
     #    possible_specs = possible_specs[:5]
 
@@ -488,8 +492,9 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
     state_size = num_states
     action_sizes = num_actors * [2]
     num_rules = max(1, int(0.5 * state_size))
+    num_rules = state_size - 1
     num_antecedents = max(1, int(0.5 * state_size))
-    #num_antecedents = num_states - 1
+    num_antecedents = state_size - 1
 
     completed = False
     while not completed:
@@ -506,8 +511,6 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         while len(actors_list) > 0:
             random_actor = random.randint(0, (len(actors_list) - 1))
             adversarial_specs_allocation.append(actors_list.pop(random_actor))
-
-
 
         weights = [1 for _ in specifications]
         # weights = [1, 2]
@@ -549,12 +552,24 @@ def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         possible_states = [utils.flatten(p_s) for p_s in itertools.product(possible_game_states, *possible_spec_states)]
         possible_state_tensors = torch.stack([tt(p_s).float() for p_s in possible_states])
 
+
+        # check if the environment is easy
+        p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
+        env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists)
+        policy_prob, _ = utils.run_prism(location, name, weights, policy=True, num_specs=num_specs)
+        number_of_envs_skipped = 0
+        print(round(policy_prob, 5), round(prism_prob, 5))
+        if round(policy_prob, 5) == round(prism_prob, 5):
+            number_of_envs_skipped += 1
+            if number_of_envs_skipped % 100 == 0:
+                print(number_of_envs_skipped)
+            continue
+
         # Compare against Almanac
-        probs = {'reg': [], 'det': []}
         almanac_time = 0.0
         steps_taken = 0
         finished = False
-        steps_per_round = 100
+        steps_per_round = 10000
         while not finished:
 
             # Run Almamac
@@ -816,5 +831,5 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
 #debug()
 # oc_test()
-exp3(num_specs=2, num_actors=2, num_states=8, num_run=1, root=utils.get_root(), id=1, max_steps=1, hps=exp3_hps)
+exp3(num_specs=2, num_actors=2, num_states=5, num_run=1, root=utils.get_root(), id=1, max_steps=1, hps=exp3_hps)
 # exp2(num_specs=2, num_agents=2, num_landmarks=2, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=exp2_hps)

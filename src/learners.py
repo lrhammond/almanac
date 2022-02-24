@@ -645,16 +645,18 @@ class Almanac:
                         
         # If enough data has been collected update the critics
         for j in range(self.num_objectives):
-            if len(self.critic_buffers[j]) > self.hps['update_after']['critics']:
+            if len(self.critic_buffers[j]) >= self.hps['update_after']['critics']:
                 data = self.critic_buffers[j].sample(sample_all=True)
-                self.update_critic(j, data, until_converged=self.hps['until_converged']['critics'], num_updates=self.hps['num_updates']['critics'])
+                #self.update_critic(j, data, until_converged=self.hps['until_converged']['critics'], num_updates=self.hps['num_updates']['critics'])
+                self.update_critic(j, data, until_converged=False, num_updates=self.hps['num_updates']['critics'])
                 self.critic_buffers[j].clear()
                 self.updates['critics'][j] += 1
         
         # If enough data has been collected update the actors and the Lagrange multipliers
-        if len(self.actor_buffer) > self.hps['update_after']['actors']:
+        if len(self.actor_buffer) >= self.hps['update_after']['actors']:
             data = self.actor_buffer.sample(sample_all=True)
-            self.update_actors(data, objectives, until_converged=self.hps['until_converged']['actors'], num_updates=self.hps['num_updates']['actors'])
+            #self.update_actors(data, objectives, until_converged=self.hps['until_converged']['actors'], num_updates=self.hps['num_updates']['actors'])
+            self.update_actors(data, objectives, until_converged=False, num_updates=self.hps['num_updates']['actors'])
             self.actor_buffer.clear()
             self.updates['actors'] += 1
 

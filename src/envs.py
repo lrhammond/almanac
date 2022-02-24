@@ -411,10 +411,7 @@ class StructuredMarkovGame:
                     f.write('\nmodule ACTION_{}\n\n'.format(i))
                     f.write('    a{} : [-1..{}] init -1;\n'.format(i, (highest_action_num)))
 
-                    for j in range(self.action_sizes[i]):
-                        f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, j))
-                    for e in eps_actions:
-                        f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, e))
+                    self.__write_no_policy(i, f, eps_actions)
 
                     f.write('\nendmodule\n\n')
             elif current_player is not None:
@@ -423,95 +420,69 @@ class StructuredMarkovGame:
                     f.write('\nmodule ACTION_{}\n\n'.format(i))
                     f.write('    a{} : [-1..{}] init -1;\n'.format(i, (highest_action_num)))
                     if current_player == i:
-                        for j in range(self.action_sizes[i]):
-                            f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, j))
-                        for e in eps_actions:
-                            f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, e))
+                        self.__write_no_policy(i, f, eps_actions)
                     else:
-                        for k in policy.keys():
-
-                            guard = ('    [action] ')
-                            for j in range(self.state_size):
-                                guard += 's{}={}'.format(j, k[j])
-                                if j != self.state_size - 1:
-                                    guard += " & "
-
-                            remaining = k[self.state_size:]
-
-                            for l in range(len(ldbas)):
-                                n_l_s = ldbas[l].ldba.get_num_states()
-                                ldba_state = remaining[:n_l_s]
-                                guard += " & q{}={}".format(l, ldba_state.index(1))
-                                remaining = remaining[n_l_s:]
-
-                            action_probs = policy[k][i]
-                            eps_action_probs = action_probs[self.action_sizes[i]:]
-
-                            if not det:
-                                action_choice = ''
-                                for a in range(self.action_sizes[i]):
-                                    action_choice += '{}:(a{}\'={})'.format(action_probs[a], i, a)
-                                    if a != self.action_sizes[i] - 1:
-                                        action_choice += ' + '
-                                for b in range(len(eps_actions)):
-                                    action_choice += ' + {}:(a{}\'={})'.format(eps_action_probs[b], i, eps_actions[b])
-
-                            else:
-                                action = int(torch.argmax(action_probs))
-                                poss_actions = list(range(self.action_sizes[i])) + eps_actions
-                                action_choice = '1.0:(a{}\'={})'.format(i, poss_actions[action])
-
-                            f.write(guard + ' -> ' + action_choice + ';\n')
+                        self.__write_policy(i, f, policy, ldbas, det, eps_actions)
 
                     f.write('\nendmodule\n\n')
 
             else:
-
                 for i in range(len(self.action_sizes)):
 
                     f.write('\nmodule ACTION_{}\n\n'.format(i))
                     f.write('    a{} : [-1..{}] init -1;\n'.format(i, (highest_action_num)))
 
-                    for k in policy.keys():
-
-                        guard = ('    [action] ')
-                        for j in range(self.state_size):
-                            guard += 's{}={}'.format(j, k[j])
-                            if j != self.state_size - 1:
-                                guard += " & "
-
-                        remaining = k[self.state_size:]
-
-                        for l in range(len(ldbas)):
-                            n_l_s = ldbas[l].ldba.get_num_states()
-                            ldba_state = remaining[:n_l_s]
-                            guard += " & q{}={}".format(l, ldba_state.index(1))
-                            remaining = remaining[n_l_s:]
-
-                        action_probs = policy[k][i]
-                        eps_action_probs = action_probs[self.action_sizes[i]:]
-
-                        if not det:
-                            action_choice = ''
-                            for a in range(self.action_sizes[i]):
-                                action_choice += '{}:(a{}\'={})'.format(action_probs[a], i, a)
-                                if a != self.action_sizes[i] - 1:
-                                    action_choice += ' + '
-                            for b in range(len(eps_actions)):
-                                action_choice += ' + {}:(a{}\'={})'.format(eps_action_probs[b], i, eps_actions[b])
-
-                        else:
-                            action = int(torch.argmax(action_probs))
-                            poss_actions = list(range(self.action_sizes[i])) + eps_actions
-                            action_choice = '1.0:(a{}\'={})'.format(i, poss_actions[action])
-
-                        f.write(guard + ' -> ' + action_choice + ';\n')
+                    self.__write_policy(i, f, policy, ldbas, det, eps_actions)
 
                     f.write('\nendmodule\n\n')
 
             for i in range(self.state_size):
                 f.write('\nformula l{0} = (s{0}=1);'.format(i))
                 f.write('\nlabel "l{0}" = l{0};'.format(i))
+
+    def __write_no_policy(self, i, f, eps_actions):
+        # Writes what is needed for a player to have no policy, for when it is supposed to be found by prism
+        for j in range(self.action_sizes[i]):
+            f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, j))
+        for e in eps_actions:
+            f.write('    [action] true -> 1.0:(a{}\'={});\n'.format(i, e))
+
+    def __write_policy(self, i, f, policy, ldbas, det, eps_actions):
+        # Writes policy to the model file for a player
+        for k in policy.keys():
+
+            guard = ('    [action] ')
+            for j in range(self.state_size):
+                guard += 's{}={}'.format(j, k[j])
+                if j != self.state_size - 1:
+                    guard += " & "
+
+            remaining = k[self.state_size:]
+
+            for l in range(len(ldbas)):
+                n_l_s = ldbas[l].ldba.get_num_states()
+                ldba_state = remaining[:n_l_s]
+                guard += " & q{}={}".format(l, ldba_state.index(1))
+                remaining = remaining[n_l_s:]
+
+            action_probs = policy[k][i]
+            eps_action_probs = action_probs[self.action_sizes[i]:]
+
+            if not det:
+                action_choice = ''
+                for a in range(self.action_sizes[i]):
+                    action_choice += '{}:(a{}\'={})'.format(action_probs[a], i, a)
+                    if a != self.action_sizes[i] - 1:
+                        action_choice += ' + '
+                for b in range(len(eps_actions)):
+                    action_choice += ' + {}:(a{}\'={})'.format(eps_action_probs[b], i, eps_actions[b])
+
+            else:
+                action = int(torch.argmax(action_probs))
+                poss_actions = list(range(self.action_sizes[i])) + eps_actions
+                action_choice = '1.0:(a{}\'={})'.format(i, poss_actions[action])
+
+            f.write(guard + ' -> ' + action_choice + ';\n')
 
 
 # Matrix Markov game (mmg) class
