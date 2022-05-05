@@ -185,6 +185,7 @@ exp1_hps ={'actual_dist': True,
             'epsilon': 0,
             'gamma_Phi' : 0.99,
             'kl_target' : 0.025,
+            'l2_weight' : 0.0001,
             'learning_rates': { 'actors': (('constant', 0.001),),
                                 'critics': ('constant', 0.75),
                                 'lagrange_multiplier': (('constant', 0.01),) },
@@ -194,7 +195,7 @@ exp1_hps ={'actual_dist': True,
                             'critics': 'sgd' },
             'patient_updates': True,
             'sequential': False,
-            'spec_reward': 10,
+            'spec_reward': 1,
             'update_after': { 'actors': 1000,
                               'critics': 1000 }}
 
@@ -232,15 +233,23 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
 
         # Form objectives
         specifications = [s(*random.sample(labels, k = s.__code__.co_argcount)) for s in random.sample(possible_specs, k=num_specs)]
-        objectives = [list(range(len(specifications)))]
+        print(specifications)
+        # objectives = [list(range(len(specifications)))]
+        # objectives = list(range(len(specifications)))
         weights = [1 for _ in specifications]
+        #weights = [1, 2]
+        weights = [1]
+        objectives = weights.copy()
 
         # Form env
-        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True, single_init=True, sink_prob=0.8)
+        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True, single_init=True, sink_prob=0.3)
         env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
 
         # Form input parameters and LDBAs
-        spec_controller = specs.Spec_Controller(specifications, location, load_from=location)
+        load_path = os.path.join(location, "specs")
+        if not os.path.exists(load_path):
+            os.mkdir(load_path)
+        spec_controller = specs.Spec_Controller(specifications, location)
         obs_size = env.get_obs_size() + sum(spec_controller.num_states)
         act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
 
@@ -268,13 +277,13 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
         almanac_time = 0.0
         steps_taken = 0
         finished = False
-        steps_per_round = 100
+        steps_per_round = 2
         while not finished:
 
             # Run Almamac
             resume = False if steps_taken == 0 else True
             t0 = time()
-            run(learner, env, steps_per_round, spec_controller, [], objectives, location, prefix, resume=resume, verbose=True, num_plot_points=10)
+            run(learner, env, steps_per_round, spec_controller, [], objectives, location, prefix, resume=resume, verbose=True, num_plot_points=2)
             t1 = time()
             almanac_time += (t1 - t0)
             steps_taken += steps_per_round
@@ -285,6 +294,7 @@ def exp1(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=ex
             env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, det=True)
             policy_prob, _ = utils.run_prism(location, name, weights, policy=True)
             det_policy_prob, _ = utils.run_prism(location, name, weights, policy=True, det=True)
+            print(f"Policy Prob: {policy_prob} Deterministic Prob: {det_policy_prob}")
             probs['reg'].append(policy_prob)
             probs['det'].append(det_policy_prob)
 
@@ -324,9 +334,9 @@ exp2_hps_almanac ={'actual_dist': True,
             # 'learning_rates': { 'actors': (('constant', 0.0001),),
             #                     'critics': ('constant', 0.001),
             #                     'lagrange_multiplier': (('constant', 0.005),) },
-            'learning_rates': { 'actors': (('constant', 1.0),),
-                                'critics': ('constant', 1.0),
-                                'lagrange_multiplier': (('constant', 1.0),) },
+            'learning_rates': { 'actors': (('constant', 0.0003), ('constant', 0.0001)),
+                                'critics': ('constant', 0.001),
+                                'lagrange_multiplier': (('constant', 0.005),) },
             'models': { 'actors': {'type':'dnn', 'shape':[64,64]},
                         'critics': {'type':'dnn', 'shape':[64,64]} },
             'normalise_advantages' : True,
@@ -336,7 +346,7 @@ exp2_hps_almanac ={'actual_dist': True,
                             'critics': 'adam' },
             'patient_updates': True,
             'sequential': False,
-            'spec_reward': 10,
+            'spec_reward': 1,
             'until_converged' : { 'actors': True,
                                   'critics': False },
             'update_after': { 'actors': 100,
@@ -413,14 +423,207 @@ def exp2(num_specs, num_agents, num_landmarks, num_run, root, id, max_steps, hps
         run(learner, env, max_steps, spec_controller, [], objectives, location, prefix, verbose=True, num_plot_points=1000)
 
 
-# Experiment 3
+# Experiment 3 - adversarial case
+exp3_hps = {'actual_dist': True,
+            'augment_data': True,
+            'buffers': {'actors': {'size': 1000, 'batch': 32},
+                        'critics': {'size': 1000, 'batch': 32}},
+            'continue_prob': 0.9,
+            'epsilon': 0,
+            'gamma_Phi': 0.99,
+            'kl_target': 0.025,
+            'l2_weight': 0.0001,
+            'learning_rates': {'actors': (('constant', 0.001),
+                                          ('constant', 0.001)),
+                               'critics': ('constant', 0.75),
+                               'lagrange_multiplier': (('constant', 0.01),
+                                                       ('constant', 0.01))},
+            'models': {'actors': {'type': 'dnn', 'shape': [24, 32, 24]},
+                       'critics': {'type': 'dnn', 'shape': [24, 24, 24]}},
+            'optimisers': {'actors': 'sgd',
+                           'critics': 'sgd'},
+            'patient_updates': True,
+            'sequential': False,
+            'spec_reward': 1,
+            'update_after': {'actors': 1000,
+                             'critics': 1000}}
+
+
+def exp3(num_specs, num_actors, num_states, num_run, root, id, max_steps, hps=exp3_hps):
+    """
+    Adversarial Experiment Case
+    Experiment 3 is setup where the number of specs equals the number of actors to test whether adversarial almanac
+    converge under a purely adversarial case.
+    Each actor is assigned to a single, unique specification
+
+    Parameters
+    ----------
+    num_specs
+    num_actors
+    num_states
+    num_run
+    root
+    id
+    max_steps
+    hps
+
+    Returns
+    -------
+
+    """
+    assert num_specs in [1, 2, 3, 4, 5]
+    assert num_actors == num_specs
+
+    location = '{}/experiments/1'.format(root)
+    name = '{}-{}-{}-{}'.format(num_states, num_actors, num_specs, num_run)
+
+    # Specifications
+    labels = ['l{}'.format(i) for i in range(num_states)]
+    """possible_specs = [lambda x, y: 'F G ({} | {})'.format(x, y),
+                      lambda x, y: 'G F ({} & (X {}))'.format(x, y)]"""
+    possible_specs = [lambda x, y: 'G F ({} & (X {}))'.format(x, y),
+                      lambda x, y: 'G F ({} & (X {}))'.format(x, y)]
+
+
+    #if num_states == 1:
+    #    possible_specs = possible_specs[:5]
+
+    # Map parameters
+    state_size = num_states
+    action_sizes = num_actors * [2]
+    num_rules = max(1, int(0.5 * state_size))
+    num_rules = state_size - 1
+    num_antecedents = max(1, int(0.5 * state_size))
+    num_antecedents = state_size - 1
+
+    completed = False
+    while not completed:
+
+        # Form objectives
+        specifications = [s(*random.sample(labels, k=s.__code__.co_argcount)) for s in
+                          random.sample(possible_specs, k=num_specs)]
+        print(specifications)
+
+        # TODO: assign new specifications to actors
+        # Form adversarial specifications
+        actors_list = [i for i in range(num_actors)]
+        adversarial_specs_allocation = []
+        while len(actors_list) > 0:
+            random_actor = random.randint(0, (len(actors_list) - 1))
+            adversarial_specs_allocation.append(actors_list.pop(random_actor))
+
+        weights = [1 for _ in specifications]
+        # weights = [1, 2]
+        # weights = [1]
+        objectives = weights.copy()
+
+        # Form env
+        smg = envs.StructuredMarkovGame(state_size, action_sizes, num_rules, num_antecedents, deterministic=True,
+                                        single_init=True, sink_prob=0.3)
+        env = envs.EnvWrapper('smg-{}-{}'.format(id, num_run), 'smg', smg)
+
+        # Form input parameters and LDBAs
+        spec_controller = specs.Spec_Controller(specifications, location, load_from=location + "/specs")
+        obs_size = env.get_obs_size() + sum(spec_controller.num_states)
+        act_sizes = [a_s + sum(spec_controller.epsilon_act_sizes) for a_s in env.get_act_sizes()]
+
+        # Evaluate using PRISM
+        spec_controller.save_props(location, name, weights)
+        env.model.create_prism_model(num_run, spec_controller.specs, location)
+
+        # Sometimes the MMG and spec combination generated is trivial, if so we retry
+        prism_prob, prism_time = utils.run_prism(location, name, weights, num_specs=num_specs)
+        if prism_prob == 0.0:
+            continue
+
+        # Create learner
+        learner = make_learner('almanac',
+                               obs_size,
+                               act_sizes,
+                               objectives,
+                               hps,
+                               adversarial_spec_allocations=adversarial_specs_allocation)
+        prefix = "{}-{}-{}-{}".format(env.name, learner.name, id, num_run)
+
+        # Create state representations
+        possible_game_states = list(itertools.product([0, 1], repeat=env.get_obs_size()))
+        possible_spec_states = [[tuple((1 if i == j else 0) for i in range(s_s)) for j in range(s_s)] for s_s in
+                                spec_controller.num_states]
+        possible_states = [utils.flatten(p_s) for p_s in itertools.product(possible_game_states, *possible_spec_states)]
+        possible_state_tensors = torch.stack([tt(p_s).float() for p_s in possible_states])
+
+
+        # check if the environment is easy
+        p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
+        env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists)
+        policy_prob, _ = utils.run_prism(location, name, weights, policy=True, num_specs=num_specs)
+        number_of_envs_skipped = 0
+        print(round(policy_prob, 5), round(prism_prob, 5))
+        if round(policy_prob, 5) == round(prism_prob, 5):
+            number_of_envs_skipped += 1
+            if number_of_envs_skipped % 100 == 0:
+                print(number_of_envs_skipped)
+            continue
+
+        # Compare against Almanac
+        almanac_time = 0.0
+        steps_taken = 0
+        finished = False
+        steps_per_round = 10000
+        while not finished:
+
+            # Run Almamac
+            resume = False if steps_taken == 0 else True
+            t0 = time()
+            run(learner, env, steps_per_round, spec_controller, [], objectives, location, prefix, resume=resume,
+                verbose=True, num_plot_points=10)
+            t1 = time()
+            almanac_time += (t1 - t0)
+            steps_taken += steps_per_round
+
+            # Expected return for each actor under the current policy
+            p_dists = learner.get_policy_dists(possible_states, possible_state_tensors)
+            env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists)
+            policy_prob, _ = utils.run_prism(location, name, weights, policy=True, num_specs=num_specs)
+            print("Actual Results:")
+            print(policy_prob)
+
+            # Optimal return for each actor given the joint policy of all other actors
+            optimal_results = []
+            for i in range(num_actors):
+                spec_controller.save_props(location, name, weights, current_player=i)
+                env.model.create_prism_model(num_run, spec_controller.specs, location, policy=p_dists, current_player=i)
+                policy_prob, _ = utils.run_prism(location, name, weights, policy=False, current_player=i, num_specs=num_specs)
+                optimal_results.append(policy_prob)
+
+            print("Optimal Results:")
+            print(optimal_results)
+
+            # Check to see if we can stop
+            if steps_taken >= max_steps:
+                finished = True
+
+        # Record results
+        results = {'prism_prob': optimal_results,
+                   'prism_time': prism_time,
+                   'almanac_time': almanac_time,
+                   'policy_prob': policy_prob}
+
+        # Create directory
+        results_save_dir = '{}/results'.format(location)
+        if not os.path.exists(results_save_dir):
+            os.mkdir(results_save_dir)
+        with open('{}/{}.txt'.format(results_save_dir, name), 'w') as f:
+            f.write(str(results))
+
+        completed = True
 
 
 
-def make_learner(learner_name, obs_size, act_sizes, objectives, hps):
+def make_learner(learner_name, obs_size, act_sizes, objectives, hps, adversarial_spec_allocations=[]):
 
     if learner_name == 'almanac':
-        learner = learners.Almanac(obs_size, act_sizes, objectives, hps)
+        learner = learners.Almanac(obs_size, act_sizes, objectives, hps, adversarial_spec_allocations)
     else:
         print("Error: Agent name must be \'almanac\' or")
         return
@@ -453,8 +656,11 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
     if len(objectives) != num_objectives:
         print('Error: All objectives must be included in lexicographic ranking')
         return
-    if len(learner.lrs['actors']) != num_objectives or len(learner.lrs['lagrange_multiplier']) != num_objectives:
-        print('Error: Must be the same number of learning rates for actors and Lagrange multipliers as objectives')
+    if len(learner.lrs['lagrange_multiplier']) != num_objectives:
+        print('Error: Must be the same number of Lagrange multipliers as objectives')
+        return
+    if len(learner.lrs['actors']) != num_objectives:
+        print('Error: Must be the same number of learning rates for actors')
         return
 
     # Prepare for saving scores
@@ -464,7 +670,11 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
     suffix = "-eval" if evaluate else ""
     mode = 'a' if resume else 'w'
-    with open('{}/scores/{}{}.txt'.format(location, prefix, suffix), mode) as f:
+    scores_dir = '{}/{}'.format(location, 'scores')
+    if not os.path.exists(scores_dir):
+        os.mkdir(scores_dir)
+
+    with open('{}/{}{}.txt'.format(scores_dir, prefix, suffix), mode) as f:
         obj_list = [str(i) for i in range(num_objectives)]
         if not resume:
             f.write("recent_" + ",recent_".join(obj_list) + ",total_" + ",total_".join(obj_list) + "\n")
@@ -591,7 +801,9 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
             current_discounts *= np.array(discounts)
             discounted_rewards = current_discounts * rewards
             # utilities = [sum(z[0] * z[1] for z in zip(o, discounted_rewards)) for o in objectives]
-            utilities = [discounted_rewards[j] for j in objectives]
+            #print(objectives)
+            #print(discounted_rewards)
+            utilities = [discounted_rewards[j] for j in range(num_objectives)]
             recent_scores = [recent_scores[i] + utilities[i] for i in range(num_objectives)]
 
             # Update variables for next step
@@ -617,7 +829,7 @@ def run(learner, env, max_steps, spec_controller, reward_functions, objectives, 
 
     return
 
-debug()
+#debug()
 # oc_test()
-# exp1(num_specs=2, num_actors=2, num_states=3, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=test_hps)
+exp3(num_specs=2, num_actors=2, num_states=5, num_run=1, root=utils.get_root(), id=1, max_steps=1, hps=exp3_hps)
 # exp2(num_specs=2, num_agents=2, num_landmarks=2, num_run=1, root=utils.get_root(), id=1, max_steps=100000, hps=exp2_hps)

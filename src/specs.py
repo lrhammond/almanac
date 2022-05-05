@@ -11,26 +11,28 @@ import re
 from itertools import chain, combinations, product
 import pickle
 from torch.nn.functional import feature_alpha_dropout, one_hot as one_hot
-import torch.tensor as tt
+from torch import tensor as tt
 
 
 # Specification controller class
 
 class Spec_Controller:
 
-    def __init__(self, formulae, save_to, load_from=None):
+    def __init__(self, formulae, save_to, load_from=None, adversarial=False, strict_adversarial=False):
         
         self.formulae = formulae
         if load_from != None:
             self.specs = []
             for f in formulae:
+
                 filename = load_from + '/specs/{}.pickle'.format(f)
                 if os.path.isfile(f):
                     old_spec = pickle.load(open(filename, "rb"))
                     self.specs.append(old_spec)
                 else:
                     new_spec = Spec(f)
-                    new_spec.save(save_to + '/specs/')
+                    save_path = str(os.path.join(save_to + 'specs'))
+                    new_spec.save(save_path)
                     self.specs.append(new_spec)
         else:
             self.specs = [Spec(f) for f in formulae]
@@ -104,11 +106,14 @@ class Spec_Controller:
         
         return s_1s, s_2s, acceptances
 
-    def save_props(self, location, name, weights):
+    def save_props(self, location, name, weights, current_player=None):
 
         specs_name = location + '/prism_specs/' + name + '.props'
         with open(specs_name, 'w') as f:
-            if self.num_specs == 1:
+            if current_player is not None:
+                f.write('Pmax=? [ X ( ' + self.formulae[current_player] + ' ) ]\n\n')
+                f.write('P=? [ X ( ' + self.formulae[current_player] + ' ) ]\n\n')
+            elif self.num_specs == 1:
                 f.write('Pmax=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
                 f.write('P=? [ X ( ' + self.formulae[0] + ' ) ]\n\n')
             else:
@@ -245,7 +250,7 @@ class LDBA:
         """
 
         # Translate the LTL formula to an OA using Rabinizer 4.
-        out=check_output(['rabinizer4/bin/ltl2ldba', '-e', ltl])
+        out = check_output([r'C:\Users\chess\Documents\Alistair\Monash\MARL\alamanac\rabinizer4\bin\ltl2ldba.bat', '-e', ltl])
         
         # Split the output into two parts: the header and the body
         header, body = out.decode('utf-8').split('--BODY--\n')
@@ -390,8 +395,3 @@ class LDBA:
         while os.path.isfile(filename):
             filename = 'temp_%032x.hoa' % random.getrandbits(128)
         return filename
-
-
-l = LDBA("F G a")
-
-print("hello")
